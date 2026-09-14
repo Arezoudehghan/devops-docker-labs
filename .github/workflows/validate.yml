@@ -1,4 +1,4 @@
-name: Validate Docker Compose Labs
+name: Validate DevOps Docker Labs
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
       - name: Check out repository
@@ -20,23 +20,32 @@ jobs:
 
       - name: Prepare safe environment files
         run: |
-          cp session-36-networks/.env.example session-36-networks/.env
-          cp session-37-depends-on-restart/.env.example session-37-depends-on-restart/.env
+          cp compose/session-36-networks/.env.example compose/session-36-networks/.env
+          cp compose/session-37-depends-on-restart/.env.example compose/session-37-depends-on-restart/.env
 
       - name: Validate Session 36 Compose configuration
-        run: docker compose --env-file session-36-networks/.env -f session-36-networks/compose.yaml config --quiet
+        run: docker compose --env-file compose/session-36-networks/.env -f compose/session-36-networks/compose.yaml config --quiet
 
       - name: Build Session 36 images
-        run: docker compose --env-file session-36-networks/.env -f session-36-networks/compose.yaml build --pull
+        run: docker compose --env-file compose/session-36-networks/.env -f compose/session-36-networks/compose.yaml build --pull
 
       - name: Validate Session 37 Compose configuration
-        run: docker compose --env-file session-37-depends-on-restart/.env -f session-37-depends-on-restart/compose.yaml config --quiet
+        run: docker compose --env-file compose/session-37-depends-on-restart/.env -f compose/session-37-depends-on-restart/compose.yaml config --quiet
 
       - name: Pull Session 37 images
-        run: docker compose --env-file session-37-depends-on-restart/.env -f session-37-depends-on-restart/compose.yaml pull
+        run: docker compose --env-file compose/session-37-depends-on-restart/.env -f compose/session-37-depends-on-restart/compose.yaml pull
 
       - name: Validate shell scripts
         run: |
-          bash -n session-36-networks/scripts/verify.sh
-          bash -n session-37-depends-on-restart/scripts/verify.sh
-          bash -n session-37-depends-on-restart/scripts/test-restart-behavior.sh
+          bash -n compose/session-36-networks/scripts/verify.sh
+          bash -n compose/session-37-depends-on-restart/scripts/verify.sh
+          bash -n compose/session-37-depends-on-restart/scripts/test-restart-behavior.sh
+
+      - name: Validate Session 75 Python syntax
+        run: python3 -m py_compile swarm/session-75-swarm-rolling-update/app.py
+
+      - name: Validate Session 75 Swarm stack
+        run: docker stack config -c swarm/session-75-swarm-rolling-update/stack.yml > /dev/null
+
+      - name: Build Session 75 image
+        run: docker build -t swarm-rolling-demo:ci swarm/session-75-swarm-rolling-update
