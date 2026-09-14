@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  web:
+    image: 192.168.94.90:8085/swarm-rolling-demo:v1
+
+    ports:
+      - target: 8000
+        published: 8088
+        protocol: tcp
+        mode: ingress
+
+    deploy:
+      mode: replicated
+      replicas: 4
+
+      update_config:
+        parallelism: 1
+        delay: 10s
+        monitor: 15s
+        max_failure_ratio: 0
+        failure_action: rollback
+        order: start-first
+
+      rollback_config:
+        parallelism: 1
+        delay: 5s
+        monitor: 10s
+        max_failure_ratio: 0
+        failure_action: pause
+        order: start-first
+
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 30s
