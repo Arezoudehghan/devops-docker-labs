@@ -40,6 +40,13 @@ jobs:
           bash -n compose/session-36-networks/scripts/verify.sh
           bash -n compose/session-37-depends-on-restart/scripts/verify.sh
           bash -n compose/session-37-depends-on-restart/scripts/test-restart-behavior.sh
+          bash -n production/session-71-zero-downtime-deploy/scripts/switch.sh
+
+      - name: Build Session 71 Blue image
+        run: docker build -t zero-app:v1 production/session-71-zero-downtime-deploy/releases/v1
+
+      - name: Build Session 71 Green image
+        run: docker build -t zero-app:v2 production/session-71-zero-downtime-deploy/releases/v2
 
       - name: Validate Session 75 Python syntax
         run: python3 -m py_compile swarm/session-75-swarm-rolling-update/app.py

@@ -1,6 +1,6 @@
 # DevOps Docker Labs
 
-[![Validate DevOps Docker Labs](https://github.com/Arezoudehghan/docker-compose-labs/actions/workflows/validate.yml/badge.svg)](https://github.com/Arezoudehghan/docker-compose-labs/actions/workflows/validate.yml)
+[![Validate DevOps Docker Labs](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml/badge.svg)](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml)
 
 A structured collection of hands-on Docker labs covering Docker Compose, networking, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
 
@@ -20,6 +20,8 @@ A structured collection of hands-on Docker labs covering Docker Compose, network
 ├── compose/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
+├── production/
+│   └── session-71-zero-downtime-deploy/
 ├── swarm/
 │   └── session-75-swarm-rolling-update/
 ├── .github/workflows/
@@ -37,6 +39,12 @@ A structured collection of hands-on Docker labs covering Docker Compose, network
 | 36 | Docker Compose networks | [`compose/session-36-networks`](compose/session-36-networks/) | `DEV-1` |
 | 37 | `depends_on` and restart policy | [`compose/session-37-depends-on-restart`](compose/session-37-depends-on-restart/) | `DEV-2` |
 
+### Docker in Production
+
+| Session | Topic | Lab directory | Execution host |
+|---|---|---|---|
+| 71 | Simple zero-downtime Blue/Green deployment with Nginx | [`production/session-71-zero-downtime-deploy`](production/session-71-zero-downtime-deploy/) | `DEV-2` |
+
 ### Docker Swarm
 
 | Session | Topic | Lab directory | Execution host |
@@ -48,8 +56,8 @@ Each lab is isolated in its own directory and contains the files and documentati
 ## Clone the repository
 
 ```bash
-git clone https://github.com/Arezoudehghan/docker-compose-labs.git
-cd docker-compose-labs
+git clone https://github.com/Arezoudehghan/devops-docker-labs.git
+cd devops-docker-labs
 ```
 
 Then enter the directory for the lab you want to run and follow its `README.md`.
@@ -60,12 +68,13 @@ Then enter the directory for the lab you want to run and follow its `README.md`.
 - Use `.env.example` only as a safe template.
 - Validate Compose files with `docker compose config --quiet` before starting a lab.
 - Validate Swarm stack files with `docker stack config` before deployment.
+- Validate deployment scripts with `bash -n` before running them.
 - Do not run labs on the same host when they publish conflicting host ports.
 - Read cleanup warnings before removing volumes or other persistent data.
 
 ## Automated validation
 
-GitHub Actions validates the Compose configurations, shell-script syntax, Python syntax, Docker image builds, and the Swarm stack configuration on pushes to `main` and on pull requests.
+GitHub Actions validates the Compose configurations, shell-script syntax, Docker image builds, Python syntax, and the Swarm stack configuration on pushes to `main` and on pull requests.
 
 ## Portfolio organization
 
