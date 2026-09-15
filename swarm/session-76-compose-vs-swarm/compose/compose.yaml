@@ -1,0 +1,19 @@
+name: session76-compose
+
+services:
+  web:
+    image: nginx:alpine
+    command:
+      - /bin/sh
+      - -c
+      - |
+        echo "COMPOSE CONTAINER: $$(hostname)" > /usr/share/nginx/html/index.html
+        exec nginx -g 'daemon off;'
+    ports:
+      - "8088:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1/ >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s

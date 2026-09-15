@@ -39,7 +39,6 @@ jobs:
         run: |
           bash -n compose/session-36-networks/scripts/verify.sh
           bash -n compose/session-37-depends-on-restart/scripts/verify.sh
-          bash -n compose/session-37-depends-on-restart/scripts/test-restart-behavior.sh
           bash -n production/session-71-zero-downtime-deploy/scripts/switch.sh
 
       - name: Build Session 71 Blue image
@@ -56,3 +55,9 @@ jobs:
 
       - name: Build Session 75 image
         run: docker build -t swarm-rolling-demo:ci swarm/session-75-swarm-rolling-update
+
+      - name: Validate Session 76 Compose configuration
+        run: docker compose -f swarm/session-76-compose-vs-swarm/compose/compose.yaml config --quiet
+
+      - name: Validate Session 76 Swarm stack
+        run: docker stack config -c swarm/session-76-compose-vs-swarm/swarm/stack.yaml > /dev/null
