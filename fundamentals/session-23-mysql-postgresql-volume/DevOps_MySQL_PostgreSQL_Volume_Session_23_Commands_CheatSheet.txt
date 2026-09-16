@@ -1,0 +1,363 @@
+------------------------------------------------------------
+# docker volume create mysql_data
+
+Explanation:
+Creates a Docker named volume called mysql_data for persistent MySQL data.
+------------------------------------------------------------
+# docker volume ls
+
+Explanation:
+Lists Docker volumes available on the current Docker host.
+------------------------------------------------------------
+# docker run -d \
+  --name mysql-db \
+  -e MYSQL_ROOT_PASSWORD='LabPass123!' \
+  -e MYSQL_DATABASE=appdb \
+  -v mysql_data:/var/lib/mysql \
+  mysql:8.4
+
+Explanation:
+Runs a MySQL 8.4 container named mysql-db in detached mode and stores its database files in the mysql_data named volume.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+- --name = container name: Assign the name mysql-db to the container.
+- -e = --env (environment): Set an environment variable inside the container. It is used here for MYSQL_ROOT_PASSWORD and MYSQL_DATABASE.
+- -v = --volume (volume): Mount mysql_data at /var/lib/mysql inside the container.
+- \ = shell line continuation: Continue the same shell command on the next line.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# docker logs mysql-db
+
+Explanation:
+Displays the logs produced by the mysql-db container.
+------------------------------------------------------------
+# docker exec mysql-db mysqladmin ping -uroot -p'LabPass123!'
+
+Explanation:
+Runs mysqladmin inside mysql-db and checks whether the MySQL server is responding.
+
+Options:
+- -u = --user (user): Connect as the MySQL user root.
+- -p = --password[=password] (password): Use LabPass123! as the MySQL password.
+------------------------------------------------------------
+# docker exec -it mysql-db mysql -uroot -p
+
+Explanation:
+Starts an interactive MySQL client session inside mysql-db and prompts for the root password.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-terminal.
+- -u = --user (user): Connect as the MySQL user root.
+- -p = --password[=password] (password): Prompt for the MySQL password because no password value is attached.
+------------------------------------------------------------
+# USE appdb;
+
+Explanation:
+Selects appdb as the active MySQL database for the following SQL statements.
+------------------------------------------------------------
+# CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(150)
+);
+
+Explanation:
+Creates a MySQL table named users with an auto-incrementing primary key, a name column, and an email column.
+------------------------------------------------------------
+# INSERT INTO users (name, email)
+VALUES
+('Arezou', 'arezou@example.com'),
+('Ali', 'ali@example.com');
+
+Explanation:
+Inserts two rows into the MySQL users table.
+------------------------------------------------------------
+# SELECT * FROM users;
+
+Explanation:
+Returns all columns and all rows from the users table.
+------------------------------------------------------------
+# EXIT;
+
+Explanation:
+Exits the MySQL command-line client.
+------------------------------------------------------------
+# docker inspect mysql-db
+
+Explanation:
+Shows detailed Docker metadata and configuration for the mysql-db container, including its mounts.
+------------------------------------------------------------
+# docker volume inspect mysql_data
+
+Explanation:
+Shows detailed information about the mysql_data volume, including its driver and mount point.
+------------------------------------------------------------
+# docker rm -f mysql-db
+
+Explanation:
+Removes the mysql-db container and forces its removal if it is running.
+
+Options:
+- -f = --force (force): Force removal of the running container by sending SIGKILL first.
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all Docker containers, including stopped containers.
+
+Options:
+- -a = --all (all): Show all containers instead of only running containers.
+------------------------------------------------------------
+# docker run -d \
+  --name mysql-db-new \
+  -e MYSQL_ROOT_PASSWORD='LabPass123!' \
+  -v mysql_data:/var/lib/mysql \
+  mysql:8.4
+
+Explanation:
+Runs a new MySQL 8.4 container and attaches the existing mysql_data volume so previously stored database data can be reused.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+- --name = container name: Assign the name mysql-db-new to the container.
+- -e = --env (environment): Set MYSQL_ROOT_PASSWORD inside the container.
+- -v = --volume (volume): Mount mysql_data at /var/lib/mysql inside the container.
+- \ = shell line continuation: Continue the same shell command on the next line.
+------------------------------------------------------------
+# docker exec mysql-db-new mysqladmin ping -uroot -p'LabPass123!'
+
+Explanation:
+Runs mysqladmin inside mysql-db-new and checks whether the MySQL server is responding.
+
+Options:
+- -u = --user (user): Connect as the MySQL user root.
+- -p = --password[=password] (password): Use LabPass123! as the MySQL password.
+------------------------------------------------------------
+# docker exec -it mysql-db-new mysql -uroot -p
+
+Explanation:
+Starts an interactive MySQL client session inside mysql-db-new and prompts for the root password.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-terminal.
+- -u = --user (user): Connect as the MySQL user root.
+- -p = --password[=password] (password): Prompt for the MySQL password because no password value is attached.
+------------------------------------------------------------
+# docker volume create postgres_data
+
+Explanation:
+Creates a Docker named volume called postgres_data for persistent PostgreSQL data.
+------------------------------------------------------------
+# docker run -d \
+  --name postgres-db \
+  -e POSTGRES_USER=appuser \
+  -e POSTGRES_PASSWORD='LabPass123!' \
+  -e POSTGRES_DB=appdb \
+  -v postgres_data:/var/lib/postgresql/data \
+  postgres:17
+
+Explanation:
+Runs a PostgreSQL 17 container named postgres-db in detached mode and stores its database files in the postgres_data named volume.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+- --name = container name: Assign the name postgres-db to the container.
+- -e = --env (environment): Set environment variables inside the container. It is used here for POSTGRES_USER, POSTGRES_PASSWORD, and POSTGRES_DB.
+- -v = --volume (volume): Mount postgres_data at /var/lib/postgresql/data inside the container.
+- \ = shell line continuation: Continue the same shell command on the next line.
+------------------------------------------------------------
+# docker logs postgres-db
+
+Explanation:
+Displays the logs produced by the postgres-db container.
+------------------------------------------------------------
+# docker exec postgres-db pg_isready -U appuser -d appdb
+
+Explanation:
+Runs pg_isready inside postgres-db to check whether PostgreSQL is accepting connections for appdb as appuser.
+
+Options:
+- -U = --username (username): Check the server using the PostgreSQL user appuser.
+- -d = --dbname (database name): Check the database named appdb.
+------------------------------------------------------------
+# docker exec -it postgres-db psql -U appuser -d appdb
+
+Explanation:
+Starts an interactive psql session inside postgres-db and connects to appdb as appuser.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-terminal.
+- -U = --username (username): Connect as the PostgreSQL user appuser.
+- -d = --dbname (database name): Connect to the database named appdb.
+------------------------------------------------------------
+# CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(150)
+);
+
+Explanation:
+Creates a PostgreSQL table named users with a SERIAL primary key, a name column, and an email column.
+------------------------------------------------------------
+# INSERT INTO users (name, email)
+VALUES
+('Arezou', 'arezou@example.com'),
+('Sara', 'sara@example.com');
+
+Explanation:
+Inserts two rows into the PostgreSQL users table.
+------------------------------------------------------------
+# \q
+
+Explanation:
+Exits the psql command-line client.
+------------------------------------------------------------
+# docker rm -f postgres-db
+
+Explanation:
+Removes the postgres-db container and forces its removal if it is running.
+
+Options:
+- -f = --force (force): Force removal of the running container by sending SIGKILL first.
+------------------------------------------------------------
+# docker run -d \
+  --name postgres-db-new \
+  -e POSTGRES_USER=appuser \
+  -e POSTGRES_PASSWORD='LabPass123!' \
+  -v postgres_data:/var/lib/postgresql/data \
+  postgres:17
+
+Explanation:
+Runs a new PostgreSQL 17 container and attaches the existing postgres_data volume so previously stored database data can be reused.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+- --name = container name: Assign the name postgres-db-new to the container.
+- -e = --env (environment): Set environment variables inside the container. It is used here for POSTGRES_USER and POSTGRES_PASSWORD.
+- -v = --volume (volume): Mount postgres_data at /var/lib/postgresql/data inside the container.
+- \ = shell line continuation: Continue the same shell command on the next line.
+------------------------------------------------------------
+# docker exec postgres-db-new pg_isready -U appuser -d appdb
+
+Explanation:
+Runs pg_isready inside postgres-db-new to check whether PostgreSQL is accepting connections for appdb as appuser.
+
+Options:
+- -U = --username (username): Check the server using the PostgreSQL user appuser.
+- -d = --dbname (database name): Check the database named appdb.
+------------------------------------------------------------
+# docker exec -it postgres-db-new psql -U appuser -d appdb
+
+Explanation:
+Starts an interactive psql session inside postgres-db-new and connects to appdb as appuser.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-terminal.
+- -U = --username (username): Connect as the PostgreSQL user appuser.
+- -d = --dbname (database name): Connect to the database named appdb.
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates and starts the services defined in the current Compose file in detached mode.
+
+Options:
+- -d = --detach (detach): Run the Compose services in the background.
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Lists the containers and status of services in the current Compose project.
+------------------------------------------------------------
+# docker compose down
+
+Explanation:
+Stops and removes the containers and networks created by the current Compose project while keeping named volumes by default.
+------------------------------------------------------------
+# docker compose down -v
+
+Explanation:
+Stops and removes the current Compose project and also removes its named volumes and anonymous volumes attached to its containers.
+
+Options:
+- -v = --volumes (volumes): Remove named volumes declared in the Compose file and anonymous volumes attached to containers.
+------------------------------------------------------------
+# docker exec mysql-db-new \
+  mysqldump -uroot -p'LabPass123!' appdb > appdb.sql
+
+Explanation:
+Runs mysqldump inside mysql-db-new and writes a logical backup of appdb to appdb.sql on the Docker host.
+
+Options:
+- -u = --user (user): Connect as the MySQL user root.
+- -p = --password[=password] (password): Use LabPass123! as the MySQL password.
+- appdb = database argument: Dump the database named appdb.
+- > = output redirection: Write standard output to appdb.sql and overwrite the file if it already exists.
+- \ = shell line continuation: Continue the same shell command on the next line.
+------------------------------------------------------------
+# ls -lh appdb.sql
+
+Explanation:
+Shows detailed information about appdb.sql with a human-readable file size.
+
+Options:
+- -l = long listing format: Display detailed file information.
+- -h = --human-readable (human-readable): Show file sizes using units such as K, M, and G.
+------------------------------------------------------------
+# docker exec postgres-db-new \
+  pg_dump -U appuser appdb > appdb.sql
+
+Explanation:
+Runs pg_dump inside postgres-db-new and writes a logical backup of appdb to appdb.sql on the Docker host.
+
+Options:
+- -U = --username (username): Connect as the PostgreSQL user appuser.
+- appdb = database argument: Dump the database named appdb.
+- > = output redirection: Write standard output to appdb.sql and overwrite the file if it already exists.
+- \ = shell line continuation: Continue the same shell command on the next line.
+------------------------------------------------------------
+# docker volume rm mysql_data
+
+Explanation:
+Removes the Docker volume named mysql_data when it is not in use by a container.
+------------------------------------------------------------
+# docker volume rm postgres_data
+
+Explanation:
+Removes the Docker volume named postgres_data when it is not in use by a container.
+------------------------------------------------------------
+# docker volume ls -f dangling=true
+
+Explanation:
+Lists Docker volumes filtered to volumes that are dangling according to Docker's volume filter.
+
+Options:
+- -f = --filter (filter): Apply the filter dangling=true to the volume list.
+------------------------------------------------------------
+# docker volume prune
+
+Explanation:
+Removes unused anonymous local Docker volumes after confirmation by default.
+------------------------------------------------------------
+# docker inspect postgres-db
+
+Explanation:
+Shows detailed Docker metadata and configuration for the postgres-db container, including its mounts.
+------------------------------------------------------------
+# docker run -e MYSQL_ROOT_PASSWORD='LabPass123!' mysql:8.4
+
+Explanation:
+Technical correction: The lesson showed docker run mysql:8.4 as an incomplete MySQL example. The official MySQL image needs initialization credentials or another supported root-password setting, so this corrected command supplies MYSQL_ROOT_PASSWORD.
+
+Options:
+- -e = --env (environment): Set MYSQL_ROOT_PASSWORD inside the container.
+------------------------------------------------------------
