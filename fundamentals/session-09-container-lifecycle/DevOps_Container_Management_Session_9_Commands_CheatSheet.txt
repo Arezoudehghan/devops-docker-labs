@@ -1,0 +1,165 @@
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists the containers that are currently running.
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all containers, including running and stopped containers.
+
+Options:
+- -a = --all (all): Show all containers instead of only running containers.
+------------------------------------------------------------
+# docker ps -q
+
+Explanation:
+Lists only the IDs of currently running containers.
+
+Options:
+- -q = --quiet (quiet): Display only container IDs.
+------------------------------------------------------------
+# docker ps -aq
+
+Explanation:
+Lists only the IDs of all containers, including stopped containers.
+
+Options:
+- -a = --all (all): Show all containers instead of only running containers.
+- -q = --quiet (quiet): Display only container IDs.
+------------------------------------------------------------
+# docker run -d --name web1 nginx
+
+Explanation:
+Creates and starts a new container named web1 from the nginx image in the background.
+
+Options:
+- -d = --detach (detach): Run the container in detached mode.
+- --name = name: Assign the container the name web1.
+------------------------------------------------------------
+# docker stop web1
+
+Explanation:
+Stops the existing container named web1 gracefully.
+------------------------------------------------------------
+# docker start web1
+
+Explanation:
+Starts the existing stopped container named web1.
+------------------------------------------------------------
+# docker restart web1
+
+Explanation:
+Restarts the existing container named web1.
+------------------------------------------------------------
+# docker rm web1
+
+Explanation:
+Removes the existing container named web1.
+------------------------------------------------------------
+# docker rm -f web1
+
+Explanation:
+Forcibly removes the container named web1, stopping it first if needed.
+
+Options:
+- -f = --force (force): Force the removal of a running container.
+------------------------------------------------------------
+# docker rm web1 web2 web3
+
+Explanation:
+Removes the containers named web1, web2, and web3 in one command.
+------------------------------------------------------------
+# docker container prune
+
+Explanation:
+Removes all stopped containers.
+------------------------------------------------------------
+# docker stop 28ac34f85ab1
+
+Explanation:
+Stops the container with the ID 28ac34f85ab1 gracefully.
+------------------------------------------------------------
+# docker container ls
+
+Explanation:
+Lists the containers that are currently running.
+------------------------------------------------------------
+# docker container stop web1
+
+Explanation:
+Stops the existing container named web1 gracefully.
+------------------------------------------------------------
+# docker container start web1
+
+Explanation:
+Starts the existing stopped container named web1.
+------------------------------------------------------------
+# docker container rm web1
+
+Explanation:
+Removes the existing container named web1.
+------------------------------------------------------------
+# docker run -d --name test-nginx nginx
+
+Explanation:
+Creates and starts a new container named test-nginx from the nginx image in the background.
+
+Options:
+- -d = --detach (detach): Run the container in detached mode.
+- --name = name: Assign the container the name test-nginx.
+------------------------------------------------------------
+# docker stop test-nginx
+
+Explanation:
+Stops the existing container named test-nginx gracefully.
+------------------------------------------------------------
+# docker start test-nginx
+
+Explanation:
+Starts the existing stopped container named test-nginx.
+------------------------------------------------------------
+# docker restart test-nginx
+
+Explanation:
+Restarts the existing container named test-nginx.
+------------------------------------------------------------
+# docker rm test-nginx
+
+Explanation:
+Removes the existing container named test-nginx.
+------------------------------------------------------------
+# docker restart backend
+
+Explanation:
+Restarts the existing container named backend.
+------------------------------------------------------------
+# docker stop backend
+
+Explanation:
+Stops the existing container named backend gracefully.
+------------------------------------------------------------
+# docker rm backend
+
+Explanation:
+Removes the existing container named backend.
+------------------------------------------------------------
+# docker start nginx
+
+Explanation:
+Starts an existing stopped container named nginx. This command does not create a container from the nginx image.
+------------------------------------------------------------
+# docker run nginx
+
+Explanation:
+Creates and starts a new container from the nginx image in the foreground.
+------------------------------------------------------------
+# docker run --name web1 nginx
+
+Explanation:
+Creates and starts a new container named web1 from the nginx image in the foreground.
+
+Options:
+- --name = name: Assign the container the name web1.
+------------------------------------------------------------
