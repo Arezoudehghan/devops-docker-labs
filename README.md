@@ -25,7 +25,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 │   ├── session-05-first-nginx-container/
 │   ├── session-06-docker-run/
 │   ├── session-07-foreground-detached-mode/
-│   └── session-09-container-lifecycle/
+│   ├── session-09-container-lifecycle/
+│   └── session-10-logs-exec-inspect-troubleshooting/
 ├── compose/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
@@ -54,6 +55,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 | 06 | Running containers with `docker run` | [`fundamentals/session-06-docker-run`](fundamentals/session-06-docker-run/) | Docker host |
 | 07 | Foreground vs Detached mode | [`fundamentals/session-07-foreground-detached-mode`](fundamentals/session-07-foreground-detached-mode/) | Docker host |
 | 09 | Container lifecycle: list, stop, start, restart, remove | [`fundamentals/session-09-container-lifecycle`](fundamentals/session-09-container-lifecycle/) | Docker host |
+| 10 | Logs, exec, inspect, and container troubleshooting | [`fundamentals/session-10-logs-exec-inspect-troubleshooting`](fundamentals/session-10-logs-exec-inspect-troubleshooting/) | Docker host |
 
 ### Docker Compose
 
