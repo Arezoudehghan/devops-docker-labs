@@ -23,7 +23,9 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 │   ├── session-03-docker-architecture/
 │   ├── session-04-install-docker-ubuntu/
 │   ├── session-05-first-nginx-container/
-│   └── session-06-docker-run/
+│   ├── session-06-docker-run/
+│   ├── session-07-foreground-detached-mode/
+│   └── session-09-container-lifecycle/
 ├── compose/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
@@ -50,6 +52,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 | 04 | Install Docker on Ubuntu | [`fundamentals/session-04-install-docker-ubuntu`](fundamentals/session-04-install-docker-ubuntu/) | Docker host |
 | 05 | First real container with Nginx | [`fundamentals/session-05-first-nginx-container`](fundamentals/session-05-first-nginx-container/) | Docker host |
 | 06 | Running containers with `docker run` | [`fundamentals/session-06-docker-run`](fundamentals/session-06-docker-run/) | Docker host |
+| 07 | Foreground vs Detached mode | [`fundamentals/session-07-foreground-detached-mode`](fundamentals/session-07-foreground-detached-mode/) | Docker host |
+| 09 | Container lifecycle: list, stop, start, restart, remove | [`fundamentals/session-09-container-lifecycle`](fundamentals/session-09-container-lifecycle/) | Docker host |
 
 ### Docker Compose
 
