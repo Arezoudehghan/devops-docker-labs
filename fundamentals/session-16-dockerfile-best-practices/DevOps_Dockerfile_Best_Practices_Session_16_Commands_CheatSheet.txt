@@ -1,0 +1,331 @@
+------------------------------------------------------------
+# FROM python:3
+
+Explanation:
+Uses the python:3 image as the base image for the build.
+------------------------------------------------------------
+# FROM python:3.13-slim
+
+Explanation:
+Uses the slim Python 3.13 image as the base image.
+------------------------------------------------------------
+# FROM nginx:latest
+
+Explanation:
+Uses the image tagged nginx:latest as the base image.
+------------------------------------------------------------
+# FROM nginx:1.29
+
+Explanation:
+Uses the Nginx 1.29 image as the base image.
+------------------------------------------------------------
+# docker build -t myapp:v1 .
+
+Explanation:
+Builds a Docker image from the current directory and names it myapp:v1.
+
+Options:
+- -t = --tag (tag): Sets the image name and optional tag.
+- . = current directory: Uses the current directory as the build context.
+------------------------------------------------------------
+# WORKDIR /app
+
+Explanation:
+Sets /app as the working directory for following Dockerfile instructions.
+------------------------------------------------------------
+# COPY . .
+
+Explanation:
+Copies the contents of the current build context into the current working directory in the image.
+------------------------------------------------------------
+# RUN pip install -r requirements.txt
+
+Explanation:
+Runs pip install during the image build and installs packages listed in requirements.txt.
+
+Options:
+- -r = --requirement (requirement file): Installs packages from the specified requirements file.
+------------------------------------------------------------
+# CMD ["python", "app.py"]
+
+Explanation:
+Sets the default container command to run python app.py using exec-form syntax.
+------------------------------------------------------------
+# COPY requirements.txt .
+
+Explanation:
+Copies requirements.txt into the current working directory in the image.
+------------------------------------------------------------
+# RUN pip install --no-cache-dir -r requirements.txt
+
+Explanation:
+Installs the Python packages in requirements.txt without keeping pip's download cache.
+
+Options:
+- --no-cache-dir = disable pip cache: Prevents pip from storing downloaded package files in its cache.
+- -r = --requirement (requirement file): Installs packages from the specified requirements file.
+------------------------------------------------------------
+# RUN apt-get install -y \
+    curl \
+    vim \
+    nano \
+    net-tools \
+    wget
+
+Explanation:
+Installs curl, vim, nano, net-tools, and wget during the image build.
+
+Options:
+- -y = --assume-yes (assume yes): Automatically answers yes to installation prompts.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
+
+Explanation:
+Updates APT package metadata, installs curl without recommended packages, and removes cached APT package lists in the same image layer.
+
+Options:
+- -y = --assume-yes (assume yes): Automatically answers yes to installation prompts.
+- --no-install-recommends = do not install recommended packages: Installs only required dependencies instead of recommended extras.
+- -r in rm -rf = --recursive (recursive): Removes directories and their contents recursively.
+- -f in rm -rf = --force (force): Ignores nonexistent files and does not prompt.
+- && = AND operator: Runs the next command only if the previous command succeeds.
+- \ = line continuation: Continues the same shell command on the next line.
+- /var/lib/apt/lists/* = path pattern: Matches all files and directories inside the APT package-list directory.
+------------------------------------------------------------
+# COPY app.py /app/
+
+Explanation:
+Copies app.py from the build context into /app/ in the image.
+------------------------------------------------------------
+# RUN apt-get update
+
+Explanation:
+Updates the APT package index during the image build.
+------------------------------------------------------------
+# RUN apt-get install -y curl
+
+Explanation:
+Installs the curl package during the image build.
+
+Options:
+- -y = --assume-yes (assume yes): Automatically answers yes to installation prompts.
+------------------------------------------------------------
+# RUN useradd --create-home appuser \
+    && chown -R appuser:appuser /app
+
+Explanation:
+Creates the appuser account with a home directory, then changes ownership of /app to that user and group.
+
+Options:
+- --create-home = create home directory: Creates the new user's home directory.
+- -R = --recursive (recursive): Applies the ownership change recursively to /app and its contents.
+- && = AND operator: Runs chown only if useradd succeeds.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# USER appuser
+
+Explanation:
+Sets appuser as the user for following Dockerfile instructions and for the container's default runtime user.
+------------------------------------------------------------
+# ENV DB_PASSWORD=mysecretpassword
+
+Explanation:
+Sets the DB_PASSWORD environment variable in the image to mysecretpassword.
+------------------------------------------------------------
+# ARG TOKEN=abcdef123456
+
+Explanation:
+Defines a build argument named TOKEN with the default value abcdef123456.
+------------------------------------------------------------
+# RUN --mount=type=secret,id=mysecret \
+    cat /run/secrets/mysecret
+
+Explanation:
+Runs cat during the build while mounting the BuildKit secret named mysecret at /run/secrets/mysecret.
+
+Options:
+- --mount=type=secret,id=mysecret = RUN mount option: Mounts a BuildKit secret with ID mysecret for this build step.
+- \ = line continuation: Continues the same Dockerfile instruction on the next line.
+------------------------------------------------------------
+# docker build \
+  --secret id=mysecret,src=secret.txt \
+  -t myapp:v1 .
+
+Explanation:
+Builds myapp:v1 from the current directory and provides secret.txt to BuildKit as the secret named mysecret.
+
+Options:
+- --secret id=mysecret,src=secret.txt = build secret: Sets the secret ID to mysecret and reads its value from secret.txt.
+- -t = --tag (tag): Sets the image name and tag.
+- . = current directory: Uses the current directory as the build context.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# ENV APP_PORT=8080
+
+Explanation:
+Sets the APP_PORT environment variable in the image to 8080.
+------------------------------------------------------------
+# ENV LOG_LEVEL=info
+
+Explanation:
+Sets the LOG_LEVEL environment variable in the image to info.
+------------------------------------------------------------
+# ENV DB_PASSWORD=SuperSecret123
+
+Explanation:
+Sets the DB_PASSWORD environment variable in the image to SuperSecret123.
+------------------------------------------------------------
+# FROM golang:1.25 AS builder
+
+Explanation:
+Starts a build stage from golang:1.25 and names the stage builder.
+------------------------------------------------------------
+# WORKDIR /src
+
+Explanation:
+Sets /src as the working directory for following Dockerfile instructions.
+------------------------------------------------------------
+# RUN go build -o app .
+
+Explanation:
+Builds the Go application in the current directory and writes the resulting binary to app.
+
+Options:
+- -o = output file: Sets the output binary name or path to app.
+- . = current directory: Uses the Go package in the current directory as the build target.
+------------------------------------------------------------
+# FROM debian:bookworm-slim
+
+Explanation:
+Starts a new image stage from the slim Debian Bookworm image.
+------------------------------------------------------------
+# COPY --from=builder /src/app /app/app
+
+Explanation:
+Copies the built application from /src/app in the builder stage to /app/app in the current stage.
+
+Options:
+- --from=builder = source stage: Copies files from the build stage named builder instead of from the local build context.
+------------------------------------------------------------
+# CMD ["/app/app"]
+
+Explanation:
+Sets /app/app as the default command for the container using exec-form syntax.
+------------------------------------------------------------
+# CMD python app.py
+
+Explanation:
+Sets python app.py as the container's default command using shell-form syntax.
+------------------------------------------------------------
+# ENTRYPOINT ["python", "app.py"]
+
+Explanation:
+Sets python app.py as the container entrypoint using exec-form syntax.
+------------------------------------------------------------
+# EXPOSE 5000
+
+Explanation:
+Documents that the containerized application is intended to listen on port 5000.
+------------------------------------------------------------
+# docker build -t best-app:v1 .
+
+Explanation:
+Builds a Docker image from the current directory and tags it as best-app:v1.
+
+Options:
+- -t = --tag (tag): Sets the image name and tag.
+- . = current directory: Uses the current directory as the build context.
+------------------------------------------------------------
+# docker images best-app
+
+Explanation:
+Lists local Docker images whose repository name matches best-app.
+------------------------------------------------------------
+# docker run -d \
+  --name best-app \
+  -p 8080:5000 \
+  best-app:v1
+
+Explanation:
+Starts a container from best-app:v1 in detached mode, names it best-app, and publishes container port 5000 on host port 8080.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name best-app = container name: Assigns the name best-app to the container.
+- -p = --publish (publish): Publishes a container port on the host.
+- 8080:5000 = port mapping: Maps host port 8080 to container port 5000.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker exec best-app whoami
+
+Explanation:
+Runs whoami inside the running container named best-app.
+------------------------------------------------------------
+# docker top best-app
+
+Explanation:
+Displays the processes running inside the best-app container.
+------------------------------------------------------------
+# docker history best-app:v1
+
+Explanation:
+Shows the image layer history for best-app:v1.
+------------------------------------------------------------
+# docker build -t best-app:v2 .
+
+Explanation:
+Builds a Docker image from the current directory and tags it as best-app:v2.
+
+Options:
+- -t = --tag (tag): Sets the image name and tag.
+- . = current directory: Uses the current directory as the build context.
+------------------------------------------------------------
+# FROM ubuntu:latest
+
+Explanation:
+Uses the image tagged ubuntu:latest as the base image.
+------------------------------------------------------------
+# RUN apt-get install -y python3 python3-pip vim nano curl wget
+
+Explanation:
+Installs Python 3, pip, Vim, Nano, curl, and wget during the image build.
+
+Options:
+- -y = --assume-yes (assume yes): Automatically answers yes to installation prompts.
+------------------------------------------------------------
+# RUN pip3 install -r requirements.txt
+
+Explanation:
+Runs pip3 install during the image build and installs packages listed in requirements.txt.
+
+Options:
+- -r = --requirement (requirement file): Installs packages from the specified requirements file.
+------------------------------------------------------------
+# ENV DB_PASSWORD=CompanySecret123
+
+Explanation:
+Sets the DB_PASSWORD environment variable in the image to CompanySecret123.
+------------------------------------------------------------
+# CMD python3 app.py
+
+Explanation:
+Sets python3 app.py as the container's default command using shell-form syntax.
+------------------------------------------------------------
+# docker build \
+  --build-arg HTTP_PROXY=http://proxy.example:8080 \
+  --build-arg HTTPS_PROXY=http://proxy.example:8080 \
+  -t best-app:v1 .
+
+Explanation:
+Builds best-app:v1 from the current directory while passing HTTP and HTTPS proxy values as build arguments.
+
+Options:
+- --build-arg HTTP_PROXY=http://proxy.example:8080 = build argument: Passes the HTTP_PROXY value to the Docker build.
+- --build-arg HTTPS_PROXY=http://proxy.example:8080 = build argument: Passes the HTTPS_PROXY value to the Docker build.
+- -t = --tag (tag): Sets the image name and tag.
+- . = current directory: Uses the current directory as the build context.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
