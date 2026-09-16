@@ -1,0 +1,34 @@
+------------------------------------------------------------
+# docker run nginx
+
+Explanation:
+Creates and starts a new container from the nginx image. If the image is not available locally, Docker pulls it before starting the container.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists the containers that are currently running.
+------------------------------------------------------------
+# docker version
+
+Explanation:
+Shows detailed Docker version information for both the Docker CLI client and the Docker Engine server when the server is reachable.
+------------------------------------------------------------
+# docker --version
+
+Explanation:
+Prints the Docker CLI version and exits.
+
+Options:
+- --version = version: Print Docker CLI version information and exit.
+------------------------------------------------------------
+# systemctl status docker
+
+Explanation:
+Shows the current status of the Docker systemd service, including whether it is active and recent service information.
+------------------------------------------------------------
+# docker info
+
+Explanation:
+Displays detailed information about the Docker Engine, including containers, images, storage configuration, CPU, memory, and other host details.
+------------------------------------------------------------
