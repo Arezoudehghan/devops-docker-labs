@@ -15,3 +15,8 @@ systemctl status docker
 docker info
 docker ps
 ```
+
+## Files
+
+- `check-docker.sh` — Docker installation, Engine, service, and running-container checks.
+- `DevOps_Docker_What_and_Why_Session_1_Commands_CheatSheet.txt` — Command cheat sheet for this session.
