@@ -1,0 +1,318 @@
+------------------------------------------------------------
+# docker volume create mysql-data
+
+Explanation:
+Creates a Docker-managed named volume called `mysql-data`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume ls
+
+Explanation:
+Lists Docker volumes available on the host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name mysql \
+  -e MYSQL_ROOT_PASSWORD=StrongPassword \
+  -v mysql-data:/var/lib/mysql \
+  mysql:8
+
+Explanation:
+Technical correction: the earlier MySQL example was incomplete because the official `mysql:8` image requires an initialization password or another supported initialization option. This corrected command starts MySQL in detached mode and stores its database files in the `mysql-data` volume.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Assigns the container name `mysql`.
+- -e = --env (environment): Sets `MYSQL_ROOT_PASSWORD=StrongPassword` inside the container.
+- -v = --volume (volume): Mounts the named volume `mysql-data` at `/var/lib/mysql`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name nginx \
+  -v /opt/website:/usr/share/nginx/html \
+  nginx
+
+Explanation:
+Starts an Nginx container in the background and bind-mounts `/opt/website` from the host into the Nginx web root.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Assigns the container name `nginx`.
+- -v = --volume (volume): Bind-mounts `/opt/website` to `/usr/share/nginx/html`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "Hello Docker" > /opt/website/index.html
+
+Explanation:
+Writes `Hello Docker` into `/opt/website/index.html`, replacing the file if it already exists.
+
+Options:
+- > = output redirection: Sends the output of `echo` to `/opt/website/index.html` and overwrites the file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume create app-data
+
+Explanation:
+Creates a Docker-managed named volume called `app-data`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume inspect app-data
+
+Explanation:
+Shows detailed metadata about the `app-data` volume, including its mount point and driver.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p /srv/myapp/data
+
+Explanation:
+Creates `/srv/myapp/data` and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and does not report an error if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name myapp \
+  -v /srv/myapp/data:/app/data \
+  myimage
+
+Explanation:
+Starts `myimage` in the background and bind-mounts the host directory `/srv/myapp/data` into `/app/data`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Assigns the container name `myapp`.
+- -v = --volume (volume): Bind-mounts `/srv/myapp/data` to `/app/data`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -lah /srv/myapp/data
+
+Explanation:
+Lists the contents of `/srv/myapp/data` in long format, including hidden files, with human-readable sizes.
+
+Options:
+- -l = --format=long (long format): Uses the long listing format.
+- -a = --all (all): Includes hidden entries whose names start with a dot.
+- -h = --human-readable (human-readable): Displays file sizes in readable units such as KB, MB, and GB.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f mysql
+
+Explanation:
+Removes the container named `mysql` even if it is currently running.
+
+Options:
+- -f = --force (force): Force-removes the running container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -v /home/arezou/project:/app \
+  myimage
+
+Explanation:
+Runs `myimage` with `/home/arezou/project` bind-mounted at `/app` and automatically removes the container when it exits.
+
+Options:
+- --rm = automatically remove the container: Removes the container automatically after it stops.
+- -v = --volume (volume): Bind-mounts `/home/arezou/project` to `/app`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name nginx \
+  --mount type=volume,source=nginx-data,target=/usr/share/nginx/html \
+  nginx
+
+Explanation:
+Starts Nginx in the background and mounts the named Docker volume `nginx-data` at `/usr/share/nginx/html`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Assigns the container name `nginx`.
+- --mount = mount specification: Creates a mount using `type=volume`, `source=nginx-data`, and `target=/usr/share/nginx/html`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name nginx \
+  --mount type=bind,source=/opt/website,target=/usr/share/nginx/html \
+  nginx
+
+Explanation:
+Starts Nginx in the background and bind-mounts `/opt/website` from the host at `/usr/share/nginx/html`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Assigns the container name `nginx`.
+- --mount = mount specification: Creates a mount using `type=bind`, `source=/opt/website`, and `target=/usr/share/nginx/html`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  -v /opt/config:/app/config:ro \
+  myimage
+
+Explanation:
+Starts `myimage` in the background with `/opt/config` bind-mounted read-only at `/app/config`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -v = --volume (volume): Bind-mounts `/opt/config` to `/app/config`; the `:ro` suffix makes the mount read-only.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  -v app-config:/app/config:ro \
+  myimage
+
+Explanation:
+Starts `myimage` in the background with the named volume `app-config` mounted read-only at `/app/config`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -v = --volume (volume): Mounts the named volume `app-config` at `/app/config`; the `:ro` suffix makes the mount read-only.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name nginx \
+  -p 80:80 \
+  -v /opt/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
+  nginx
+
+Explanation:
+Starts Nginx in the background, publishes host port 80 to container port 80, and mounts a custom Nginx configuration file as read-only.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Assigns the container name `nginx`.
+- -p = --publish (publish): Maps host port `80` to container port `80`.
+- -v = --volume (volume): Bind-mounts `/opt/nginx/nginx.conf` to `/etc/nginx/nginx.conf`; the `:ro` suffix makes the mount read-only.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume create postgres-data
+
+Explanation:
+Creates a Docker-managed named volume called `postgres-data`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name postgres \
+  -e POSTGRES_PASSWORD=StrongPassword \
+  -v postgres-data:/var/lib/postgresql/data \
+  postgres
+
+Explanation:
+Starts PostgreSQL in the background, sets its database password, and stores its persistent data in the `postgres-data` volume.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Assigns the container name `postgres`.
+- -e = --env (environment): Sets `POSTGRES_PASSWORD=StrongPassword` inside the container.
+- -v = --volume (volume): Mounts the named volume `postgres-data` at `/var/lib/postgresql/data`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -v /:/host myimage
+
+Explanation:
+Runs `myimage` with the host root filesystem `/` bind-mounted at `/host` inside the container.
+
+Options:
+- -v = --volume (volume): Bind-mounts the host path `/` to `/host`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  myimage
+
+Explanation:
+Runs `myimage` with the host Docker socket mounted at the same path inside the container.
+
+Options:
+- -v = --volume (volume): Bind-mounts `/var/run/docker.sock` from the host to `/var/run/docker.sock` in the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume create lesson21-data
+
+Explanation:
+Creates a Docker-managed named volume called `lesson21-data`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -v lesson21-data:/data \
+  alpine \
+  sh -c 'echo "Created with Volume" > /data/test.txt'
+
+Explanation:
+Runs a temporary Alpine container that writes `Created with Volume` into `/data/test.txt` on the `lesson21-data` volume.
+
+Options:
+- --rm = automatically remove the container: Removes the container automatically after it stops.
+- -v = --volume (volume): Mounts the named volume `lesson21-data` at `/data`.
+- -c = command string: Tells `sh` to execute the following quoted command string.
+- > = output redirection: Sends the output of `echo` to `/data/test.txt` and overwrites the file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -v lesson21-data:/data \
+  alpine \
+  cat /data/test.txt
+
+Explanation:
+Runs a temporary Alpine container, mounts `lesson21-data` at `/data`, and prints the saved file to standard output.
+
+Options:
+- --rm = automatically remove the container: Removes the container automatically after it stops.
+- -v = --volume (volume): Mounts the named volume `lesson21-data` at `/data`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p ~/lesson21-bind
+
+Explanation:
+Creates the `lesson21-bind` directory under the current user's home directory. The `~` character expands to the current user's home directory.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and does not report an error if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -v ~/lesson21-bind:/data \
+  alpine \
+  sh -c 'echo "Created with Bind Mount" > /data/test.txt'
+
+Explanation:
+Runs a temporary Alpine container that bind-mounts `~/lesson21-bind` at `/data` and writes `Created with Bind Mount` into `/data/test.txt`.
+
+Options:
+- --rm = automatically remove the container: Removes the container automatically after it stops.
+- -v = --volume (volume): Bind-mounts `~/lesson21-bind` to `/data`.
+- -c = command string: Tells `sh` to execute the following quoted command string.
+- > = output redirection: Sends the output of `echo` to `/data/test.txt` and overwrites the file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat ~/lesson21-bind/test.txt
+
+Explanation:
+Prints the contents of `~/lesson21-bind/test.txt` to standard output. The `~` character expands to the current user's home directory.
+------------------------------------------------------------
