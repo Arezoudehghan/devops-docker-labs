@@ -2,7 +2,7 @@
 
 [![Validate DevOps Docker Labs](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml/badge.svg)](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml)
 
-A structured collection of hands-on Docker labs covering Docker fundamentals, Docker Compose, networking, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
+A structured collection of hands-on Docker labs covering Docker fundamentals, persistent storage, Docker Compose, networking, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
 
 ## Lab environment
 
@@ -31,6 +31,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 │   ├── session-11-image-layers/
 │   ├── session-12-first-dockerfile/
 │   └── session-13-dockerfile-from-run-copy-cmd-entrypoint/
+├── volumes/
+│   └── session-21-volume-vs-bind-mount/
 ├── compose/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
@@ -64,6 +66,12 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 | 11 | Docker images and layers | [`fundamentals/session-11-image-layers`](fundamentals/session-11-image-layers/) | Docker host |
 | 12 | Build your first Dockerfile | [`fundamentals/session-12-first-dockerfile`](fundamentals/session-12-first-dockerfile/) | Docker host |
 | 13 | Dockerfile instructions: FROM, RUN, COPY, CMD, ENTRYPOINT | [`fundamentals/session-13-dockerfile-from-run-copy-cmd-entrypoint`](fundamentals/session-13-dockerfile-from-run-copy-cmd-entrypoint/) | Docker host |
+
+### Docker Volumes and Data Persistence
+
+| Session | Topic | Lab directory | Execution host |
+|---|---|---|---|
+| 21 | Volume vs Bind Mount | [`volumes/session-21-volume-vs-bind-mount`](volumes/session-21-volume-vs-bind-mount/) | Docker host |
 
 ### Docker Compose
 
