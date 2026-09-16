@@ -2,7 +2,7 @@
 
 [![Validate DevOps Docker Labs](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml/badge.svg)](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml)
 
-A structured collection of hands-on Docker labs covering Docker Compose, networking, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
+A structured collection of hands-on Docker labs covering Docker fundamentals, Docker Compose, networking, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
 
 ## Lab environment
 
@@ -17,6 +17,8 @@ A structured collection of hands-on Docker labs covering Docker Compose, network
 
 ```text
 .
+├── fundamentals/
+│   └── session-01-docker-basics/
 ├── compose/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
@@ -32,6 +34,12 @@ A structured collection of hands-on Docker labs covering Docker Compose, network
 ```
 
 ## Available labs
+
+### Docker Fundamentals
+
+| Session | Topic | Lab directory | Execution host |
+|---|---|---|---|
+| 01 | Docker installation and Engine verification | [`fundamentals/session-01-docker-basics`](fundamentals/session-01-docker-basics/) | Docker host |
 
 ### Docker Compose
 
