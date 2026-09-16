@@ -1,0 +1,257 @@
+------------------------------------------------------------
+# docker --version
+
+Explanation:
+Shows the installed Docker CLI version.
+
+Options:
+- --version = version: Displays version information and exits.
+------------------------------------------------------------
+# docker info
+
+Explanation:
+Shows detailed information about the Docker client and Docker Engine.
+------------------------------------------------------------
+# mkdir -p ~/docker-lab/lesson12
+
+Explanation:
+Creates the lesson12 directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and does not report an error if the directory already exists.
+------------------------------------------------------------
+# cd ~/docker-lab/lesson12
+
+Explanation:
+Changes the current shell directory to ~/docker-lab/lesson12.
+------------------------------------------------------------
+# pwd
+
+Explanation:
+Prints the full path of the current working directory.
+------------------------------------------------------------
+# cat > index.html <<'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My First Docker Image</title>
+</head>
+<body>
+    <h1>Hello from my first Dockerfile!</h1>
+    <p>Docker is working.</p>
+</body>
+</html>
+EOF
+
+Explanation:
+Creates or replaces index.html with the exact HTML content inside the here-document.
+
+Options:
+- > = output redirection: Sends the output of cat to index.html and truncates the file if it already exists.
+- <<'EOF' = here-document operator: Supplies all following lines to cat until the closing EOF marker; quoting EOF prevents shell expansion inside the content.
+------------------------------------------------------------
+# cat index.html
+
+Explanation:
+Prints the contents of index.html to standard output.
+------------------------------------------------------------
+# nano Dockerfile
+
+Explanation:
+Opens the file named Dockerfile in the Nano text editor.
+------------------------------------------------------------
+# FROM nginx:alpine
+
+Explanation:
+Uses the nginx image with the alpine tag as the base image for the Dockerfile build stage.
+------------------------------------------------------------
+# COPY index.html /usr/share/nginx/html/index.html
+
+Explanation:
+Copies index.html from the build context into /usr/share/nginx/html/index.html inside the image.
+------------------------------------------------------------
+# EXPOSE 80
+
+Explanation:
+Documents that the containerized application is intended to listen on port 80.
+------------------------------------------------------------
+# docker build -t my-web:v1 .
+
+Explanation:
+Technical correction: An incomplete example in the lesson omitted the required build context; this corrected command includes `.`. It builds an image from the current directory and tags it as my-web:v1.
+
+Options:
+- -t = --tag (tag): Assigns the name and tag my-web:v1 to the built image.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists Docker images stored on the local Docker host.
+------------------------------------------------------------
+# docker images
+
+Explanation:
+Lists Docker images stored on the local Docker host.
+------------------------------------------------------------
+# docker history my-web:v1
+
+Explanation:
+Shows the history and image layers associated with my-web:v1.
+------------------------------------------------------------
+# docker image inspect my-web:v1
+
+Explanation:
+Displays detailed JSON metadata and configuration for the my-web:v1 image.
+------------------------------------------------------------
+# docker run -d --name my-web-container -p 8080:80 my-web:v1
+
+Explanation:
+Creates and starts a container named my-web-container from my-web:v1 in the background. It publishes host port 8080 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Assigns the container name my-web-container.
+- -p = --publish (publish): Publishes a container port to the host.
+- 8080:80 = publish value: Maps host port 8080 to container port 80.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# curl http://localhost:8080
+
+Explanation:
+Sends an HTTP request to the service exposed on localhost port 8080 and prints the response.
+------------------------------------------------------------
+# docker exec my-web-container cat /usr/share/nginx/html/index.html
+
+Explanation:
+Runs cat inside the running my-web-container container and prints the deployed index.html file.
+------------------------------------------------------------
+# sed -i 's/Docker is working./Docker Image Version 2/' index.html
+
+Explanation:
+Edits index.html in place and replaces the first matching text on each line from Docker is working. to Docker Image Version 2.
+
+Options:
+- -i = --in-place (in-place): Edits index.html directly instead of writing the changed text only to standard output.
+- 's/Docker is working./Docker Image Version 2/' = sed substitution expression: Replaces the matched text with the new text.
+------------------------------------------------------------
+# docker build -t my-web:v2 .
+
+Explanation:
+Builds a new image from the current directory and tags it as my-web:v2.
+
+Options:
+- -t = --tag (tag): Assigns the name and tag my-web:v2 to the built image.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
+# docker run -d --name my-web-v2 -p 8081:80 my-web:v2
+
+Explanation:
+Creates and starts a container named my-web-v2 from my-web:v2 in the background. It publishes host port 8081 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Assigns the container name my-web-v2.
+- -p = --publish (publish): Publishes a container port to the host.
+- 8081:80 = publish value: Maps host port 8081 to container port 80.
+------------------------------------------------------------
+# curl http://localhost:8081
+
+Explanation:
+Sends an HTTP request to the service exposed on localhost port 8081 and prints the response.
+------------------------------------------------------------
+# docker stop my-web-container my-web-v2
+
+Explanation:
+Stops the running containers named my-web-container and my-web-v2.
+------------------------------------------------------------
+# docker rm my-web-container my-web-v2
+
+Explanation:
+Removes the containers named my-web-container and my-web-v2.
+------------------------------------------------------------
+# docker rmi my-web:v1 my-web:v2
+
+Explanation:
+Removes the local Docker images my-web:v1 and my-web:v2.
+------------------------------------------------------------
+# ls -la
+
+Explanation:
+Lists directory contents using a long format and includes hidden entries.
+
+Options:
+- -l = long listing format: Shows detailed information such as permissions, owner, size, and modification time.
+- -a = --all (all): Includes entries whose names begin with a dot.
+------------------------------------------------------------
+# ls
+
+Explanation:
+Lists the visible files and directories in the current directory.
+------------------------------------------------------------
+# docker run -d --name test -p 8080:80 my-web:v1
+
+Explanation:
+Creates and starts a background container named test from my-web:v1. It publishes host port 8080 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Assigns the container name test.
+- -p = --publish (publish): Publishes a container port to the host.
+- 8080:80 = publish value: Maps host port 8080 to container port 80.
+------------------------------------------------------------
+# ss -ltnp | grep 8080
+
+Explanation:
+Lists listening TCP sockets using numeric values and process information, then filters the output for 8080.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -n = --numeric (numeric): Shows numeric addresses and ports instead of resolving names.
+- -p = --processes (processes): Shows the process using each socket when permitted.
+- | = pipe operator: Sends the output of ss to grep as input.
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all Docker containers, including stopped containers.
+
+Options:
+- -a = --all (all): Shows all containers instead of only running containers.
+------------------------------------------------------------
+# docker rm -f my-web-container
+
+Explanation:
+Force-removes the container named my-web-container.
+
+Options:
+- -f = --force (force): Forces removal of the container, including stopping it first if it is running.
+------------------------------------------------------------
+# curl http://localhost:8888
+
+Explanation:
+Sends an HTTP request to the service exposed on localhost port 8888 and prints the response.
+------------------------------------------------------------
+# docker build -t app:v1 .
+
+Explanation:
+Builds an image from the current directory and tags it as app:v1.
+
+Options:
+- -t = --tag (tag): Assigns the name and tag app:v1 to the built image.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
+# docker build -t company-web:v1 .
+
+Explanation:
+Builds an image from the current directory and tags it as company-web:v1.
+
+Options:
+- -t = --tag (tag): Assigns the name and tag company-web:v1 to the built image.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
