@@ -1,0 +1,382 @@
+------------------------------------------------------------
+# docker network create app-network
+
+Explanation:
+Creates a user-defined Docker bridge network named app-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network ls
+
+Explanation:
+Lists the Docker networks available on the host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --network app-network \
+  nginx:alpine
+
+Explanation:
+Starts an nginx:alpine container named web in the background and attaches it to app-network.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name web = container name: Assign the name web to the container.
+- --network app-network = network: Connect the container to app-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name api \
+  --network app-network \
+  nginx:alpine
+
+Explanation:
+Starts an nginx:alpine container named api in the background and attaches it to app-network.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name api = container name: Assign the name api to the container.
+- --network app-network = network: Connect the container to app-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists the currently running Docker containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec -it web sh
+
+Explanation:
+Starts an interactive shell inside the running container named web.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-terminal.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ping api
+
+Explanation:
+Sends ICMP echo requests to the host name api to test name resolution and network reachability.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f db
+
+Explanation:
+Forcibly removes the container named db.
+
+Options:
+- -f = --force (force): Force removal of the running container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# exit
+
+Explanation:
+Exits the current shell or interactive session.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  --network app-network \
+  curlimages/curl \
+  http://api
+
+Explanation:
+Runs a temporary curl container on app-network and sends an HTTP request to the api container.
+
+Options:
+- --rm = remove automatically: Delete the temporary container when it exits.
+- --network app-network = network: Connect the temporary container to app-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name redis \
+  --network app-network \
+  redis:alpine
+
+Explanation:
+Starts a Redis container named redis in the background and attaches it to app-network.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name redis = container name: Assign the name redis to the container.
+- --network app-network = network: Connect the container to app-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm -it \
+  --network app-network \
+  redis:alpine \
+  redis-cli -h redis
+
+Explanation:
+Runs a temporary interactive Redis CLI container on app-network and connects the CLI to the Redis host named redis.
+
+Options:
+- --rm = remove automatically: Delete the temporary container when it exits.
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-terminal.
+- --network app-network = network: Connect the temporary container to app-network.
+- -h redis = server hostname: Tell redis-cli to connect to the host named redis.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# PING
+
+Explanation:
+Sends the Redis PING command to test whether the Redis server is responding.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --network app-network \
+  -p 8080:80 \
+  nginx
+
+Explanation:
+Starts an nginx container named web and publishes container port 80 on host port 8080.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name web = container name: Assign the name web to the container.
+- --network app-network = network: Connect the container to app-network.
+- -p 8080:80 = --publish 8080:80 (publish): Map host port 8080 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name db \
+  --network app-network \
+  -p 5432:5432 \
+  -e POSTGRES_PASSWORD=example \
+  postgres
+
+Explanation:
+Technical correction: the original lesson command did not set the required PostgreSQL password, so -e POSTGRES_PASSWORD=example was added. This starts PostgreSQL as db, attaches it to app-network, and publishes port 5432.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name db = container name: Assign the name db to the container.
+- --network app-network = network: Connect the container to app-network.
+- -p 5432:5432 = --publish 5432:5432 (publish): Map host port 5432 to container port 5432.
+- -e POSTGRES_PASSWORD=example = --env POSTGRES_PASSWORD=example (environment): Set the PostgreSQL password environment variable required by the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name db \
+  --network app-network \
+  -e POSTGRES_PASSWORD=example \
+  postgres
+
+Explanation:
+Technical correction: the original lesson command did not set the required PostgreSQL password, so -e POSTGRES_PASSWORD=example was added. This starts PostgreSQL as db on app-network without publishing its database port to the host.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name db = container name: Assign the name db to the container.
+- --network app-network = network: Connect the container to app-network.
+- -e POSTGRES_PASSWORD=example = --env POSTGRES_PASSWORD=example (environment): Set the PostgreSQL password environment variable required by the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network inspect app-network
+
+Explanation:
+Shows detailed information about app-network, including attached containers and their network settings.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name test1 \
+  nginx
+
+Explanation:
+Starts an nginx container named test1 in the background.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name test1 = container name: Assign the name test1 to the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network connect app-network test1
+
+Explanation:
+Connects the existing container test1 to app-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network disconnect app-network test1
+
+Explanation:
+Disconnects the container test1 from app-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network create frontend-network
+
+Explanation:
+Creates a user-defined Docker bridge network named frontend-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network create backend-network
+
+Explanation:
+Creates a user-defined Docker bridge network named backend-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name frontend \
+  --network frontend-network \
+  nginx:alpine
+
+Explanation:
+Starts an nginx:alpine container named frontend and attaches it to frontend-network.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name frontend = container name: Assign the name frontend to the container.
+- --network frontend-network = network: Connect the container to frontend-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name api2 \
+  --network frontend-network \
+  nginx:alpine
+
+Explanation:
+Starts an nginx:alpine container named api2 and attaches it to frontend-network.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name api2 = container name: Assign the name api2 to the container.
+- --network frontend-network = network: Connect the container to frontend-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network connect backend-network api2
+
+Explanation:
+Connects the existing api2 container to backend-network, so api2 belongs to both networks.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name backend \
+  --network backend-network \
+  nginx:alpine
+
+Explanation:
+Starts an nginx:alpine container named backend and attaches it to backend-network.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name backend = container name: Assign the name backend to the container.
+- --network backend-network = network: Connect the container to backend-network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec frontend ping -c 2 api2
+
+Explanation:
+Runs ping inside the frontend container and sends two ICMP echo requests to api2.
+
+Options:
+- -c 2 = count 2 packets: Stop after sending two echo requests.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec frontend ping -c 2 backend
+
+Explanation:
+Runs ping inside the frontend container and sends two ICMP echo requests to backend.
+
+Options:
+- -c 2 = count 2 packets: Stop after sending two echo requests.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect api2
+
+Explanation:
+Shows detailed Docker metadata and configuration for the container named api2.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect web
+
+Explanation:
+Shows detailed Docker metadata and configuration for the container named web.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect api
+
+Explanation:
+Shows detailed Docker metadata and configuration for the container named api.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs api
+
+Explanation:
+Displays the logs produced by the container named api.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect db
+
+Explanation:
+Shows detailed Docker metadata and configuration for the container named db.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f web api redis frontend api2 backend test1 2>/dev/null
+
+Explanation:
+Forcibly removes the listed containers and hides error messages sent to standard error.
+
+Options:
+- -f = --force (force): Force removal of running containers.
+- 2>/dev/null = standard-error redirection: Redirect file descriptor 2, which is stderr, to /dev/null so error messages are discarded.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network rm app-network frontend-network backend-network 2>/dev/null
+
+Explanation:
+Removes the listed Docker networks and hides error messages sent to standard error.
+
+Options:
+- 2>/dev/null = standard-error redirection: Redirect file descriptor 2, which is stderr, to /dev/null so error messages are discarded.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  --network app-network \
+  redis:alpine \
+  redis-cli -h redis ping
+
+Explanation:
+Runs a temporary Redis CLI container on app-network, connects to the Redis host named redis, and sends a ping command.
+
+Options:
+- --rm = remove automatically: Delete the temporary container when it exits.
+- --network app-network = network: Connect the temporary container to app-network.
+- -h redis = server hostname: Tell redis-cli to connect to the host named redis.
+------------------------------------------------------------
