@@ -1,0 +1,640 @@
+------------------------------------------------------------
+# FROM ubuntu:24.04
+
+Explanation:
+Sets Ubuntu 24.04 as the base image for the Docker build.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM python:3.13-slim
+
+Explanation:
+Sets the slim Python 3.13 image as the base image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM nginx
+
+Explanation:
+Sets the default Nginx image as the base image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM node:22
+
+Explanation:
+Sets the Node.js 22 image as the base image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM node:22 AS build
+
+Explanation:
+Starts a build stage from Node.js 22 and names the stage build.
+
+Options:
+- AS build = stage alias: names this build stage build
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM nginx:alpine
+
+Explanation:
+Starts a new stage from the Alpine-based Nginx image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN apt-get update
+
+Explanation:
+Refreshes the package index while building the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN apt-get install -y curl
+
+Explanation:
+Installs curl while building the image and automatically accepts confirmation prompts.
+
+Options:
+- -y = --yes / --assume-yes (yes): automatically answers yes to package manager prompts
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN mkdir /app
+
+Explanation:
+Creates the /app directory while building the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN echo "Installing application..."
+
+Explanation:
+Prints the message during the image build.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t myapp:v1 .
+
+Explanation:
+Builds an image from the current build context and tags it as myapp:v1.
+
+Options:
+- -t = --tag (tag): assigns the name and tag myapp:v1
+- . = build context: uses the current directory as the Docker build context
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run myapp:v1
+
+Explanation:
+Creates and starts a container from the myapp:v1 image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY app.py /app/app.py
+
+Explanation:
+Copies app.py from the build context into /app/app.py in the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY requirements.txt /app/
+
+Explanation:
+Copies requirements.txt into the /app/ directory in the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY . /app/
+
+Explanation:
+Copies the current build context into /app/ in the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN chmod +x /app/app.py
+
+Explanation:
+Adds executable permission to /app/app.py during the image build.
+
+Options:
+- +x = add execute permission: makes the target executable
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["echo", "Hello Docker"]
+
+Explanation:
+Sets echo with Hello Docker as the default container command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t cmd-demo:v1 .
+
+Explanation:
+Builds an image from the current directory and tags it as cmd-demo:v1.
+
+Options:
+- -t = --tag (tag): assigns the name and tag cmd-demo:v1
+- . = build context: uses the current directory as the Docker build context
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm cmd-demo:v1
+
+Explanation:
+Runs cmd-demo:v1 and automatically removes the container after it exits.
+
+Options:
+- --rm = remove: automatically removes the container when it exits
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm cmd-demo:v1 echo "Hello Arezou"
+
+Explanation:
+Runs cmd-demo:v1 with a replacement command, overriding the image CMD.
+
+Options:
+- --rm = remove: automatically removes the container when it exits
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo Hello Docker
+
+Explanation:
+Prints Hello Docker to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo Hello Arezou
+
+Explanation:
+Prints Hello Arezou to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ENTRYPOINT ["echo"]
+
+Explanation:
+Sets echo as the main executable for the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t entry-demo:v1 .
+
+Explanation:
+Builds an image from the current directory and tags it as entry-demo:v1.
+
+Options:
+- -t = --tag (tag): assigns the name and tag entry-demo:v1
+- . = build context: uses the current directory as the Docker build context
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm entry-demo:v1 "Hello Docker"
+
+Explanation:
+Runs entry-demo:v1 and passes Hello Docker to its ENTRYPOINT.
+
+Options:
+- --rm = remove: automatically removes the container when it exits
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ENTRYPOINT ["echo", "Hello"]
+
+Explanation:
+Sets echo Hello as the main executable and initial argument.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["Docker"]
+
+Explanation:
+Sets Docker as the default argument passed to the ENTRYPOINT.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t hello:v1 .
+
+Explanation:
+Builds an image from the current directory and tags it as hello:v1.
+
+Options:
+- -t = --tag (tag): assigns the name and tag hello:v1
+- . = build context: uses the current directory as the Docker build context
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm hello:v1
+
+Explanation:
+Runs hello:v1 with its default ENTRYPOINT and CMD and removes the container after exit.
+
+Options:
+- --rm = remove: automatically removes the container when it exits
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm hello:v1 Arezou
+
+Explanation:
+Runs hello:v1 and replaces the default CMD argument with Arezou.
+
+Options:
+- --rm = remove: automatically removes the container when it exits
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ENTRYPOINT ["ping"]
+
+Explanation:
+Sets ping as the main executable for the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run myping google.com
+
+Explanation:
+Runs myping and passes google.com to its ENTRYPOINT.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ping google.com
+
+Explanation:
+Sends ICMP echo requests to google.com.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ENTRYPOINT ["curl"]
+
+Explanation:
+Sets curl as the main executable for the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["--help"]
+
+Explanation:
+Sets --help as the default argument for the ENTRYPOINT program.
+
+Options:
+- --help = help: requests help output from the program
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run mycurl
+
+Explanation:
+Runs the mycurl image with its default ENTRYPOINT and CMD.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl --help
+
+Explanation:
+Displays curl help information.
+
+Options:
+- --help = help: displays help information for curl
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run mycurl https://example.com
+
+Explanation:
+Runs mycurl and passes https://example.com to its ENTRYPOINT.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl https://example.com
+
+Explanation:
+Requests https://example.com with curl.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm --entrypoint /bin/sh hello:v1
+
+Explanation:
+Runs hello:v1 with /bin/sh replacing the image ENTRYPOINT and removes the container after exit.
+
+Options:
+- --rm = remove: automatically removes the container when it exits
+- --entrypoint /bin/sh = --entrypoint: overrides the image ENTRYPOINT with /bin/sh
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD echo "Hello Docker"
+
+Explanation:
+Sets a shell-form default CMD that runs echo through a shell.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ENTRYPOINT echo "Starting..."
+
+Explanation:
+Sets a shell-form ENTRYPOINT that runs echo through a shell.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ENTRYPOINT ["echo", "Starting"]
+
+Explanation:
+Sets an exec-form ENTRYPOINT that directly runs echo with Starting as an argument.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["python", "app.py"]
+
+Explanation:
+Sets python app.py as the default container command in exec form.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD python app.py
+
+Explanation:
+Sets python app.py as the default container command in shell form.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p ~/docker-labs/lesson13
+
+Explanation:
+Creates the lesson13 directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): creates parent directories as needed and does not fail if the directory exists
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd ~/docker-labs/lesson13
+
+Explanation:
+Changes the current shell directory to ~/docker-labs/lesson13.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# nano hello.sh
+
+Explanation:
+Opens hello.sh in the Nano text editor.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "===================="
+
+Explanation:
+Prints a separator line to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "Hello $1"
+
+Explanation:
+Prints Hello followed by the first positional argument passed to the shell script.
+
+Options:
+- $1 = first positional parameter: expands to the first argument passed to the script
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "Container is running"
+
+Explanation:
+Prints Container is running to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# nano Dockerfile
+
+Explanation:
+Opens Dockerfile in the Nano text editor.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM alpine:3.22
+
+Explanation:
+Sets Alpine Linux 3.22 as the base image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN mkdir -p /app
+
+Explanation:
+Creates /app during the image build and does not fail if it already exists.
+
+Options:
+- -p = --parents (parents): creates parent directories as needed and does not fail if the directory exists
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY hello.sh /app/hello.sh
+
+Explanation:
+Copies hello.sh from the build context to /app/hello.sh in the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN chmod +x /app/hello.sh
+
+Explanation:
+Adds executable permission to /app/hello.sh during the image build.
+
+Options:
+- +x = add execute permission: makes the target executable
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ENTRYPOINT ["/app/hello.sh"]
+
+Explanation:
+Sets /app/hello.sh as the main executable for the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t lesson13:v1 .
+
+Explanation:
+Builds an image from the current directory and tags it as lesson13:v1.
+
+Options:
+- -t = --tag (tag): assigns the name and tag lesson13:v1
+- . = build context: uses the current directory as the Docker build context
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists Docker images stored on the local Docker host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm lesson13:v1
+
+Explanation:
+Runs lesson13:v1 with its default ENTRYPOINT and CMD and removes the container after exit.
+
+Options:
+- --rm = remove: automatically removes the container when it exits
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm lesson13:v1 Arezou
+
+Explanation:
+Runs lesson13:v1 and passes Arezou instead of the default CMD argument.
+
+Options:
+- --rm = remove: automatically removes the container when it exits
+------------------------------------------------------------
+
+------------------------------------------------------------
+# /app/hello.sh Docker
+
+Explanation:
+Runs /app/hello.sh directly and passes Docker as its first argument.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image inspect lesson13:v1 --format '{{json .Config.Entrypoint}}'
+
+Explanation:
+Inspects lesson13:v1 and prints its configured ENTRYPOINT as JSON.
+
+Options:
+- --format '{{json .Config.Entrypoint}}' = --format: formats output with the Go template that converts .Config.Entrypoint to JSON
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image inspect lesson13:v1 --format '{{json .Config.Cmd}}'
+
+Explanation:
+Inspects lesson13:v1 and prints its configured CMD as JSON.
+
+Options:
+- --format '{{json .Config.Cmd}}' = --format: formats output with the Go template that converts .Config.Cmd to JSON
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker history lesson13:v1
+
+Explanation:
+Shows the image history and build layers for lesson13:v1.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["echo", "Hello from CMD"]
+
+Explanation:
+Sets echo Hello from CMD as the default container command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t lesson13:cmd .
+
+Explanation:
+Builds an image from the current directory and tags it as lesson13:cmd.
+
+Options:
+- -t = --tag (tag): assigns the name and tag lesson13:cmd
+- . = build context: uses the current directory as the Docker build context
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm lesson13:cmd
+
+Explanation:
+Runs lesson13:cmd with its default CMD and removes the container after exit.
+
+Options:
+- --rm = remove: automatically removes the container when it exits
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm lesson13:cmd echo "CMD was overridden"
+
+Explanation:
+Runs lesson13:cmd with a replacement command, overriding the image CMD.
+
+Options:
+- --rm = remove: automatically removes the container when it exits
+------------------------------------------------------------
+
+------------------------------------------------------------
+# WORKDIR /app
+
+Explanation:
+Sets /app as the working directory for following Dockerfile instructions and for the container by default.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY requirements.txt .
+
+Explanation:
+Copies requirements.txt into the current Dockerfile working directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN pip install --no-cache-dir -r requirements.txt
+
+Explanation:
+Installs Python packages from requirements.txt without using pip's cache.
+
+Options:
+- --no-cache-dir = no cache directory: disables the pip cache
+- -r = --requirement (requirement): installs packages listed in the specified requirements file
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY . .
+
+Explanation:
+Copies the current build context into the current Dockerfile working directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d myapp:v1
+
+Explanation:
+Runs myapp:v1 in detached mode.
+
+Options:
+- -d = --detach (detach): runs the container in the background and prints its container ID
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run image
+
+Explanation:
+Runs a container from an image named image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run image Arezou
+
+Explanation:
+Runs the image named image and passes Arezou as the command or argument according to the image configuration.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN python app.py
+
+Explanation:
+Runs python app.py during the image build. In this lesson it is a troubleshooting example because it does not start the application when the container later runs.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["python", "/app/app.py"]
+
+Explanation:
+Sets python /app/app.py as the default runtime command for the container.
+------------------------------------------------------------
