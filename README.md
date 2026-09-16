@@ -33,6 +33,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   └── session-13-dockerfile-from-run-copy-cmd-entrypoint/
 ├── volumes/
 │   └── session-21-volume-vs-bind-mount/
+├── networking/
+│   └── session-24-network-basics/
 ├── compose/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
@@ -72,6 +74,12 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
 | 21 | Volume vs Bind Mount | [`volumes/session-21-volume-vs-bind-mount`](volumes/session-21-volume-vs-bind-mount/) | Docker host |
+
+### Docker Networking
+
+| Session | Topic | Lab directory | Execution host |
+|---|---|---|---|
+| 24 | Docker networking basics | [`networking/session-24-network-basics`](networking/session-24-network-basics/) | Docker host |
 
 ### Docker Compose
 
