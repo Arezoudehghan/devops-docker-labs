@@ -1,0 +1,537 @@
+------------------------------------------------------------
+# mkdir -p /opt/demo-data
+
+Explanation:
+Creates the /opt/demo-data directory on the host. Parent directories are also created if they do not already exist.
+
+Options:
+- -p = --parents (parents): Create parent directories as needed and do not report an error if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name bind-test \
+  -v /opt/demo-data:/data \
+  nginx
+
+Explanation:
+Starts an Nginx container named bind-test in the background and bind-mounts /opt/demo-data from the host to /data inside the container.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name = container name: Assign the name bind-test to the container.
+- -v = --volume (volume): Mount /opt/demo-data on the host at /data inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec -it bind-test sh
+
+Explanation:
+Starts an interactive sh shell inside the running bind-test container.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-TTY for the interactive shell.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "Hello from Container" > /data/test.txt
+
+Explanation:
+Writes the text Hello from Container to /data/test.txt. Because /data is bind-mounted, the file is stored in the mounted host directory.
+
+Options:
+- > = output redirection: Write standard output to /data/test.txt, replacing the file if it already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# exit
+
+Explanation:
+Exits the current shell session.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat /opt/demo-data/test.txt
+
+Explanation:
+Displays the contents of /opt/demo-data/test.txt on the host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "Hello from Host" > /opt/demo-data/host.txt
+
+Explanation:
+Writes the text Hello from Host to /opt/demo-data/host.txt on the host.
+
+Options:
+- > = output redirection: Write standard output to /opt/demo-data/host.txt, replacing the file if it already exists.
+---------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec bind-test cat /data/host.txt
+
+Explanation:
+Runs cat inside the bind-test container to display /data/host.txt from the bind-mounted directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f bind-test
+
+Explanation:
+Forcibly removes the bind-test container.
+
+Options:
+- -f = --force (force): Force removal of the running container by sending SIGKILL first if needed.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -l /opt/demo-data
+
+Explanation:
+Lists the files in /opt/demo-data using the long listing format.
+
+Options:
+- -l = long listing format: Show detailed information such as permissions, owner, size, and modification time.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume create app-data
+
+Explanation:
+Creates a Docker named volume called app-data.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name app \
+  -v app-data:/data \
+  nginx
+
+Explanation:
+Starts an Nginx container named app in the background and mounts the named volume app-data at /data.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name = container name: Assign the name app to the container.
+- -v = --volume (volume): Mount the named volume app-data at /data inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name app \
+  -v /opt/app-data:/data \
+  nginx
+
+Explanation:
+Starts an Nginx container named app in the background and bind-mounts /opt/app-data from the host to /data inside the container.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name = container name: Assign the name app to the container.
+- -v = --volume (volume): Bind-mount /opt/app-data from the host at /data inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -it \
+  -v /home/arezou/project:/app \
+  python:3.12 \
+  bash
+
+Explanation:
+Starts a Python 3.12 container with an interactive Bash shell and bind-mounts /home/arezou/project from the host to /app.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-TTY.
+- -v = --volume (volume): Bind-mount /home/arezou/project from the host at /app inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  -p 8080:80 \
+  -v /opt/nginx/nginx.conf:/etc/nginx/nginx.conf:ro \
+  nginx
+
+Explanation:
+Starts an Nginx container named web in the background, publishes port 8080, and mounts the host Nginx configuration file as read-only.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name = container name: Assign the name web to the container.
+- -p = --publish (publish): Map host port 8080 to container port 80.
+- -v = --volume (volume): Mount /opt/nginx/nginx.conf at /etc/nginx/nginx.conf.
+- ro = read-only: Prevent the container from modifying the mounted configuration file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -v /opt/data:/data nginx
+
+Explanation:
+Starts an Nginx container and bind-mounts /opt/data from the host to /data inside the container.
+
+Options:
+- -v = --volume (volume): Bind-mount /opt/data from the host at /data inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -v /opt/data:/data:rw nginx
+
+Explanation:
+Starts an Nginx container and bind-mounts /opt/data to /data with explicit read-write access.
+
+Options:
+- -v = --volume (volume): Bind-mount /opt/data from the host at /data inside the container.
+- rw = read-write: Allow the container to read from and write to the mounted path.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name bind-test \
+  --mount type=bind,source=/opt/demo-data,target=/data \
+  nginx
+
+Explanation:
+Starts an Nginx container named bind-test in the background and creates a bind mount using the explicit --mount syntax.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name = container name: Assign the name bind-test to the container.
+- --mount = mount specification: Attach a filesystem mount to the container.
+- type=bind = bind mount type: Use a host path as the mount source.
+- source=/opt/demo-data = mount source: Use /opt/demo-data on the host.
+- target=/data = mount target: Make the mount available at /data inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  --mount type=bind,source=/opt/data,target=/data \
+  nginx
+
+Explanation:
+Starts an Nginx container and bind-mounts /opt/data from the host to /data using --mount.
+
+Options:
+- --mount = mount specification: Attach a filesystem mount to the container.
+- type=bind = bind mount type: Use a host path as the mount source.
+- source=/opt/data = mount source: Use /opt/data on the host.
+- target=/data = mount target: Make the mount available at /data inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  -v /opt/not-exist:/data \
+  nginx
+
+Explanation:
+Starts an Nginx container with /opt/not-exist bind-mounted to /data. With -v, Docker can create a missing host directory automatically.
+
+Options:
+- -v = --volume (volume): Bind-mount /opt/not-exist from the host at /data inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  --mount type=bind,source=/opt/not-exist,target=/data \
+  nginx
+
+Explanation:
+Attempts to start an Nginx container with /opt/not-exist as the bind-mount source. With --mount, Docker reports an error if the source path does not exist.
+
+Options:
+- --mount = mount specification: Attach a filesystem mount to the container.
+- type=bind = bind mount type: Use a host path as the mount source.
+- source=/opt/not-exist = mount source: Use /opt/not-exist on the host.
+- target=/data = mount target: Make the mount available at /data inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -it \
+  -v "$(pwd)":/app \
+  python:3.12 \
+  bash
+
+Explanation:
+Starts a Python 3.12 container with an interactive Bash shell and mounts the current host directory at /app.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-TTY.
+- -v = --volume (volume): Bind-mount the path returned by $(pwd) at /app inside the container.
+- $(pwd) = command substitution: Run pwd and substitute its output, which is the current working directory, into the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# pwd
+
+Explanation:
+Prints the absolute path of the current working directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -it \
+  --name python-dev \
+  -v "$(pwd)":/app \
+  -w /app \
+  python:3.12 \
+  bash
+
+Explanation:
+Starts an interactive Python 3.12 container named python-dev, mounts the current host directory at /app, and sets /app as the working directory.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-TTY.
+- --name = container name: Assign the name python-dev to the container.
+- -v = --volume (volume): Bind-mount the path returned by $(pwd) at /app inside the container.
+- -w = --workdir (working directory): Set /app as the working directory inside the container.
+- $(pwd) = command substitution: Run pwd and substitute the current working directory into the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -it \
+  -v /:/host \
+  ubuntu \
+  bash
+
+Explanation:
+Starts an interactive Ubuntu container with the host root filesystem mounted at /host and opens Bash.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-TTY.
+- -v = --volume (volume): Bind-mount the host root directory / at /host inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -ld /opt/app/data
+
+Explanation:
+Shows detailed information about the /opt/app/data directory itself.
+
+Options:
+- -l = long listing format: Show detailed file information.
+- -d = --directory (directory): List the directory entry itself instead of listing its contents.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec bind-test id
+
+Explanation:
+Runs id inside the bind-test container to display the user and group IDs used by the process.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect bind-test
+
+Explanation:
+Displays detailed Docker metadata and configuration for the bind-test container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  --format '{{json .Mounts}}' \
+  bind-test
+
+Explanation:
+Displays only the Mounts data from the bind-test container inspection output and formats it as JSON.
+
+Options:
+- --format = output format: Format the inspect output using a Go template.
+- {{json .Mounts}} = template expression: Convert the .Mounts field to JSON.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p ~/nginx-lab/html
+
+Explanation:
+Creates the nginx-lab/html directory under the current user's home directory.
+
+Options:
+- -p = --parents (parents): Create parent directories as needed and do not report an error if they already exist.
+- ~ = home-directory expansion: The shell expands ~ to the current user's home directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo '<h1>Hello Docker Bind Mount</h1>' > ~/nginx-lab/html/index.html
+
+Explanation:
+Writes a simple HTML heading to index.html in the host directory.
+
+Options:
+- > = output redirection: Write standard output to ~/nginx-lab/html/index.html, replacing the file if it already exists.
+- ~ = home-directory expansion: The shell expands ~ to the current user's home directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name nginx-bind \
+  -p 8080:80 \
+  -v ~/nginx-lab/html:/usr/share/nginx/html:ro \
+  nginx
+
+Explanation:
+Starts an Nginx container named nginx-bind, publishes it on host port 8080, and mounts the host HTML directory as read-only.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name = container name: Assign the name nginx-bind to the container.
+- -p = --publish (publish): Map host port 8080 to container port 80.
+- -v = --volume (volume): Bind-mount ~/nginx-lab/html at /usr/share/nginx/html inside the container.
+- ro = read-only: Prevent the container from modifying the mounted directory.
+- ~ = home-directory expansion: The shell expands ~ to the current user's home directory before Docker receives the path.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://localhost:8080
+
+Explanation:
+Requests the web page served on localhost port 8080 and prints the response body.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo '<h1>Version 2</h1>' > ~/nginx-lab/html/index.html
+
+Explanation:
+Replaces the host index.html file with a new HTML heading.
+
+Options:
+- > = output redirection: Write standard output to ~/nginx-lab/html/index.html and replace its existing contents.
+- ~ = home-directory expansion: The shell expands ~ to the current user's home directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY . /app
+
+Explanation:
+Copies the current Docker build context into /app in the image. This is a Dockerfile instruction, not a Bash command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  some-image
+
+Explanation:
+Starts a container from some-image and bind-mounts the host Docker socket into the container.
+
+Options:
+- -v = --volume (volume): Bind-mount /var/run/docker.sock from the host at the same path inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p ~/bind-lab
+
+Explanation:
+Creates the bind-lab directory under the current user's home directory.
+
+Options:
+- -p = --parents (parents): Create parent directories as needed and do not report an error if the directory already exists.
+- ~ = home-directory expansion: The shell expands ~ to the current user's home directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "file created on host" > ~/bind-lab/host.txt
+
+Explanation:
+Writes the text file created on host to ~/bind-lab/host.txt.
+
+Options:
+- > = output redirection: Write standard output to ~/bind-lab/host.txt, replacing the file if it already exists.
+- ~ = home-directory expansion: The shell expands ~ to the current user's home directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -dit \
+  --name bind-lab \
+  -v ~/bind-lab:/data \
+  ubuntu \
+  bash
+
+Explanation:
+Starts an Ubuntu container named bind-lab in detached interactive mode with a pseudo-TTY and bind-mounts ~/bind-lab at /data.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- -i = --interactive (interactive): Keep standard input open.
+- -t = --tty (TTY): Allocate a pseudo-TTY.
+- --name = container name: Assign the name bind-lab to the container.
+- -v = --volume (volume): Bind-mount ~/bind-lab from the host at /data inside the container.
+- ~ = home-directory expansion: The shell expands ~ to the current user's home directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec bind-lab cat /data/host.txt
+
+Explanation:
+Runs cat inside the bind-lab container to display the host.txt file from the bind-mounted directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec bind-lab \
+  sh -c 'echo "file created by container" > /data/container.txt'
+
+Explanation:
+Runs a shell command inside bind-lab that writes text to /data/container.txt. The file is created in the bind-mounted host directory.
+
+Options:
+- -c = command string: Tell sh to execute the following quoted string as shell commands.
+- > = output redirection: Inside sh, write the echo output to /data/container.txt and replace the file if it already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat ~/bind-lab/container.txt
+
+Explanation:
+Displays the container.txt file from the bind-lab directory on the host.
+
+Options:
+- ~ = home-directory expansion: The shell expands ~ to the current user's home directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  --format '{{json .Mounts}}' \
+  bind-lab
+
+Explanation:
+Displays the Mounts data for the bind-lab container and formats it as JSON.
+
+Options:
+- --format = output format: Format the inspect output using a Go template.
+- {{json .Mounts}} = template expression: Convert the .Mounts field to JSON.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f bind-lab
+
+Explanation:
+Forcibly removes the bind-lab container.
+
+Options:
+- -f = --force (force): Force removal of the running container by sending SIGKILL first if needed.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -l ~/bind-lab
+
+Explanation:
+Lists the files in ~/bind-lab using the long listing format.
+
+Options:
+- -l = long listing format: Show detailed information such as permissions, owner, size, and modification time.
+- ~ = home-directory expansion: The shell expands ~ to the current user's home directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  -v /opt/app/data:/data \
+  nginx
+
+Explanation:
+Starts an Nginx container and bind-mounts /opt/app/data from the host to /data inside the container.
+
+Options:
+- -v = --volume (volume): Bind-mount /opt/app/data from the host at /data inside the container.
+------------------------------------------------------------
