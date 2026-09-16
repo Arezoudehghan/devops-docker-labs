@@ -1,0 +1,215 @@
+------------------------------------------------------------
+# docker run -d -p 8080:80 nginx
+
+Explanation:
+Creates and starts an Nginx container in the background and publishes host port 8080 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -p = --publish (publish): Publishes a container port to the host; `8080:80` maps host port 8080 to container port 80.
+------------------------------------------------------------
+# docker run -d --name web1 -p 8080:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `web1` in the background and maps host port 8080 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `web1` to the container.
+- -p = --publish (publish): Publishes a container port to the host; `8080:80` maps host port 8080 to container port 80.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists the currently running Docker containers.
+------------------------------------------------------------
+# curl http://127.0.0.1:8080
+
+Explanation:
+Sends an HTTP request to port 8080 on the local host to test the published container service.
+------------------------------------------------------------
+# docker port web1
+
+Explanation:
+Shows the published port mappings for the container named `web1`.
+------------------------------------------------------------
+# docker run -d --name web2 -p 9090:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `web2` in the background and maps host port 9090 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `web2` to the container.
+- -p = --publish (publish): Publishes a container port to the host; `9090:80` maps host port 9090 to container port 80.
+------------------------------------------------------------
+# docker run -d --name web1 -p 8081:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `web1` and maps host port 8081 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `web1` to the container.
+- -p = --publish (publish): Publishes a container port to the host; `8081:80` maps host port 8081 to container port 80.
+------------------------------------------------------------
+# docker run -d --name web2 -p 8082:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `web2` and maps host port 8082 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `web2` to the container.
+- -p = --publish (publish): Publishes a container port to the host; `8082:80` maps host port 8082 to container port 80.
+------------------------------------------------------------
+# docker run -d --name web3 -p 8083:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `web3` and maps host port 8083 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `web3` to the container.
+- -p = --publish (publish): Publishes a container port to the host; `8083:80` maps host port 8083 to container port 80.
+------------------------------------------------------------
+# docker run -d --name web2 -p 8080:80 nginx
+
+Explanation:
+Attempts to create and start an Nginx container named `web2` and publish host port 8080 to container port 80. It will fail if that host port is already in use.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `web2` to the container.
+- -p = --publish (publish): Publishes a container port to the host; `8080:80` maps host port 8080 to container port 80.
+------------------------------------------------------------
+# docker run -d --name web2 -p 8081:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `web2` and maps host port 8081 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `web2` to the container.
+- -p = --publish (publish): Publishes a container port to the host; `8081:80` maps host port 8081 to container port 80.
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  -p 8080:80 \
+  -p 8443:443 \
+  nginx
+
+Explanation:
+Creates and starts an Nginx container named `web` with two published port mappings. Host port 8080 maps to container port 80, and host port 8443 maps to container port 443.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `web` to the container.
+- -p = --publish (publish): Publishes a container port to the host; it is used twice for `8080:80` and `8443:443`.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker run -p 8080:80/tcp nginx
+
+Explanation:
+Creates and starts an Nginx container and publishes host port 8080 to container port 80 using TCP.
+
+Options:
+- -p = --publish (publish): Publishes a container port to the host; `8080:80/tcp` maps host port 8080 to container port 80 with the TCP protocol.
+------------------------------------------------------------
+# docker run -p 5353:53/udp IMAGE_NAME
+
+Explanation:
+Creates and starts a container from `IMAGE_NAME` and publishes host port 5353 to container port 53 using UDP.
+
+Options:
+- -p = --publish (publish): Publishes a container port to the host; `5353:53/udp` maps host port 5353 to container port 53 with the UDP protocol.
+------------------------------------------------------------
+# docker run -d --name private-web -p 127.0.0.1:8080:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `private-web` and binds the published port only to the host loopback address.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `private-web` to the container.
+- -p = --publish (publish): Publishes `127.0.0.1:8080` on the host to port 80 in the container.
+------------------------------------------------------------
+# docker run -d -P nginx
+
+Explanation:
+Creates and starts an Nginx container in the background and automatically publishes all exposed container ports to available host ports.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -P = --publish-all (publish all): Publishes all exposed container ports to randomly assigned host ports.
+------------------------------------------------------------
+# docker port CONTAINER_NAME
+
+Explanation:
+Shows the published port mappings for the container represented by `CONTAINER_NAME`.
+------------------------------------------------------------
+# EXPOSE 80
+
+Explanation:
+Declares in a Dockerfile that the containerized application is intended to listen on port 80. It does not publish the port to the Docker host by itself.
+------------------------------------------------------------
+# docker run -d \
+  --name myapp \
+  -p 8088:5000 \
+  myapp:1.0
+
+Explanation:
+Creates and starts the `myapp:1.0` container named `myapp` and maps host port 8088 to container port 5000.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `myapp` to the container.
+- -p = --publish (publish): Publishes a container port to the host; `8088:5000` maps host port 8088 to container port 5000.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker rm -f web1 web2 web3 private-web
+
+Explanation:
+Removes the containers named `web1`, `web2`, `web3`, and `private-web`, forcing removal if they are running.
+
+Options:
+- -f = --force (force): Forces removal of running containers.
+------------------------------------------------------------
+# docker run -d --name lab-web -p 8080:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `lab-web` in the background and maps host port 8080 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `lab-web` to the container.
+- -p = --publish (publish): Publishes a container port to the host; `8080:80` maps host port 8080 to container port 80.
+------------------------------------------------------------
+# docker port lab-web
+
+Explanation:
+Shows the published port mappings for the container named `lab-web`.
+------------------------------------------------------------
+# docker rm -f lab-web
+
+Explanation:
+Removes the container named `lab-web`, forcing removal if it is running.
+
+Options:
+- -f = --force (force): Forces removal of the running container.
+------------------------------------------------------------
+# docker run -d --name lab-web -p 9090:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `lab-web` in the background and maps host port 9090 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name `lab-web` to the container.
+- -p = --publish (publish): Publishes a container port to the host; `9090:80` maps host port 9090 to container port 80.
+------------------------------------------------------------
+# curl http://127.0.0.1:9090
+
+Explanation:
+Sends an HTTP request to port 9090 on the local host to test the published container service.
+------------------------------------------------------------
