@@ -37,7 +37,10 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-24-network-basics/
 │   ├── session-25-bridge-network/
 │   ├── session-26-host-network/
-│   └── session-29-user-defined-bridge-network/
+│   ├── session-27-container-to-container-communication/
+│   ├── session-28-docker-internal-dns/
+│   ├── session-29-user-defined-bridge-network/
+│   └── session-30-app-database-network/
 ├── compose/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
@@ -85,7 +88,10 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 24 | Docker networking basics | [`networking/session-24-network-basics`](networking/session-24-network-basics/) | Docker host |
 | 25 | Bridge Network | [`networking/session-25-bridge-network`](networking/session-25-bridge-network/) | Docker host |
 | 26 | Docker host network | [`networking/session-26-host-network`](networking/session-26-host-network/) | Docker host |
+| 27 | Container-to-container communication | [`networking/session-27-container-to-container-communication`](networking/session-27-container-to-container-communication/) | Docker host |
+| 28 | Docker internal DNS | [`networking/session-28-docker-internal-dns`](networking/session-28-docker-internal-dns/) | Docker host |
 | 29 | User-defined bridge network | [`networking/session-29-user-defined-bridge-network`](networking/session-29-user-defined-bridge-network/) | `DEV-1` |
+| 30 | App + Database on a separate network | [`networking/session-30-app-database-network`](networking/session-30-app-database-network/) | Docker host |
 
 ### Docker Compose
 
