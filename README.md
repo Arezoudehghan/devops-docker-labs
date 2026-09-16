@@ -25,8 +25,11 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 │   ├── session-05-first-nginx-container/
 │   ├── session-06-docker-run/
 │   ├── session-07-foreground-detached-mode/
+│   ├── session-08-port-mapping/
 │   ├── session-09-container-lifecycle/
-│   └── session-10-logs-exec-inspect-troubleshooting/
+│   ├── session-10-logs-exec-inspect-troubleshooting/
+│   ├── session-11-image-layers/
+│   └── session-12-first-dockerfile/
 ├── compose/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
@@ -54,8 +57,11 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 | 05 | First real container with Nginx | [`fundamentals/session-05-first-nginx-container`](fundamentals/session-05-first-nginx-container/) | Docker host |
 | 06 | Running containers with `docker run` | [`fundamentals/session-06-docker-run`](fundamentals/session-06-docker-run/) | Docker host |
 | 07 | Foreground vs Detached mode | [`fundamentals/session-07-foreground-detached-mode`](fundamentals/session-07-foreground-detached-mode/) | Docker host |
+| 08 | Docker port mapping | [`fundamentals/session-08-port-mapping`](fundamentals/session-08-port-mapping/) | Docker host |
 | 09 | Container lifecycle: list, stop, start, restart, remove | [`fundamentals/session-09-container-lifecycle`](fundamentals/session-09-container-lifecycle/) | Docker host |
 | 10 | Logs, exec, inspect, and container troubleshooting | [`fundamentals/session-10-logs-exec-inspect-troubleshooting`](fundamentals/session-10-logs-exec-inspect-troubleshooting/) | Docker host |
+| 11 | Docker images and layers | [`fundamentals/session-11-image-layers`](fundamentals/session-11-image-layers/) | Docker host |
+| 12 | Build your first Dockerfile | [`fundamentals/session-12-first-dockerfile`](fundamentals/session-12-first-dockerfile/) | Docker host |
 
 ### Docker Compose
 
