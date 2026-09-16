@@ -1,0 +1,180 @@
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  -p 8080:80 \
+  nginx:alpine
+
+Explanation:
+Runs an Nginx container in detached mode and publishes host port 8080 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name `web`.
+- -p 8080:80 = --publish 8080:80 (publish): Maps host port 8080 to container port 80.
+------------------------------------------------------------
+# docker run -d \
+  --name host-nginx \
+  --network host \
+  nginx:alpine
+
+Explanation:
+Runs an Nginx container with the host network stack instead of a separate Docker network namespace.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name host-nginx = --name: Assigns the container name `host-nginx`.
+- --network host = --network: Connects the container to the `host` network mode.
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --network host \
+  -p 8080:80 \
+  nginx:alpine
+
+Explanation:
+Runs Nginx in host network mode. The `-p 8080:80` publishing option is accepted by Docker but is ignored in host network mode because the container already uses the host network stack.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name `web`.
+- --network host = --network: Uses the host network stack.
+- -p 8080:80 = --publish 8080:80 (publish): Requests host-to-container port publishing, but Docker ignores it when host networking is used.
+------------------------------------------------------------
+# docker network ls
+
+Explanation:
+Lists Docker networks available on the host.
+------------------------------------------------------------
+# ip addr
+
+Explanation:
+Displays the Linux network interfaces and their assigned IP addresses.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# curl http://127.0.0.1
+
+Explanation:
+Sends an HTTP request to the local host address using the default HTTP port.
+------------------------------------------------------------
+# curl http://localhost
+
+Explanation:
+Sends an HTTP request to the local machine using the `localhost` hostname.
+------------------------------------------------------------
+# curl http://192.168.1.50
+
+Explanation:
+Sends an HTTP request to the Docker host at IP address `192.168.1.50`.
+------------------------------------------------------------
+# docker inspect host-nginx \
+  --format '{{.HostConfig.NetworkMode}}'
+
+Explanation:
+Reads the container configuration and prints only its configured network mode.
+
+Options:
+- --format '{{.HostConfig.NetworkMode}}' = --format: Formats the inspect output using the Go template and returns the value of `HostConfig.NetworkMode`.
+------------------------------------------------------------
+# sudo ss -lntp
+
+Explanation:
+Displays listening TCP sockets with numeric addresses and associated process information.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -n = --numeric (numeric): Shows numeric addresses and ports instead of resolving names.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -p = --processes (processes): Shows the process using each socket.
+------------------------------------------------------------
+# sudo ss -lntp | grep ':80'
+
+Explanation:
+Shows listening TCP sockets and filters the result to lines containing `:80`.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -n = --numeric (numeric): Shows numeric addresses and ports instead of resolving names.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -p = --processes (processes): Shows the process using each socket.
+- | = pipe operator: Sends the output of `ss` to `grep`.
+------------------------------------------------------------
+# docker run -d \
+  --name host-nginx-2 \
+  --network host \
+  nginx:alpine
+
+Explanation:
+Runs a second Nginx container in host network mode. It may fail if another process already owns the same host port that Nginx tries to use.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name host-nginx-2 = --name: Assigns the container name `host-nginx-2`.
+- --network host = --network: Uses the host network stack.
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all Docker containers, including running and stopped containers.
+
+Options:
+- -a = --all (all): Shows all containers instead of only running containers.
+------------------------------------------------------------
+# docker logs host-nginx-2
+
+Explanation:
+Displays the logs produced by the `host-nginx-2` container.
+------------------------------------------------------------
+# docker run -d \
+  --name web1 \
+  -p 8081:80 \
+  nginx:alpine
+
+Explanation:
+Runs an Nginx container named `web1` and publishes host port 8081 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web1 = --name: Assigns the container name `web1`.
+- -p 8081:80 = --publish 8081:80 (publish): Maps host port 8081 to container port 80.
+------------------------------------------------------------
+# docker run -d \
+  --name web2 \
+  -p 8082:80 \
+  nginx:alpine
+
+Explanation:
+Runs a second Nginx container named `web2` and publishes host port 8082 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web2 = --name: Assigns the container name `web2`.
+- -p 8082:80 = --publish 8082:80 (publish): Maps host port 8082 to container port 80.
+------------------------------------------------------------
+# services:
+
+  nginx:
+    image: nginx:alpine
+    network_mode: host
+
+Explanation:
+Technical correction: the invalid `ports` section was removed because Docker Compose does not allow port publishing with `network_mode: host`. This Compose service runs Nginx with the host network stack.
+------------------------------------------------------------
+# docker logs host-nginx
+
+Explanation:
+Displays the logs produced by the `host-nginx` container.
+------------------------------------------------------------
+# curl http://127.0.0.1:80
+
+Explanation:
+Sends an HTTP request to port 80 on the local host.
+------------------------------------------------------------
+# docker logs <container-name>
+
+Explanation:
+Displays the logs of the container whose name replaces the `<container-name>` placeholder.
+------------------------------------------------------------
