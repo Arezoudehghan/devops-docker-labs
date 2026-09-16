@@ -1,0 +1,360 @@
+------------------------------------------------------------
+# docker network ls
+
+Explanation:
+Lists all Docker networks available on the Docker host.
+------------------------------------------------------------
+# ip addr show docker0
+
+Explanation:
+Shows the IP address and interface details of the Linux docker0 bridge interface.
+------------------------------------------------------------
+# docker run -d --name web nginx
+
+Explanation:
+Starts an Nginx container in detached mode with the name web.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name web to the container.
+------------------------------------------------------------
+# docker inspect web
+
+Explanation:
+Displays detailed Docker metadata and configuration for the container named web.
+------------------------------------------------------------
+# docker network inspect bridge
+
+Explanation:
+Displays detailed configuration and connected-container information for the default Docker bridge network.
+------------------------------------------------------------
+# docker run -dit --name container1 alpine sh
+
+Explanation:
+Starts an Alpine container named container1 in the background with an interactive TTY and runs sh.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+- --name = container name: Assigns the name container1 to the container.
+------------------------------------------------------------
+# docker run -dit --name container2 alpine sh
+
+Explanation:
+Starts an Alpine container named container2 in the background with an interactive TTY and runs sh.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+- --name = container name: Assigns the name container2 to the container.
+------------------------------------------------------------
+# docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container1
+
+Explanation:
+Displays only the IP address of container1 from its Docker network settings.
+
+Options:
+- -f = --format (format): Formats the inspect output using the supplied Go template.
+------------------------------------------------------------
+# docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container2
+
+Explanation:
+Displays only the IP address of container2 from its Docker network settings.
+
+Options:
+- -f = --format (format): Formats the inspect output using the supplied Go template.
+------------------------------------------------------------
+# docker exec container1 ping -c 3 172.17.0.3
+
+Explanation:
+Runs ping inside container1 and sends three ICMP echo requests to 172.17.0.3.
+
+Options:
+- -c = count: Tells ping to stop after sending 3 echo requests.
+------------------------------------------------------------
+# docker exec container1 ping -c 3 container2
+
+Explanation:
+Runs ping inside container1 and tries to reach container2 by name three times.
+
+Options:
+- -c = count: Tells ping to stop after sending 3 echo requests.
+------------------------------------------------------------
+# docker network create app-network
+
+Explanation:
+Creates a user-defined Docker network named app-network using Docker's default network driver for this command.
+------------------------------------------------------------
+# docker network create --driver bridge app-network
+
+Explanation:
+Creates a user-defined Docker bridge network named app-network.
+
+Options:
+- --driver = network driver: Selects bridge as the network driver.
+------------------------------------------------------------
+# docker network create -d bridge app-network
+
+Explanation:
+Creates a user-defined Docker bridge network named app-network using the short form of the driver option.
+
+Options:
+- -d = --driver (driver): Selects bridge as the network driver.
+------------------------------------------------------------
+# docker rm -f container1 container2
+
+Explanation:
+Removes container1 and container2, forcibly stopping them first if they are running.
+
+Options:
+- -f = --force (force): Forces removal of running containers by sending a kill signal first.
+------------------------------------------------------------
+# docker run -dit \
+  --name container1 \
+  --network app-network \
+  alpine sh
+
+Explanation:
+Starts container1 with Alpine and attaches it to the user-defined network app-network.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+- --name = container name: Assigns the name container1.
+- --network = network: Connects the container to app-network.
+- \ = shell line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker run -dit \
+  --name container2 \
+  --network app-network \
+  alpine sh
+
+Explanation:
+Starts container2 with Alpine and attaches it to the user-defined network app-network.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+- --name = container name: Assigns the name container2.
+- --network = network: Connects the container to app-network.
+- \ = shell line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker network create backend-network
+
+Explanation:
+Creates a user-defined Docker network named backend-network.
+------------------------------------------------------------
+# docker run -d \
+  --name db \
+  --network backend-network \
+  -e POSTGRES_PASSWORD='change-me-before-use' \
+  postgres
+
+Explanation:
+Technical correction: The lesson command did not provide the required PostgreSQL initialization password, so this corrected command adds POSTGRES_PASSWORD. It starts a PostgreSQL container named db on backend-network.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name db.
+- --network = network: Connects the container to backend-network.
+- -e = --env (environment): Sets the container environment variable POSTGRES_PASSWORD.
+- POSTGRES_PASSWORD='change-me-before-use' = environment variable value: Provides an initialization password; replace this example value before real use.
+- \ = shell line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --network backend-network \
+  myapp:latest
+
+Explanation:
+Starts the myapp:latest image as a detached container named web on backend-network.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name web.
+- --network = network: Connects the container to backend-network.
+- \ = shell line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --network app-network \
+  -p 8080:8080 \
+  myapp
+
+Explanation:
+Starts the myapp container named web, connects it to app-network, and publishes container port 8080 on host port 8080.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name web.
+- --network = network: Connects the container to app-network.
+- -p = --publish (publish): Maps host port 8080 to container port 8080.
+- \ = shell line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker run -d \
+  --name db \
+  --network app-network \
+  -e POSTGRES_PASSWORD='change-me-before-use' \
+  postgres
+
+Explanation:
+Technical correction: The lesson command did not provide the required PostgreSQL initialization password, so this corrected command adds POSTGRES_PASSWORD. It starts the PostgreSQL container named db on app-network.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name db.
+- --network = network: Connects the container to app-network.
+- -e = --env (environment): Sets the container environment variable POSTGRES_PASSWORD.
+- POSTGRES_PASSWORD='change-me-before-use' = environment variable value: Provides an initialization password; replace this example value before real use.
+- \ = shell line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker network create \
+  --driver bridge \
+  --subnet 172.30.0.0/24 \
+  --gateway 172.30.0.1 \
+  production-net
+
+Explanation:
+Creates a user-defined bridge network named production-net with a fixed subnet and gateway.
+
+Options:
+- --driver = network driver: Selects bridge as the network driver.
+- --subnet = subnet in CIDR notation: Sets the network subnet to 172.30.0.0/24.
+- --gateway = gateway address: Sets the network gateway to 172.30.0.1.
+- \ = shell line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker network inspect production-net
+
+Explanation:
+Displays detailed configuration and connected-container information for production-net.
+------------------------------------------------------------
+# docker network connect backend-network web
+
+Explanation:
+Connects the existing container web to the Docker network backend-network.
+------------------------------------------------------------
+# docker network inspect backend-network
+
+Explanation:
+Displays detailed configuration and connected-container information for backend-network.
+------------------------------------------------------------
+# docker network disconnect backend-network web
+
+Explanation:
+Disconnects the container web from the Docker network backend-network.
+------------------------------------------------------------
+# docker network rm backend-network
+
+Explanation:
+Removes the Docker network named backend-network.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# docker network inspect app-network
+
+Explanation:
+Displays detailed configuration and connected-container information for app-network.
+------------------------------------------------------------
+# docker inspect container1
+
+Explanation:
+Displays detailed Docker metadata and configuration for container1.
+------------------------------------------------------------
+# docker inspect container2
+
+Explanation:
+Displays detailed Docker metadata and configuration for container2.
+------------------------------------------------------------
+# docker network create lab-net
+
+Explanation:
+Creates a user-defined Docker network named lab-net.
+------------------------------------------------------------
+# docker run -dit \
+  --name lab-c1 \
+  --network lab-net \
+  alpine sh
+
+Explanation:
+Starts an Alpine container named lab-c1 in the background and connects it to lab-net.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+- --name = container name: Assigns the name lab-c1.
+- --network = network: Connects the container to lab-net.
+- \ = shell line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker run -dit \
+  --name lab-c2 \
+  --network lab-net \
+  alpine sh
+
+Explanation:
+Starts an Alpine container named lab-c2 in the background and connects it to lab-net.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+- --name = container name: Assigns the name lab-c2.
+- --network = network: Connects the container to lab-net.
+- \ = shell line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker network inspect lab-net
+
+Explanation:
+Displays detailed configuration and connected-container information for lab-net.
+------------------------------------------------------------
+# docker exec lab-c1 ping -c 3 lab-c2
+
+Explanation:
+Runs ping inside lab-c1 and sends three echo requests to lab-c2 by container name.
+
+Options:
+- -c = count: Tells ping to stop after sending 3 echo requests.
+------------------------------------------------------------
+# docker exec lab-c2 ping -c 3 lab-c1
+
+Explanation:
+Runs ping inside lab-c2 and sends three echo requests to lab-c1 by container name.
+
+Options:
+- -c = count: Tells ping to stop after sending 3 echo requests.
+------------------------------------------------------------
+# docker rm -f lab-c1 lab-c2
+
+Explanation:
+Removes lab-c1 and lab-c2, forcibly stopping them first if they are running.
+
+Options:
+- -f = --force (force): Forces removal of running containers by sending a kill signal first.
+------------------------------------------------------------
+# docker network rm lab-net
+
+Explanation:
+Removes the Docker network named lab-net.
+------------------------------------------------------------
+# docker network connect app-network container1
+
+Explanation:
+Connects the existing container container1 to the Docker network app-network.
+------------------------------------------------------------
+# docker network disconnect app-network container1
+
+Explanation:
+Disconnects the container container1 from the Docker network app-network.
+------------------------------------------------------------
+# docker network rm app-network
+
+Explanation:
+Removes the Docker network named app-network.
+------------------------------------------------------------
