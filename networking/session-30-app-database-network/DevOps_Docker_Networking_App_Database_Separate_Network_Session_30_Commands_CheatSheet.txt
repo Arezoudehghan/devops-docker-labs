@@ -1,0 +1,307 @@
+------------------------------------------------------------
+# docker network create app-db-net
+
+Explanation:
+Creates a user-defined Docker network named app-db-net. Docker uses the bridge driver by default when no driver is specified.
+------------------------------------------------------------
+# docker network ls
+
+Explanation:
+Lists Docker networks available on the host.
+------------------------------------------------------------
+# docker network inspect app-db-net
+
+Explanation:
+Shows detailed configuration and membership information for the app-db-net network.
+------------------------------------------------------------
+# docker volume create mysql_data
+
+Explanation:
+Creates a named Docker volume called mysql_data for persistent MySQL data.
+------------------------------------------------------------
+# docker volume ls
+
+Explanation:
+Lists Docker volumes available on the host.
+------------------------------------------------------------
+# docker run -d \
+  --name db \
+  --network app-db-net \
+  -e MYSQL_ROOT_PASSWORD=RootPass123 \
+  -e MYSQL_DATABASE=appdb \
+  -e MYSQL_USER=appuser \
+  -e MYSQL_PASSWORD=AppPass123 \
+  -v mysql_data:/var/lib/mysql \
+  mysql:8.4
+
+Explanation:
+Starts a MySQL 8.4 container named db on app-db-net with an application database, user credentials, and persistent storage.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name db = container name: Assign the name db to the container.
+- --network app-db-net = network: Connect the container to app-db-net.
+- -e = --env (environment): Set an environment variable inside the container.
+- MYSQL_ROOT_PASSWORD=RootPass123 = environment variable value: Set the MySQL root password.
+- MYSQL_DATABASE=appdb = environment variable value: Create the appdb database during initialization.
+- MYSQL_USER=appuser = environment variable value: Create the appuser MySQL user during initialization.
+- MYSQL_PASSWORD=AppPass123 = environment variable value: Set the password for appuser.
+- -v = --volume (volume): Mount a volume into the container.
+- mysql_data:/var/lib/mysql = volume mapping: Mount mysql_data at /var/lib/mysql inside the container.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# docker logs db
+
+Explanation:
+Shows the logs produced by the db container.
+------------------------------------------------------------
+# docker logs -f db
+
+Explanation:
+Shows the db container logs and continues following new log output.
+
+Options:
+- -f = --follow (follow): Continue streaming new log output.
+------------------------------------------------------------
+# docker run -d \
+  --name app \
+  --network app-db-net \
+  -p 8080:80 \
+  -e WORDPRESS_DB_HOST=db:3306 \
+  -e WORDPRESS_DB_NAME=appdb \
+  -e WORDPRESS_DB_USER=appuser \
+  -e WORDPRESS_DB_PASSWORD=AppPass123 \
+  wordpress:latest
+
+Explanation:
+Starts a WordPress container named app on app-db-net and publishes the application on host port 8080.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name app = container name: Assign the name app to the container.
+- --network app-db-net = network: Connect the container to app-db-net.
+- -p = --publish (publish): Publish a container port on the Docker host.
+- 8080:80 = port mapping: Map host port 8080 to container port 80.
+- -e = --env (environment): Set an environment variable inside the container.
+- WORDPRESS_DB_HOST=db:3306 = environment variable value: Tell WordPress to connect to the database host db on port 3306.
+- WORDPRESS_DB_NAME=appdb = environment variable value: Tell WordPress to use the appdb database.
+- WORDPRESS_DB_USER=appuser = environment variable value: Set the database username used by WordPress.
+- WORDPRESS_DB_PASSWORD=AppPass123 = environment variable value: Set the database password used by WordPress.
+------------------------------------------------------------
+# docker exec app php -r 'echo gethostbyname("db") . PHP_EOL;'
+
+Explanation:
+Runs a PHP command inside the running app container to resolve the Docker DNS name db and print its IP address.
+
+Options:
+- -r = run PHP code: Execute the provided PHP code directly without a script file.
+------------------------------------------------------------
+# docker run --rm \
+  --network app-db-net \
+  mysql:8.4 \
+  mysql \
+  -h db \
+  -uappuser \
+  -pAppPass123 \
+  -e "SELECT 1;"
+
+Explanation:
+Starts a temporary MySQL client container on app-db-net and tests a connection to db by executing SELECT 1.
+
+Options:
+- --rm = remove automatically: Remove the temporary container automatically after it exits.
+- --network app-db-net = network: Connect the temporary container to app-db-net.
+- -h = --host (host): Connect the MySQL client to the host named db.
+- -uappuser = --user=appuser (user): Authenticate as the MySQL user appuser.
+- -pAppPass123 = --password=AppPass123 (password): Use AppPass123 as the MySQL password.
+- -e = --execute (execute): Execute the SQL statement and exit.
+------------------------------------------------------------
+# docker run --rm alpine ping -c 2 db
+
+Explanation:
+Starts a temporary Alpine container on its default network and tries to ping the hostname db twice.
+
+Options:
+- --rm = remove automatically: Remove the temporary container automatically after it exits.
+- -c 2 = count: Send exactly two ICMP echo requests.
+------------------------------------------------------------
+# docker run --rm \
+  --network app-db-net \
+  alpine \
+  ping -c 2 db
+
+Explanation:
+Starts a temporary Alpine container on app-db-net and pings the db container name twice to test network DNS and reachability.
+
+Options:
+- --rm = remove automatically: Remove the temporary container automatically after it exits.
+- --network app-db-net = network: Connect the temporary container to app-db-net.
+- -c 2 = count: Send exactly two ICMP echo requests.
+------------------------------------------------------------
+# docker run -d \
+  --name db \
+  -e MYSQL_ROOT_PASSWORD=RootPass123 \
+  -e MYSQL_DATABASE=appdb \
+  -e MYSQL_USER=appuser \
+  -e MYSQL_PASSWORD=AppPass123 \
+  mysql:8.4
+
+Explanation:
+Technical correction: The original troubleshooting example omitted required MySQL initialization settings, which could make the container fail for reasons unrelated to networking. This corrected version keeps db outside app-db-net while giving it valid database credentials.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name db = container name: Assign the name db to the container.
+- -e = --env (environment): Set an environment variable inside the container.
+- MYSQL_ROOT_PASSWORD=RootPass123 = environment variable value: Set the MySQL root password.
+- MYSQL_DATABASE=appdb = environment variable value: Create the appdb database during initialization.
+- MYSQL_USER=appuser = environment variable value: Create the appuser MySQL user during initialization.
+- MYSQL_PASSWORD=AppPass123 = environment variable value: Set the password for appuser.
+------------------------------------------------------------
+# docker run -d \
+  --name app \
+  --network app-db-net \
+  -e WORDPRESS_DB_HOST=db:3306 \
+  -e WORDPRESS_DB_NAME=appdb \
+  -e WORDPRESS_DB_USER=appuser \
+  -e WORDPRESS_DB_PASSWORD=AppPass123 \
+  wordpress:latest
+
+Explanation:
+Technical correction: The original troubleshooting example omitted the WordPress database connection variables, which could cause a separate configuration failure. This corrected version keeps app on app-db-net and makes the missing db network membership the intended problem.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name app = container name: Assign the name app to the container.
+- --network app-db-net = network: Connect the container to app-db-net.
+- -e = --env (environment): Set an environment variable inside the container.
+- WORDPRESS_DB_HOST=db:3306 = environment variable value: Tell WordPress to connect to db on port 3306.
+- WORDPRESS_DB_NAME=appdb = environment variable value: Tell WordPress to use the appdb database.
+- WORDPRESS_DB_USER=appuser = environment variable value: Set the database username used by WordPress.
+- WORDPRESS_DB_PASSWORD=AppPass123 = environment variable value: Set the database password used by WordPress.
+------------------------------------------------------------
+# docker network connect app-db-net db
+
+Explanation:
+Connects the existing db container to the app-db-net network.
+------------------------------------------------------------
+# docker network disconnect app-db-net db
+
+Explanation:
+Disconnects the db container from the app-db-net network.
+------------------------------------------------------------
+# docker logs app
+
+Explanation:
+Shows the logs produced by the app container.
+------------------------------------------------------------
+# docker inspect app
+
+Explanation:
+Shows detailed configuration and runtime information for the app container.
+------------------------------------------------------------
+# docker network create frontend-net
+
+Explanation:
+Creates a user-defined Docker network named frontend-net.
+------------------------------------------------------------
+# docker network create backend-net
+
+Explanation:
+Creates a user-defined Docker network named backend-net.
+------------------------------------------------------------
+# docker run -d \
+  --name database \
+  --network backend-net \
+  -e MYSQL_ROOT_PASSWORD=RootPass123 \
+  -e MYSQL_DATABASE=appdb \
+  -e MYSQL_USER=appuser \
+  -e MYSQL_PASSWORD=AppPass123 \
+  mysql:8.4
+
+Explanation:
+Starts a MySQL 8.4 container named database and connects it only to backend-net.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name database = container name: Assign the name database to the container.
+- --network backend-net = network: Connect the container to backend-net.
+- -e = --env (environment): Set an environment variable inside the container.
+- MYSQL_ROOT_PASSWORD=RootPass123 = environment variable value: Set the MySQL root password.
+- MYSQL_DATABASE=appdb = environment variable value: Create the appdb database during initialization.
+- MYSQL_USER=appuser = environment variable value: Create the appuser MySQL user during initialization.
+- MYSQL_PASSWORD=AppPass123 = environment variable value: Set the password for appuser.
+------------------------------------------------------------
+# docker run -d \
+  --name webapp \
+  --network backend-net \
+  -p 8080:80 \
+  -e WORDPRESS_DB_HOST=database:3306 \
+  -e WORDPRESS_DB_NAME=appdb \
+  -e WORDPRESS_DB_USER=appuser \
+  -e WORDPRESS_DB_PASSWORD=AppPass123 \
+  wordpress:latest
+
+Explanation:
+Starts a WordPress container named webapp on backend-net and publishes the application on host port 8080.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name webapp = container name: Assign the name webapp to the container.
+- --network backend-net = network: Connect the container to backend-net.
+- -p = --publish (publish): Publish a container port on the Docker host.
+- 8080:80 = port mapping: Map host port 8080 to container port 80.
+- -e = --env (environment): Set an environment variable inside the container.
+- WORDPRESS_DB_HOST=database:3306 = environment variable value: Tell WordPress to connect to database on port 3306.
+- WORDPRESS_DB_NAME=appdb = environment variable value: Tell WordPress to use the appdb database.
+- WORDPRESS_DB_USER=appuser = environment variable value: Set the database username used by WordPress.
+- WORDPRESS_DB_PASSWORD=AppPass123 = environment variable value: Set the database password used by WordPress.
+------------------------------------------------------------
+# docker network connect frontend-net webapp
+
+Explanation:
+Connects the existing webapp container to frontend-net so it belongs to both frontend-net and backend-net.
+------------------------------------------------------------
+# EXPOSE 3306
+
+Explanation:
+Declares in a Dockerfile that the image is intended to listen on port 3306. It does not publish the port on the Docker host.
+
+Options:
+- 3306 = port argument: Declare TCP port 3306 as the container's intended listening port.
+------------------------------------------------------------
+# docker rm -f app db
+
+Explanation:
+Removes the app and db containers, forcing removal if they are still running.
+
+Options:
+- -f = --force (force): Force removal of running containers.
+------------------------------------------------------------
+# docker rm -f webapp database
+
+Explanation:
+Removes the webapp and database containers, forcing removal if they are still running.
+
+Options:
+- -f = --force (force): Force removal of running containers.
+------------------------------------------------------------
+# docker network rm app-db-net
+
+Explanation:
+Removes the Docker network named app-db-net.
+------------------------------------------------------------
+# docker network rm frontend-net backend-net
+
+Explanation:
+Removes the frontend-net and backend-net Docker networks.
+------------------------------------------------------------
+# docker volume rm mysql_data
+
+Explanation:
+Removes the named Docker volume mysql_data.
+------------------------------------------------------------
