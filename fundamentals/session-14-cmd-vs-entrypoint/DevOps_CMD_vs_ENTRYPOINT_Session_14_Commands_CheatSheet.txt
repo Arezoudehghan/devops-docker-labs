@@ -1,0 +1,403 @@
+------------------------------------------------------------
+# FROM alpine:latest
+
+Explanation:
+Uses the latest Alpine Linux image as the base image for the Docker build.
+------------------------------------------------------------
+# CMD ["echo", "Hello Docker"]
+
+Explanation:
+Sets `echo "Hello Docker"` as the default command of the container.
+------------------------------------------------------------
+# docker run myimage
+
+Explanation:
+Creates and starts a container from `myimage` using the image's default command.
+------------------------------------------------------------
+# echo "Hello Docker"
+
+Explanation:
+Prints `Hello Docker` to standard output.
+------------------------------------------------------------
+# docker run myimage echo "Hello Arezou"
+
+Explanation:
+Runs a container from `myimage` and replaces its default CMD with `echo "Hello Arezou"`.
+------------------------------------------------------------
+# echo "Hello Arezou"
+
+Explanation:
+Prints `Hello Arezou` to standard output.
+------------------------------------------------------------
+# ENTRYPOINT ["echo"]
+
+Explanation:
+Sets `echo` as the container's main executable in exec form.
+------------------------------------------------------------
+# docker run myimage Hello
+
+Explanation:
+Runs `myimage` and passes `Hello` to its configured ENTRYPOINT.
+------------------------------------------------------------
+# echo Hello
+
+Explanation:
+Prints `Hello` to standard output.
+------------------------------------------------------------
+# docker run myimage "Hello Docker"
+
+Explanation:
+Runs `myimage` and passes `Hello Docker` as an argument to its configured ENTRYPOINT.
+------------------------------------------------------------
+# FROM python:3
+
+Explanation:
+Uses the official Python 3 image as the base image for the Docker build.
+------------------------------------------------------------
+# COPY app.py /app/app.py
+
+Explanation:
+Copies `app.py` from the build context into `/app/app.py` inside the image.
+------------------------------------------------------------
+# WORKDIR /app
+
+Explanation:
+Sets `/app` as the working directory for following Dockerfile instructions and for the container.
+------------------------------------------------------------
+# ENTRYPOINT ["python", "app.py"]
+
+Explanation:
+Sets `python app.py` as the container's main executable in exec form.
+------------------------------------------------------------
+# CMD ["--port", "8080"]
+
+Explanation:
+Provides `--port 8080` as default arguments for the configured ENTRYPOINT.
+
+Options:
+- --port = application port option: Sets the application's port value to `8080`.
+------------------------------------------------------------
+# python app.py --port 8080
+
+Explanation:
+Starts `app.py` with Python and tells the application to use port `8080`.
+
+Options:
+- --port = application port option: Sets the application's port value to `8080`.
+------------------------------------------------------------
+# docker run myapp
+
+Explanation:
+Creates and starts a container from `myapp` using its configured ENTRYPOINT and default CMD.
+------------------------------------------------------------
+# docker run myapp --port 9090
+
+Explanation:
+Runs `myapp` and replaces its default CMD arguments with `--port 9090`.
+
+Options:
+- --port = application argument passed after the image name: Sets the application's port value to `9090`.
+------------------------------------------------------------
+# python app.py --port 9090
+
+Explanation:
+Starts `app.py` with Python and tells the application to use port `9090`.
+
+Options:
+- --port = application port option: Sets the application's port value to `9090`.
+------------------------------------------------------------
+# ENTRYPOINT ["ping"]
+
+Explanation:
+Sets `ping` as the container's main executable.
+------------------------------------------------------------
+# CMD ["-c", "4", "google.com"]
+
+Explanation:
+Provides default arguments that tell `ping` to send four requests to `google.com`.
+
+Options:
+- -c = count: Stops after sending `4` echo requests.
+------------------------------------------------------------
+# docker run ping-image
+
+Explanation:
+Runs `ping-image` using its configured ENTRYPOINT and default CMD arguments.
+------------------------------------------------------------
+# ping -c 4 google.com
+
+Explanation:
+Sends four ICMP echo requests to `google.com`.
+
+Options:
+- -c = count: Stops after sending `4` echo requests.
+------------------------------------------------------------
+# docker run ping-image example.com
+
+Explanation:
+Runs `ping-image` and replaces its default CMD with `example.com`, which is then passed to the ENTRYPOINT.
+------------------------------------------------------------
+# ping example.com
+
+Explanation:
+Runs `ping` against `example.com` using the command's normal default behavior.
+------------------------------------------------------------
+# ping -c 4 example.com
+
+Explanation:
+Sends four ICMP echo requests to `example.com`.
+
+Options:
+- -c = count: Stops after sending `4` echo requests.
+------------------------------------------------------------
+# docker run --rm -it --entrypoint /bin/sh myapp
+
+Explanation:
+Starts an interactive shell in a container from `myapp` while overriding the image's ENTRYPOINT, then removes the container after exit.
+
+Options:
+- --rm = automatically remove the container: Deletes the container when it exits.
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-terminal.
+- --entrypoint = override image ENTRYPOINT: Uses `/bin/sh` instead of the image's configured ENTRYPOINT.
+------------------------------------------------------------
+# CMD ["python", "app.py"]
+
+Explanation:
+Sets `python app.py` as the container's default command in exec form.
+------------------------------------------------------------
+# CMD python app.py
+
+Explanation:
+Sets `python app.py` as the container's default command in shell form.
+------------------------------------------------------------
+# ENTRYPOINT python app.py
+
+Explanation:
+Sets `python app.py` as the container's main command in shell form.
+------------------------------------------------------------
+# CMD ["echo", "one"]
+
+Explanation:
+Sets `echo one` as a CMD instruction, but a later CMD in the same build stage replaces it.
+------------------------------------------------------------
+# CMD ["echo", "two"]
+
+Explanation:
+Sets `echo two` as a CMD instruction, but a later CMD in the same build stage replaces it.
+------------------------------------------------------------
+# CMD ["echo", "three"]
+
+Explanation:
+Sets `echo three` as the final CMD, so it is the effective CMD when it is the last CMD in the build stage.
+------------------------------------------------------------
+# mkdir -p ~/docker-lab/session14
+
+Explanation:
+Creates the `~/docker-lab/session14` directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and does not fail if the directory already exists.
+------------------------------------------------------------
+# cd ~/docker-lab/session14
+
+Explanation:
+Changes the current shell directory to `~/docker-lab/session14`.
+------------------------------------------------------------
+# cat > Dockerfile.cmd <<'EOF'
+FROM alpine:latest
+
+CMD ["echo", "Hello from CMD"]
+EOF
+
+Explanation:
+Creates `Dockerfile.cmd` and writes the shown Dockerfile content into it using a quoted here-document.
+
+Options:
+- > = shell output redirection: Writes the command output to `Dockerfile.cmd`, replacing existing file content.
+- <<'EOF' = quoted here-document operator: Supplies the following lines as standard input until the closing `EOF`, without shell expansion.
+------------------------------------------------------------
+# docker build -f Dockerfile.cmd -t cmd-demo .
+
+Explanation:
+Builds a Docker image named `cmd-demo` using `Dockerfile.cmd` and the current directory as the build context.
+
+Options:
+- -f = --file (file): Selects `Dockerfile.cmd` as the Dockerfile.
+- -t = --tag (tag): Names and tags the resulting image as `cmd-demo`.
+- . = build context: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+# docker run --rm cmd-demo
+
+Explanation:
+Runs a container from `cmd-demo` and automatically removes the container when it exits.
+
+Options:
+- --rm = automatically remove the container: Deletes the container after it stops.
+------------------------------------------------------------
+# docker run --rm cmd-demo echo "CMD replaced"
+
+Explanation:
+Runs `cmd-demo`, replaces its default CMD with `echo "CMD replaced"`, and removes the container after it exits.
+
+Options:
+- --rm = automatically remove the container: Deletes the container after it stops.
+------------------------------------------------------------
+# cat > Dockerfile.entrypoint <<'EOF'
+FROM alpine:latest
+
+ENTRYPOINT ["echo"]
+
+CMD ["Hello from default CMD"]
+EOF
+
+Explanation:
+Creates `Dockerfile.entrypoint` and writes the shown Dockerfile content into it using a quoted here-document.
+
+Options:
+- > = shell output redirection: Writes the command output to `Dockerfile.entrypoint`, replacing existing file content.
+- <<'EOF' = quoted here-document operator: Supplies the following lines as standard input until the closing `EOF`, without shell expansion.
+------------------------------------------------------------
+# docker build -f Dockerfile.entrypoint -t entrypoint-demo .
+
+Explanation:
+Builds a Docker image named `entrypoint-demo` using `Dockerfile.entrypoint` and the current directory as the build context.
+
+Options:
+- -f = --file (file): Selects `Dockerfile.entrypoint` as the Dockerfile.
+- -t = --tag (tag): Names and tags the resulting image as `entrypoint-demo`.
+- . = build context: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+# docker run --rm entrypoint-demo
+
+Explanation:
+Runs `entrypoint-demo` with its configured ENTRYPOINT and default CMD, then removes the container after it exits.
+
+Options:
+- --rm = automatically remove the container: Deletes the container after it stops.
+------------------------------------------------------------
+# docker run --rm entrypoint-demo "Hello Arezou"
+
+Explanation:
+Runs `entrypoint-demo`, replaces its default CMD with `Hello Arezou`, and passes that argument to the ENTRYPOINT.
+
+Options:
+- --rm = automatically remove the container: Deletes the container after it stops.
+------------------------------------------------------------
+# docker image inspect cmd-demo --format '{{json .Config.Cmd}}'
+
+Explanation:
+Inspects `cmd-demo` and prints only its configured CMD value as JSON-formatted output.
+
+Options:
+- --format = format output using a Go template: Uses `{{json .Config.Cmd}}` to select and JSON-format the image CMD value.
+------------------------------------------------------------
+# docker image inspect entrypoint-demo --format 'ENTRYPOINT={{json .Config.Entrypoint}} CMD={{json .Config.Cmd}}'
+
+Explanation:
+Inspects `entrypoint-demo` and prints its configured ENTRYPOINT and CMD values in a custom format.
+
+Options:
+- --format = format output using a Go template: Selects `.Config.Entrypoint` and `.Config.Cmd` and formats both values as JSON.
+------------------------------------------------------------
+# docker run myimage AAA BBB
+
+Explanation:
+Runs `myimage` and supplies `AAA BBB` after the image name, replacing CMD or becoming arguments to ENTRYPOINT depending on the image configuration.
+------------------------------------------------------------
+# docker run --rm -it myimage /bin/sh
+
+Explanation:
+Starts `/bin/sh` interactively in a container from `myimage` and removes the container after exit.
+
+Options:
+- --rm = automatically remove the container: Deletes the container after it stops.
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-terminal.
+------------------------------------------------------------
+# ENTRYPOINT ["myapp"]
+
+Explanation:
+Sets `myapp` as the container's main executable.
+------------------------------------------------------------
+# CMD ["--config", "/etc/myapp.conf"]
+
+Explanation:
+Provides `--config /etc/myapp.conf` as default arguments for the configured ENTRYPOINT.
+
+Options:
+- --config = application configuration option: Sets `/etc/myapp.conf` as the configuration file path.
+------------------------------------------------------------
+# docker run myimage --config /tmp/test.conf
+
+Explanation:
+Runs `myimage` and replaces its default CMD arguments with `--config /tmp/test.conf`.
+
+Options:
+- --config = application argument passed after the image name: Sets `/tmp/test.conf` as the configuration file path.
+------------------------------------------------------------
+# ENTRYPOINT ["/docker-entrypoint.sh"]
+
+Explanation:
+Sets `/docker-entrypoint.sh` as the container's main executable.
+------------------------------------------------------------
+# echo "Preparing application..."
+
+Explanation:
+Prints `Preparing application...` to standard output.
+------------------------------------------------------------
+# exec "$@"
+
+Explanation:
+Replaces the current shell process with the command and arguments passed to the script.
+
+Options:
+- "$@" = all positional parameters: Expands all script arguments as separate quoted arguments.
+------------------------------------------------------------
+# services:
+  app:
+    image: myapp
+    command: ["--port", "9090"]
+
+Explanation:
+Defines a Compose service named `app` that uses `myapp` and overrides the image's default command with `--port 9090`.
+
+Options:
+- --port = application argument in the Compose `command` field: Sets the application's port value to `9090`.
+------------------------------------------------------------
+# services:
+  app:
+    image: myapp
+    entrypoint: ["python", "debug.py"]
+
+Explanation:
+Defines a Compose service named `app` that uses `myapp` and overrides the image's ENTRYPOINT with `python debug.py`.
+------------------------------------------------------------
+# docker run image bash
+
+Explanation:
+Runs the image named `image` and supplies `bash` after the image name. If the image has an ENTRYPOINT, `bash` is passed to it; otherwise it replaces CMD.
+------------------------------------------------------------
+# docker run --entrypoint /bin/bash image
+
+Explanation:
+Runs the image named `image` while overriding its configured ENTRYPOINT with `/bin/bash`.
+
+Options:
+- --entrypoint = override image ENTRYPOINT: Uses `/bin/bash` instead of the ENTRYPOINT stored in the image.
+------------------------------------------------------------
+# ENTRYPOINT ["echo", "Hello"]
+
+Explanation:
+Sets `echo Hello` as the container's main executable and fixed first argument.
+------------------------------------------------------------
+# CMD ["Docker"]
+
+Explanation:
+Sets `Docker` as the default CMD argument.
+------------------------------------------------------------
+# docker run myimage Arezou DevOps
+
+Explanation:
+Runs `myimage` and replaces its default CMD with `Arezou DevOps`, which is passed to the configured ENTRYPOINT.
+------------------------------------------------------------
