@@ -1,0 +1,10 @@
+.git
+.gitignore
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.log
+README.md
+DevOps_Dockerfile_Best_Practices_Session_16_Commands_CheatSheet.txt
