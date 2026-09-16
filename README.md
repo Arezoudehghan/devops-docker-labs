@@ -29,7 +29,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 │   ├── session-09-container-lifecycle/
 │   ├── session-10-logs-exec-inspect-troubleshooting/
 │   ├── session-11-image-layers/
-│   └── session-12-first-dockerfile/
+│   ├── session-12-first-dockerfile/
+│   └── session-13-dockerfile-from-run-copy-cmd-entrypoint/
 ├── compose/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
@@ -62,6 +63,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 | 10 | Logs, exec, inspect, and container troubleshooting | [`fundamentals/session-10-logs-exec-inspect-troubleshooting`](fundamentals/session-10-logs-exec-inspect-troubleshooting/) | Docker host |
 | 11 | Docker images and layers | [`fundamentals/session-11-image-layers`](fundamentals/session-11-image-layers/) | Docker host |
 | 12 | Build your first Dockerfile | [`fundamentals/session-12-first-dockerfile`](fundamentals/session-12-first-dockerfile/) | Docker host |
+| 13 | Dockerfile instructions: FROM, RUN, COPY, CMD, ENTRYPOINT | [`fundamentals/session-13-dockerfile-from-run-copy-cmd-entrypoint`](fundamentals/session-13-dockerfile-from-run-copy-cmd-entrypoint/) | Docker host |
 
 ### Docker Compose
 
