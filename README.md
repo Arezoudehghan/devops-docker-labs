@@ -21,7 +21,9 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 │   ├── session-01-docker-basics/
 │   ├── session-02-vm-vs-container/
 │   ├── session-03-docker-architecture/
-│   └── session-04-install-docker-ubuntu/
+│   ├── session-04-install-docker-ubuntu/
+│   ├── session-05-first-nginx-container/
+│   └── session-06-docker-run/
 ├── compose/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
@@ -46,6 +48,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, Do
 | 02 | VM vs Container | [`fundamentals/session-02-vm-vs-container`](fundamentals/session-02-vm-vs-container/) | Docker host |
 | 03 | Docker architecture | [`fundamentals/session-03-docker-architecture`](fundamentals/session-03-docker-architecture/) | Docker host |
 | 04 | Install Docker on Ubuntu | [`fundamentals/session-04-install-docker-ubuntu`](fundamentals/session-04-install-docker-ubuntu/) | Docker host |
+| 05 | First real container with Nginx | [`fundamentals/session-05-first-nginx-container`](fundamentals/session-05-first-nginx-container/) | Docker host |
+| 06 | Running containers with `docker run` | [`fundamentals/session-06-docker-run`](fundamentals/session-06-docker-run/) | Docker host |
 
 ### Docker Compose
 
