@@ -1,0 +1,80 @@
+------------------------------------------------------------
+# docker run -d --name data-test ubuntu sleep infinity
+
+Explanation:
+Creates and starts a new container from the ubuntu image and keeps it running with sleep infinity.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name data-test = name: Assigns the container the name data-test.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec data-test sh -c 'echo "My Important Data" > /data.txt'
+
+Explanation:
+Runs a shell command inside the running data-test container to create /data.txt and write My Important Data into it.
+
+Options:
+- -c = command string: Tells sh to execute the following quoted command string.
+- > = output redirection: Writes the output of echo to /data.txt and overwrites the file if it already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec data-test cat /data.txt
+
+Explanation:
+Runs cat inside the running data-test container to display the contents of /data.txt.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop data-test
+
+Explanation:
+Stops the running data-test container without removing the container or its writable layer.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker start data-test
+
+Explanation:
+Starts the existing stopped data-test container again.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f data-test
+
+Explanation:
+Removes the data-test container. The force option stops the container first if it is still running.
+
+Options:
+- -f = --force (force): Forces removal of a running container by stopping it first.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec data-test sh -c 'echo "Docker Test" > /test.txt'
+
+Explanation:
+Runs a shell command inside the running data-test container to create /test.txt and write Docker Test into it.
+
+Options:
+- -c = command string: Tells sh to execute the following quoted command string.
+- > = output redirection: Writes the output of echo to /test.txt and overwrites the file if it already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker diff data-test
+
+Explanation:
+Shows filesystem changes made in the data-test container compared with its original image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm ubuntu echo "hello"
+
+Explanation:
+Creates and runs a temporary container from the ubuntu image and executes echo "hello".
+
+Options:
+- --rm = automatically remove: Automatically removes the container when its process exits.
+------------------------------------------------------------
