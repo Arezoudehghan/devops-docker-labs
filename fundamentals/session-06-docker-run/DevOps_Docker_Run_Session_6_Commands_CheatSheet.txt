@@ -1,0 +1,535 @@
+------------------------------------------------------------
+# docker run nginx
+
+Explanation:
+Creates and starts a new container from the nginx image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web nginx
+
+Explanation:
+Creates and starts a new nginx container named web in detached mode.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = name: Assigns the container name web.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run hello-world
+
+Explanation:
+Creates and starts a container from the hello-world image. Docker pulls the image first if needed.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists containers that are currently running.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all containers, including stopped containers.
+
+Options:
+- -a = --all (all): Shows all containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d nginx
+
+Explanation:
+Creates and starts a new nginx container in detached mode.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web01 nginx
+
+Explanation:
+Creates and starts a detached nginx container named web01.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web01 = name: Assigns the container name web01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop web01
+
+Explanation:
+Stops the running container named web01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm web01
+
+Explanation:
+Removes the container named web01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f web01
+
+Explanation:
+Forcibly removes the container named web01.
+
+Options:
+- -f = --force (force): Forces removal of a running container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web01 -p 8080:80 nginx
+
+Explanation:
+Creates a detached nginx container named web01 and publishes container port 80 on host port 8080.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web01 = name: Assigns the container name web01.
+- -p 8080:80 = --publish 8080:80 (publish): Maps host port 8080 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://localhost:8080
+
+Explanation:
+Sends an HTTP request to port 8080 on the local host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ss -ltnp
+
+Explanation:
+Displays listening TCP sockets with numeric ports and associated processes when permitted.
+
+Options:
+- -l = --listening (listening): Shows listening sockets.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -n = --numeric (numeric): Keeps addresses and ports numeric.
+- -p = --processes (processes): Shows associated processes.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ss -ltnp | grep 8080
+
+Explanation:
+Shows listening TCP sockets and filters lines containing 8080.
+
+Options:
+- -l = --listening (listening): Shows listening sockets.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -n = --numeric (numeric): Keeps addresses and ports numeric.
+- -p = --processes (processes): Shows associated processes.
+- | = pipe operator: Sends ss output to grep.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d -p 9000:80 nginx
+
+Explanation:
+Creates a detached nginx container and publishes container port 80 on host port 9000.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -p 9000:80 = --publish 9000:80 (publish): Maps host port 9000 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web01 -p 8081:80 nginx
+
+Explanation:
+Creates web01 and maps host port 8081 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web01 = name: Assigns the container name web01.
+- -p 8081:80 = --publish 8081:80 (publish): Maps host port 8081 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web02 -p 8082:80 nginx
+
+Explanation:
+Creates web02 and maps host port 8082 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web02 = name: Assigns the container name web02.
+- -p 8082:80 = --publish 8082:80 (publish): Maps host port 8082 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web03 -p 8083:80 nginx
+
+Explanation:
+Creates web03 and maps host port 8083 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web03 = name: Assigns the container name web03.
+- -p 8083:80 = --publish 8083:80 (publish): Maps host port 8083 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web02 -p 8080:80 nginx
+
+Explanation:
+Attempts to create web02 using host port 8080. It fails if that host port is already allocated.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web02 = name: Assigns the container name web02.
+- -p 8080:80 = --publish 8080:80 (publish): Maps host port 8080 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -it ubuntu bash
+
+Explanation:
+Creates an Ubuntu container and opens an interactive Bash shell.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-terminal.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# hostname
+
+Explanation:
+Prints the current hostname.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat /etc/os-release
+
+Explanation:
+Prints operating system identification information from /etc/os-release.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# exit
+
+Explanation:
+Exits the current shell.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm hello-world
+
+Explanation:
+Runs hello-world and automatically removes the container after it exits.
+
+Options:
+- --rm = remove automatically: Removes the container after it exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm alpine echo "Docker Test"
+
+Explanation:
+Runs echo inside a temporary Alpine container and removes it after completion.
+
+Options:
+- --rm = remove automatically: Removes the container after it exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# env
+
+Explanation:
+Prints the current environment variables.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm -e APP_ENV=production alpine env
+
+Explanation:
+Runs env in a temporary Alpine container with APP_ENV set to production.
+
+Options:
+- --rm = remove automatically: Removes the container after it exits.
+- -e APP_ENV=production = --env APP_ENV=production (environment): Sets APP_ENV to production.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -e APP_ENV=production \
+  -e APP_PORT=8080 \
+  -e APP_NAME=myapp \
+  alpine env
+
+Explanation:
+Runs env in a temporary Alpine container with three environment variables.
+
+Options:
+- --rm = remove automatically: Removes the container after it exits.
+- -e = --env (environment): Defines an environment variable inside the container.
+- \ = shell line continuation: Continues the command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm --hostname app01 alpine hostname
+
+Explanation:
+Runs hostname in a temporary Alpine container whose hostname is app01.
+
+Options:
+- --rm = remove automatically: Removes the container after it exits.
+- --hostname app01 = hostname: Sets the container hostname to app01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm alpine hostname
+
+Explanation:
+Runs hostname in a temporary Alpine container.
+
+Options:
+- --rm = remove automatically: Removes the container after it exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm alpine ls /
+
+Explanation:
+Lists the root directory inside a temporary Alpine container.
+
+Options:
+- --rm = remove automatically: Removes the container after it exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --name test01 alpine echo hello
+
+Explanation:
+Creates test01, runs echo hello, and leaves the stopped container after completion.
+
+Options:
+- --name test01 = name: Assigns the container name test01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker start test01
+
+Explanation:
+Starts the existing container named test01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker create --name test01 nginx
+
+Explanation:
+Creates an nginx container named test01 without starting it.
+
+Options:
+- --name test01 = name: Assigns the container name test01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect web01
+
+Explanation:
+Displays detailed configuration and runtime information for web01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs web01
+
+Explanation:
+Displays logs from web01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs -f web01
+
+Explanation:
+Displays logs from web01 and follows new log output.
+
+Options:
+- -f = --follow (follow): Continues streaming new log output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker top web01
+
+Explanation:
+Displays processes running in web01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name myapp \
+  -p 8080:80 \
+  -e APP_ENV=production \
+  nginx
+
+Explanation:
+Creates a detached nginx container named myapp, publishes port 80 on host port 8080, and sets APP_ENV.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name myapp = name: Assigns the container name myapp.
+- -p 8080:80 = --publish 8080:80 (publish): Maps host port 8080 to container port 80.
+- -e APP_ENV=production = --env APP_ENV=production (environment): Sets APP_ENV to production.
+- \ = shell line continuation: Continues the command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm alpine echo hello
+
+Explanation:
+Runs echo hello in a temporary Alpine container.
+
+Options:
+- --rm = remove automatically: Removes the container after it exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop 4e82d9a1f99c
+
+Explanation:
+Stops the container identified by 4e82d9a1f99c.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name myapp \
+  -p 8080:5000 \
+  -e APP_ENV=production \
+  myapp:1.0
+
+Explanation:
+Creates myapp from myapp:1.0, maps host port 8080 to container port 5000, and sets APP_ENV.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name myapp = name: Assigns the container name myapp.
+- -p 8080:5000 = --publish 8080:5000 (publish): Maps host port 8080 to container port 5000.
+- -e APP_ENV=production = --env APP_ENV=production (environment): Sets APP_ENV to production.
+- \ = shell line continuation: Continues the command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f web01 web02 web03
+
+Explanation:
+Forcibly removes web01, web02, and web03.
+
+Options:
+- -f = --force (force): Forces removal of running containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker port web01
+
+Explanation:
+Shows published port mappings for web01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' web01
+
+Explanation:
+Prints the container IP address from web01 network settings.
+
+Options:
+- -f = --format (format): Formats docker inspect output with a Go template.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker start web01
+
+Explanation:
+Starts the existing container named web01.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -it --name ubuntu-test ubuntu bash
+
+Explanation:
+Creates ubuntu-test and opens an interactive Bash shell.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-terminal.
+- --name ubuntu-test = name: Assigns the container name ubuntu-test.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ps aux
+
+Explanation:
+Displays a broad process list in BSD-style format.
+
+Options:
+- a = BSD-style process selection: Includes processes for other users with terminals.
+- u = user-oriented format: Shows user-focused process information.
+- x = BSD-style process selection: Includes processes without a controlling terminal.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm alpine echo "Container started successfully"
+
+Explanation:
+Runs the echo command in a temporary Alpine container.
+
+Options:
+- --rm = remove automatically: Removes the container after it exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -e APP_NAME=arezou-app \
+  -e APP_ENV=production \
+  -e APP_PORT=8080 \
+  alpine env
+
+Explanation:
+Runs env in a temporary Alpine container with the lesson application variables.
+
+Options:
+- --rm = remove automatically: Removes the container after it exits.
+- -e = --env (environment): Defines an environment variable inside the container.
+- \ = shell line continuation: Continues the command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d -p 8080:80 nginx
+
+Explanation:
+Creates a detached nginx container and maps host port 8080 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -p 8080:80 = --publish 8080:80 (publish): Maps host port 8080 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run ubuntu
+
+Explanation:
+Creates and starts a container from the Ubuntu image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker images
+
+Explanation:
+Lists Docker images stored locally on the host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://localhost:9090
+
+Explanation:
+Sends an HTTP request to port 9090 on the local host.
+------------------------------------------------------------
