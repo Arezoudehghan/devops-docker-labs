@@ -1,0 +1,193 @@
+------------------------------------------------------------
+# docker network ls
+
+Explanation:
+Lists the Docker networks currently available on the Docker host.
+------------------------------------------------------------
+# docker network create app-net
+
+Explanation:
+Creates a new user-defined Docker network named app-net. Docker uses the bridge driver by default when no driver is specified.
+------------------------------------------------------------
+# docker network inspect app-net
+
+Explanation:
+Shows detailed JSON information about the app-net network, including its driver, subnet, gateway, and connected containers.
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --network app-net \
+  nginx:alpine
+
+Explanation:
+Starts an nginx container named web in the background and attaches it directly to app-net.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name web = name: Set the container name to web.
+- --network app-net = network: Connect the container to app-net when it starts.
+- nginx:alpine = image:tag: Use the nginx image with the alpine tag.
+------------------------------------------------------------
+# docker run -dit \
+  --name client \
+  --network app-net \
+  alpine \
+  sh
+
+Explanation:
+Starts an Alpine container named client in the background, keeps its input open, allocates a terminal, and connects it to app-net. The container runs sh as its command.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- -i = --interactive (interactive): Keep standard input open even when not attached.
+- -t = --tty (TTY): Allocate a pseudo-terminal.
+- --name client = name: Set the container name to client.
+- --network app-net = network: Connect the container to app-net when it starts.
+- alpine = image: Use the Alpine Linux image.
+- sh = command: Run the sh shell inside the container.
+------------------------------------------------------------
+# docker exec client ping -c 3 web
+
+Explanation:
+Runs ping inside the client container and sends three ICMP echo requests to the hostname web.
+
+Options:
+- -c 3 = count 3 packets: Stop ping after sending three echo requests.
+------------------------------------------------------------
+# docker exec client nslookup web
+
+Explanation:
+Runs nslookup inside the client container to resolve the hostname web through Docker's internal DNS.
+------------------------------------------------------------
+# docker exec client wget -qO- http://web
+
+Explanation:
+Runs wget inside the client container and fetches the HTTP response from web. The response body is written to standard output with normal wget messages suppressed.
+
+Options:
+- -q = quiet mode: Suppress normal wget output.
+- -O - = output file set to standard output: Write the downloaded content to standard output instead of a file.
+------------------------------------------------------------
+# docker run -dit \
+  --name outsider \
+  alpine \
+  sh
+
+Explanation:
+Starts an Alpine container named outsider in the background without attaching it to app-net. Because no network is specified, Docker connects it to the default bridge network.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- -i = --interactive (interactive): Keep standard input open even when not attached.
+- -t = --tty (TTY): Allocate a pseudo-terminal.
+- --name outsider = name: Set the container name to outsider.
+- alpine = image: Use the Alpine Linux image.
+- sh = command: Run the sh shell inside the container.
+------------------------------------------------------------
+# docker exec outsider ping -c 2 web
+
+Explanation:
+Runs ping inside the outsider container and sends two ICMP echo requests to web. This is used to test whether outsider can resolve and reach web.
+
+Options:
+- -c 2 = count 2 packets: Stop ping after sending two echo requests.
+------------------------------------------------------------
+# docker network connect app-net outsider
+
+Explanation:
+Connects the existing outsider container to the app-net network without recreating the container.
+------------------------------------------------------------
+# docker exec outsider ping -c 3 web
+
+Explanation:
+Runs ping inside the outsider container and sends three ICMP echo requests to web after outsider has been connected to app-net.
+
+Options:
+- -c 3 = count 3 packets: Stop ping after sending three echo requests.
+------------------------------------------------------------
+# docker network disconnect app-net outsider
+
+Explanation:
+Disconnects the outsider container from the app-net network.
+------------------------------------------------------------
+# docker network create \
+  --driver bridge \
+  --subnet 172.30.0.0/24 \
+  --gateway 172.30.0.1 \
+  backend-net
+
+Explanation:
+Creates a user-defined bridge network named backend-net with a custom IPv4 subnet and gateway.
+
+Options:
+- --driver bridge = driver: Use the bridge network driver.
+- --subnet 172.30.0.0/24 = subnet: Set the network subnet to 172.30.0.0/24.
+- --gateway 172.30.0.1 = gateway: Set 172.30.0.1 as the gateway for the subnet.
+------------------------------------------------------------
+# docker run -dit \
+  --name db \
+  --network backend-net \
+  --ip 172.30.0.10 \
+  alpine \
+  sh
+
+Explanation:
+Starts an Alpine container named db on backend-net and assigns it the static IP address 172.30.0.10. The container runs sh in the background with an interactive TTY.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- -i = --interactive (interactive): Keep standard input open even when not attached.
+- -t = --tty (TTY): Allocate a pseudo-terminal.
+- --name db = name: Set the container name to db.
+- --network backend-net = network: Connect the container to backend-net when it starts.
+- --ip 172.30.0.10 = IP address: Assign the container the IPv4 address 172.30.0.10 on the selected network.
+- alpine = image: Use the Alpine Linux image.
+- sh = command: Run the sh shell inside the container.
+------------------------------------------------------------
+# ip link show type bridge
+
+Explanation:
+Shows Linux network interfaces whose link type is bridge.
+------------------------------------------------------------
+# docker network create -d bridge app-net
+
+Explanation:
+Creates a Docker network named app-net and explicitly selects the bridge driver.
+
+Options:
+- -d = --driver (driver): Select the bridge network driver.
+------------------------------------------------------------
+# docker network connect app-net web
+
+Explanation:
+Connects the existing web container to the app-net network.
+------------------------------------------------------------
+# docker network disconnect app-net web
+
+Explanation:
+Disconnects the web container from the app-net network.
+------------------------------------------------------------
+# docker network rm app-net
+
+Explanation:
+Removes the Docker network named app-net.
+------------------------------------------------------------
+# docker inspect client
+
+Explanation:
+Shows detailed JSON information about the client container, including its NetworkSettings data.
+------------------------------------------------------------
+# ping database
+
+Explanation:
+Sends ICMP echo requests to the hostname database to test name resolution and network reachability.
+------------------------------------------------------------
+# docker exec client wget -qO- http://nginx
+
+Explanation:
+Runs wget inside the client container and fetches the HTTP response from the hostname nginx. The response body is written to standard output with normal wget messages suppressed.
+
+Options:
+- -q = quiet mode: Suppress normal wget output.
+- -O - = output file set to standard output: Write the downloaded content to standard output instead of a file.
+------------------------------------------------------------
