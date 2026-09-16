@@ -1,0 +1,342 @@
+------------------------------------------------------------
+# docker run nginx
+
+Explanation:
+Creates and starts a new container from the `nginx` image in the foreground.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d nginx
+
+Explanation:
+Creates and starts a new container from the `nginx` image in detached mode so the terminal returns immediately.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists containers that are currently running.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web1 nginx
+
+Explanation:
+Creates and starts a detached Nginx container and assigns it the name `web1`.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+- --name = name: Assign the custom container name `web1`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs web1
+
+Explanation:
+Displays the logs produced by the container named `web1`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs -f web1
+
+Explanation:
+Displays the logs from `web1` and keeps following new log output as it is produced.
+
+Options:
+- -f = --follow (follow): Continue streaming new log output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --name web2 nginx
+
+Explanation:
+Creates and starts an Nginx container in the foreground and assigns it the name `web2`.
+
+Options:
+- --name = name: Assign the custom container name `web2`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all containers, including both running and stopped containers.
+
+Options:
+- -a = --all (all): Show all containers instead of only running containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --name fg-test nginx
+
+Explanation:
+Creates and starts an Nginx container in the foreground and names it `fg-test`.
+
+Options:
+- --name = name: Assign the custom container name `fg-test`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm fg-test
+
+Explanation:
+Removes the stopped container named `fg-test`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name bg-test nginx
+
+Explanation:
+Creates and starts an Nginx container in detached mode and names it `bg-test`.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+- --name = name: Assign the custom container name `bg-test`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs bg-test
+
+Explanation:
+Displays the logs produced by the container named `bg-test`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs -f bg-test
+
+Explanation:
+Displays the logs from `bg-test` and continues streaming new log output.
+
+Options:
+- -f = --follow (follow): Continue streaming new log output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker attach bg-test
+
+Explanation:
+Attaches the current terminal to the main process of the running container named `bg-test`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec -it bg-test /bin/bash
+
+Explanation:
+Starts a new interactive Bash process inside the running container named `bg-test`.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open even when not attached.
+- -t = --tty (TTY): Allocate a pseudo-TTY for the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec -it bg-test /bin/sh
+
+Explanation:
+Starts a new interactive `sh` shell inside the running container named `bg-test`.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open even when not attached.
+- -t = --tty (TTY): Allocate a pseudo-TTY for the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec -it web1 /bin/sh
+
+Explanation:
+Starts a new interactive `sh` shell inside the running container named `web1`.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open even when not attached.
+- -t = --tty (TTY): Allocate a pseudo-TTY for the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# hostname
+
+Explanation:
+Prints the hostname of the current system or container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ps
+
+Explanation:
+Displays information about currently running processes.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# exit
+
+Explanation:
+Exits the current shell session.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop web1
+
+Explanation:
+Requests a graceful stop of the running container named `web1`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker start web1
+
+Explanation:
+Starts the existing stopped container named `web1`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run myapp
+
+Explanation:
+Creates and starts a new container from the `myapp` image in the foreground.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name myapp myapp:1.0
+
+Explanation:
+Creates and starts version `1.0` of the `myapp` image in detached mode and names the container `myapp`.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+- --name = name: Assign the custom container name `myapp`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs myapp
+
+Explanation:
+Displays the logs produced by the container named `myapp`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs -f myapp
+
+Explanation:
+Displays the logs from `myapp` and continues streaming new log output.
+
+Options:
+- -f = --follow (follow): Continue streaming new log output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec -it myapp /bin/sh
+
+Explanation:
+Starts a new interactive `sh` shell inside the running container named `myapp`.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open even when not attached.
+- -t = --tty (TTY): Allocate a pseudo-TTY for the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop myapp
+
+Explanation:
+Requests a graceful stop of the running container named `myapp`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run alpine echo "Hello Docker"
+
+Explanation:
+Creates an Alpine container, runs `echo "Hello Docker"` as its main process, and stops when that process finishes.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d alpine echo "Hello Docker"
+
+Explanation:
+Creates an Alpine container in detached mode, runs `echo "Hello Docker"`, and exits when the echo process finishes.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -it ubuntu bash
+
+Explanation:
+Creates an Ubuntu container and starts an interactive Bash shell in the foreground.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open even when not attached.
+- -t = --tty (TTY): Allocate a pseudo-TTY for the shell.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --name test-fg nginx
+
+Explanation:
+Creates and starts an Nginx container in the foreground and names it `test-fg`.
+
+Options:
+- --name = name: Assign the custom container name `test-fg`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm test-fg
+
+Explanation:
+Removes the stopped container named `test-fg`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name test-bg nginx
+
+Explanation:
+Creates and starts an Nginx container in detached mode and names it `test-bg`.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+- --name = name: Assign the custom container name `test-bg`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs test-bg
+
+Explanation:
+Displays the logs produced by the container named `test-bg`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs -f test-bg
+
+Explanation:
+Displays the logs from `test-bg` and continues streaming new log output.
+
+Options:
+- -f = --follow (follow): Continue streaming new log output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec -it test-bg /bin/sh
+
+Explanation:
+Starts a new interactive `sh` shell inside the running container named `test-bg`.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open even when not attached.
+- -t = --tty (TTY): Allocate a pseudo-TTY for the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop test-bg
+
+Explanation:
+Requests a graceful stop of the running container named `test-bg`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm test-bg
+
+Explanation:
+Removes the stopped container named `test-bg`.
+------------------------------------------------------------
