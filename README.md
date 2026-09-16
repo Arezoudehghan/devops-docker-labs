@@ -36,7 +36,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 ├── networking/
 │   ├── session-24-network-basics/
 │   ├── session-25-bridge-network/
-│   └── session-26-host-network/
+│   ├── session-26-host-network/
+│   └── session-29-user-defined-bridge-network/
 ├── compose/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
@@ -84,6 +85,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 24 | Docker networking basics | [`networking/session-24-network-basics`](networking/session-24-network-basics/) | Docker host |
 | 25 | Bridge Network | [`networking/session-25-bridge-network`](networking/session-25-bridge-network/) | Docker host |
 | 26 | Docker host network | [`networking/session-26-host-network`](networking/session-26-host-network/) | Docker host |
+| 29 | User-defined bridge network | [`networking/session-29-user-defined-bridge-network`](networking/session-29-user-defined-bridge-network/) | `DEV-1` |
 
 ### Docker Compose
 
