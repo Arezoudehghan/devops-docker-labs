@@ -1,0 +1,273 @@
+------------------------------------------------------------
+# docker network create app-net
+
+Explanation:
+Creates a user-defined Docker network named app-net.
+------------------------------------------------------------
+# docker network ls
+
+Explanation:
+Lists all Docker networks available on the host.
+------------------------------------------------------------
+# docker run -d \
+  --name web1 \
+  --network app-net \
+  nginx
+
+Explanation:
+Starts an Nginx container named web1 in the background and connects it to the app-net network.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web1 = container name: Sets the container name to web1.
+- --network app-net = network: Connects the container to the app-net network.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker run -it \
+  --name client1 \
+  --network app-net \
+  busybox sh
+
+Explanation:
+Starts an interactive BusyBox container named client1 on app-net and opens the sh shell.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open for interactive use.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+- --name client1 = container name: Sets the container name to client1.
+- --network app-net = network: Connects the container to the app-net network.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker inspect web1
+
+Explanation:
+Displays detailed Docker metadata and configuration for the web1 container.
+------------------------------------------------------------
+# ping web1
+
+Explanation:
+Sends ICMP echo requests to the hostname web1 to test name resolution and network reachability.
+------------------------------------------------------------
+# cat /etc/resolv.conf
+
+Explanation:
+Displays the container's DNS resolver configuration from /etc/resolv.conf.
+------------------------------------------------------------
+# nslookup web1
+
+Explanation:
+Queries DNS for the hostname web1 and shows its resolved address.
+------------------------------------------------------------
+# docker run -d \
+  --name backend \
+  --network app-net \
+  nginx
+
+Explanation:
+Starts an Nginx container named backend in the background and connects it to app-net.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name backend = container name: Sets the container name to backend.
+- --network app-net = network: Connects the container to the app-net network.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker run -d --name test1 nginx
+
+Explanation:
+Starts an Nginx container named test1 in the background using Docker's default network configuration.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name test1 = container name: Sets the container name to test1.
+------------------------------------------------------------
+# docker run -it --name test2 busybox sh
+
+Explanation:
+Starts an interactive BusyBox container named test2 and opens the sh shell.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open for interactive use.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+- --name test2 = container name: Sets the container name to test2.
+------------------------------------------------------------
+# ping test1
+
+Explanation:
+Sends ICMP echo requests to the hostname test1 to test name resolution and network reachability.
+------------------------------------------------------------
+# docker rm -f test1 test2
+
+Explanation:
+Removes the test1 and test2 containers, forcing removal if they are still running.
+
+Options:
+- -f = --force (force): Forces removal of running containers.
+------------------------------------------------------------
+# docker network create test-net
+
+Explanation:
+Creates a user-defined Docker network named test-net.
+------------------------------------------------------------
+# docker run -d \
+  --name test1 \
+  --network test-net \
+  nginx
+
+Explanation:
+Starts an Nginx container named test1 in the background and connects it to test-net.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name test1 = container name: Sets the container name to test1.
+- --network test-net = network: Connects the container to the test-net network.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker run -it \
+  --name test2 \
+  --network test-net \
+  busybox sh
+
+Explanation:
+Starts an interactive BusyBox container named test2 on test-net and opens the sh shell.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open for interactive use.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+- --name test2 = container name: Sets the container name to test2.
+- --network test-net = network: Connects the container to the test-net network.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker run -d \
+  --name mysql-prod-01 \
+  --network app-net \
+  --network-alias database \
+  mysql:8
+
+Explanation:
+Starts a MySQL 8 container named mysql-prod-01 on app-net and gives it the network alias database.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name mysql-prod-01 = container name: Sets the container name to mysql-prod-01.
+- --network app-net = network: Connects the container to the app-net network.
+- --network-alias database = network alias: Adds database as a network-scoped alias for the container.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker network inspect app-net
+
+Explanation:
+Displays detailed configuration and connected-container information for the app-net network.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# docker inspect backend
+
+Explanation:
+Displays detailed Docker metadata and configuration for the backend container.
+------------------------------------------------------------
+# docker inspect database
+
+Explanation:
+Displays detailed Docker metadata and configuration for the database container.
+------------------------------------------------------------
+# docker exec -it backend sh
+
+Explanation:
+Runs an interactive sh shell inside the running backend container.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open for interactive use.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+------------------------------------------------------------
+# docker exec -it backend bash
+
+Explanation:
+Runs an interactive Bash shell inside the running backend container.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open for interactive use.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+------------------------------------------------------------
+# ping database
+
+Explanation:
+Sends ICMP echo requests to the hostname database to test name resolution and network reachability.
+------------------------------------------------------------
+# nslookup database
+
+Explanation:
+Queries DNS for the hostname database and shows its resolved address.
+------------------------------------------------------------
+# docker network connect app-net db
+
+Explanation:
+Connects the existing db container to the app-net network.
+------------------------------------------------------------
+# docker exec backend ping db
+
+Explanation:
+Runs ping inside the backend container to test whether the hostname db can be resolved and reached.
+------------------------------------------------------------
+# docker exec backend cat /etc/resolv.conf
+
+Explanation:
+Runs cat inside the backend container to display its DNS resolver configuration.
+------------------------------------------------------------
+# docker exec client ping backend
+
+Explanation:
+Runs ping inside the client container to test whether the hostname backend can be resolved and reached.
+------------------------------------------------------------
+# docker network connect app-net backend
+
+Explanation:
+Connects the existing backend container to the app-net network.
+------------------------------------------------------------
+# docker network disconnect app-net backend
+
+Explanation:
+Disconnects the backend container from the app-net network.
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --network app-net \
+  nginx
+
+Explanation:
+Starts an Nginx container named web in the background and connects it to app-net.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = container name: Sets the container name to web.
+- --network app-net = network: Connects the container to the app-net network.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker run -it \
+  --name client \
+  --network app-net \
+  busybox sh
+
+Explanation:
+Starts an interactive BusyBox container named client on app-net and opens the sh shell.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open for interactive use.
+- -t = --tty (TTY): Allocates a pseudo-TTY.
+- --name client = container name: Sets the container name to client.
+- --network app-net = network: Connects the container to the app-net network.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# ping web
+
+Explanation:
+Sends ICMP echo requests to the hostname web to test name resolution and network reachability.
+------------------------------------------------------------
+# nslookup web
+
+Explanation:
+Queries DNS for the hostname web and shows its resolved address.
+------------------------------------------------------------
