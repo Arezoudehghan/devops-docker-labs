@@ -1,0 +1,434 @@
+------------------------------------------------------------
+# docker run -d \
+  --name mysql-db \
+  -e MYSQL_ROOT_PASSWORD=123456 \
+  mysql:8
+
+Explanation:
+Starts a MySQL 8 container in the background with the name mysql-db and sets the root password environment variable.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints the container ID.
+- --name = container name: Assigns the name mysql-db to the container.
+- -e = --env (environment): Sets MYSQL_ROOT_PASSWORD=123456 inside the container.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop mysql-db
+
+Explanation:
+Stops the running container named mysql-db without removing it.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm mysql-db
+
+Explanation:
+Removes the stopped container named mysql-db.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume create mydata
+
+Explanation:
+Creates a Docker named volume called mydata.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume ls
+
+Explanation:
+Lists Docker volumes available on the host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume inspect mydata
+
+Explanation:
+Shows detailed metadata for the Docker volume named mydata.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name test-container \
+  -v mydata:/data \
+  nginx
+
+Explanation:
+Starts an Nginx container named test-container and mounts the mydata volume at /data inside the container.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name test-container to the container.
+- -v = --volume (volume): Mounts the named volume mydata at the container path /data.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name volume-test \
+  -v mydata:/data \
+  alpine \
+  sleep infinity
+
+Explanation:
+Starts an Alpine container named volume-test, mounts mydata at /data, and keeps the container running with sleep infinity.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name volume-test to the container.
+- -v = --volume (volume): Mounts the named volume mydata at the container path /data.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec -it volume-test sh
+
+Explanation:
+Starts an interactive shell inside the running container named volume-test.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open for interaction.
+- -t = --tty (TTY): Allocates a pseudo-TTY for the shell session.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "Hello Arezou" > /data/test.txt
+
+Explanation:
+Writes the text Hello Arezou to /data/test.txt, replacing the file if it already exists.
+
+Options:
+- > = output redirection: Sends the command output to /data/test.txt and overwrites existing file content.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat /data/test.txt
+
+Explanation:
+Prints the contents of /data/test.txt to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# exit
+
+Explanation:
+Exits the current shell session.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f volume-test
+
+Explanation:
+Force-removes the container named volume-test, stopping it first if necessary.
+
+Options:
+- -f = --force (force): Forces removal of a running container by sending it a termination signal first.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all Docker containers, including running and stopped containers.
+
+Options:
+- -a = --all (all): Shows all containers instead of only running containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -v mydata:/data \
+  alpine \
+  cat /data/test.txt
+
+Explanation:
+Creates a temporary Alpine container, mounts mydata at /data, prints the stored file, and removes the container when it exits.
+
+Options:
+- --rm = automatically remove container: Removes the container automatically after its process exits.
+- -v = --volume (volume): Mounts the named volume mydata at the container path /data.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name app1 \
+  -v shared-data:/data \
+  alpine \
+  sleep infinity
+
+Explanation:
+Starts an Alpine container named app1 and mounts the shared-data volume at /data.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name app1 to the container.
+- -v = --volume (volume): Mounts the named volume shared-data at the container path /data.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name app2 \
+  -v shared-data:/data \
+  alpine \
+  sleep infinity
+
+Explanation:
+Starts an Alpine container named app2 and mounts the same shared-data volume at /data.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name app2 to the container.
+- -v = --volume (volume): Mounts the named volume shared-data at the container path /data.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec app1 sh -c 'echo hello > /data/file.txt'
+
+Explanation:
+Runs a shell command inside app1 that writes hello to /data/file.txt in the mounted volume.
+
+Options:
+- -c = command string: Tells sh to execute the following quoted command string.
+- > = output redirection: Writes echo output to /data/file.txt and overwrites existing file content.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec app2 cat /data/file.txt
+
+Explanation:
+Runs cat inside app2 to read /data/file.txt from the shared volume.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume create mysql-data
+
+Explanation:
+Creates a Docker named volume called mysql-data.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name mysql-db \
+  -e MYSQL_ROOT_PASSWORD=StrongPassword \
+  -v mysql-data:/var/lib/mysql \
+  mysql:8
+
+Explanation:
+Starts a MySQL 8 container named mysql-db and stores MySQL data in the mysql-data named volume.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name mysql-db to the container.
+- -e = --env (environment): Sets MYSQL_ROOT_PASSWORD=StrongPassword inside the container.
+- -v = --volume (volume): Mounts mysql-data at /var/lib/mysql inside the container.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f mysql-db
+
+Explanation:
+Force-removes the container named mysql-db, stopping it first if necessary.
+
+Options:
+- -f = --force (force): Forces removal of a running container by sending it a termination signal first.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop mycontainer
+
+Explanation:
+Stops the running container named mycontainer without removing it.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm mycontainer
+
+Explanation:
+Removes the stopped container named mycontainer.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume rm mydata
+
+Explanation:
+Removes the Docker volume named mydata if it is not currently in use.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume prune
+
+Explanation:
+Removes unused anonymous local Docker volumes by default.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  -v mysql-data:/var/lib/mysql \
+  mysql:8
+
+Explanation:
+Starts a MySQL 8 container in the background and mounts mysql-data at /var/lib/mysql.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -v = --volume (volume): Mounts mysql-data at /var/lib/mysql inside the container.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name db \
+  -v db-data:/var/lib/mysql \
+  mysql:8
+
+Explanation:
+Starts a MySQL 8 container named db and mounts the db-data volume at /var/lib/mysql.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name db to the container.
+- -v = --volume (volume): Mounts db-data at /var/lib/mysql inside the container.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume create db-data
+
+Explanation:
+Creates a Docker named volume called db-data.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name test \
+  --mount type=volume,source=mydata,target=/data \
+  alpine \
+  sleep infinity
+
+Explanation:
+Starts an Alpine container named test and mounts the mydata named volume at /data using --mount syntax.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name test to the container.
+- --mount = mount specification: Creates a mount with type=volume, source=mydata, and target=/data.
+- type=volume = mount type value: Selects a Docker volume mount.
+- source=mydata = mount source value: Uses the named volume mydata as the source.
+- target=/data = mount target value: Mounts the volume at /data inside the container.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# DELETE FROM users;
+
+Explanation:
+Deletes all rows from the users table in the currently selected SQL database.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume create lesson19-data
+
+Explanation:
+Creates a Docker named volume called lesson19-data.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume inspect lesson19-data
+
+Explanation:
+Shows detailed metadata for the Docker volume named lesson19-data.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name lesson19-container \
+  -v lesson19-data:/data \
+  alpine \
+  sleep infinity
+
+Explanation:
+Starts an Alpine container named lesson19-container and mounts lesson19-data at /data for the persistence lab.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name lesson19-container to the container.
+- -v = --volume (volume): Mounts lesson19-data at /data inside the container.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec lesson19-container \
+  sh -c 'echo "Docker Volume Persistence Test" > /data/test.txt'
+
+Explanation:
+Runs a shell command inside lesson19-container that writes the persistence test text to /data/test.txt.
+
+Options:
+- -c = command string: Tells sh to execute the following quoted command string.
+- > = output redirection: Writes echo output to /data/test.txt and overwrites existing file content.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec lesson19-container cat /data/test.txt
+
+Explanation:
+Runs cat inside lesson19-container to print the contents of /data/test.txt.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f lesson19-container
+
+Explanation:
+Force-removes lesson19-container, stopping it first if necessary.
+
+Options:
+- -f = --force (force): Forces removal of a running container by sending it a termination signal first.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -v lesson19-data:/data \
+  alpine \
+  cat /data/test.txt
+
+Explanation:
+Creates a temporary Alpine container, mounts lesson19-data at /data, prints the persisted file, and removes the container after it exits.
+
+Options:
+- --rm = automatically remove container: Removes the container automatically after its process exits.
+- -v = --volume (volume): Mounts lesson19-data at /data inside the container.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume rm lesson19-data
+
+Explanation:
+Removes the Docker volume named lesson19-data if it is not currently in use.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps -a --filter volume=lesson19-data
+
+Explanation:
+Lists all containers whose mounts reference the volume lesson19-data.
+
+Options:
+- -a = --all (all): Shows all containers instead of only running containers.
+- --filter = filter output: Limits results using the filter expression volume=lesson19-data.
+- volume=lesson19-data = filter value: Matches containers that use the specified volume.
+------------------------------------------------------------
