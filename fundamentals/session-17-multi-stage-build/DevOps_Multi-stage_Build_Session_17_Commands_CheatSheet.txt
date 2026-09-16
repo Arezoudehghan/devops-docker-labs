@@ -1,0 +1,991 @@
+------------------------------------------------------------
+# FROM node:22
+
+Explanation:
+Starts a Docker build stage from node:22.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# WORKDIR /app
+
+Explanation:
+Sets /app as the working directory for following Dockerfile instructions.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY package*.json ./
+
+Explanation:
+Copies package*.json from the build context to ./ in the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN npm install
+
+Explanation:
+Installs the Node.js project dependencies during the image build.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY . .
+
+Explanation:
+Copies . from the build context to . in the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN npm run build
+
+Explanation:
+Runs the project's npm build script during the image build.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["npm", "start"]
+
+Explanation:
+Sets npm start as the default container command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM node:22 AS builder
+
+Explanation:
+Starts a Docker build stage from node:22 and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM nginx:alpine
+
+Explanation:
+Starts a Docker build stage from nginx:alpine.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM some-build-image AS builder
+
+Explanation:
+Starts a Docker build stage from some-build-image and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN build-command
+
+Explanation:
+Runs the example build command during the image build.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM lightweight-runtime-image
+
+Explanation:
+Starts a Docker build stage from lightweight-runtime-image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /app/output /app
+
+Explanation:
+Copies /app/output from stage builder to /app in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["run-command"]
+
+Explanation:
+Sets the shown command as the default container command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM ubuntu:24.04 AS stage1
+
+Explanation:
+Starts a Docker build stage from ubuntu:24.04 and names the stage stage1.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM alpine:3.22 AS stage2
+
+Explanation:
+Starts a Docker build stage from alpine:3.22 and names the stage stage2.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /app/dist /usr/share/nginx/html
+
+Explanation:
+Copies /app/dist from stage builder to /usr/share/nginx/html in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=0 /app/dist /usr/share/nginx/html
+
+Explanation:
+Copies /app/dist from stage 0 to /usr/share/nginx/html in the current stage.
+
+Options:
+- --from=0 = source stage: Reads files from the stage or stage index 0.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM node:22-alpine AS builder
+
+Explanation:
+Starts a Docker build stage from node:22-alpine and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN npm ci
+
+Explanation:
+Installs Node.js dependencies from the lock file using a clean CI-oriented install.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# EXPOSE 80
+
+Explanation:
+Documents that the container is expected to listen on port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["nginx", "-g", "daemon off;"]
+
+Explanation:
+Starts Nginx in the foreground as the default container command.
+
+Options:
+- -g = global directives: Passes the following Nginx directive from the command line.
+- daemon off; = directive value: Disables Nginx daemon mode.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd /app
+
+Explanation:
+Changes the current shell directory to /app.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM golang:1.25-alpine AS builder
+
+Explanation:
+Starts a Docker build stage from golang:1.25-alpine and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# WORKDIR /src
+
+Explanation:
+Sets /src as the working directory for following Dockerfile instructions.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN CGO_ENABLED=0 GOOS=linux go build -o app .
+
+Explanation:
+Builds the Go application for Linux with CGO disabled and writes the binary as app.
+
+Options:
+- CGO_ENABLED=0 = environment assignment: Disables CGO for this build command.
+- GOOS=linux = environment assignment: Targets Linux.
+- -o = output file: Writes the compiled binary to app.
+- . = package argument: Builds the Go package in the current directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM alpine:3.22
+
+Explanation:
+Starts a Docker build stage from alpine:3.22.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /src/app /app/app
+
+Explanation:
+Copies /src/app from stage builder to /app/app in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# EXPOSE 8080
+
+Explanation:
+Documents that the container is expected to listen on port 8080.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["/app/app"]
+
+Explanation:
+Runs the application binary as the default container command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM scratch
+
+Explanation:
+Starts a Docker build stage from scratch.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /src/app /app
+
+Explanation:
+Copies /src/app from stage builder to /app in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ENTRYPOINT ["/app"]
+
+Explanation:
+Sets the container executable entry point.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec -it myapp sh
+
+Explanation:
+Runs an interactive shell inside the specified running container.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-terminal.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM python:3.13-slim AS builder
+
+Explanation:
+Starts a Docker build stage from python:3.13-slim and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY requirements.txt .
+
+Explanation:
+Copies requirements.txt from the build context to . in the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN pip install \
+    --no-cache-dir \
+    --prefix=/install \
+    -r requirements.txt
+
+Explanation:
+Installs the Python dependencies shown by the command during the image build.
+
+Options:
+- --no-cache-dir = disable cache: Prevents pip from storing downloaded packages in its cache.
+- --prefix=/install = installation prefix: Installs files under /install.
+- -r = --requirement (requirement file): Reads packages from requirements.txt.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM python:3.13-slim
+
+Explanation:
+Starts a Docker build stage from python:3.13-slim.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /install /usr/local
+
+Explanation:
+Copies /install from stage builder to /usr/local in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["python", "app.py"]
+
+Explanation:
+Runs python app.py as the default container command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN apt-get update && \
+    apt-get install -y gcc build-essential
+
+Explanation:
+Refreshes the APT package index and then installs the required build packages if the update succeeds.
+
+Options:
+- && = shell AND operator: Runs the install command only if apt-get update succeeds.
+- -y = --assume-yes (assume yes): Automatically answers yes to confirmation prompts.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN pip install -r requirements.txt
+
+Explanation:
+Installs the Python dependencies shown by the command during the image build.
+
+Options:
+- -r = --requirement (requirement file): Reads packages from requirements.txt.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN pip install \
+    --prefix=/install \
+    -r requirements.txt
+
+Explanation:
+Installs the Python dependencies shown by the command during the image build.
+
+Options:
+- --prefix=/install = installation prefix: Installs files under /install.
+- -r = --requirement (requirement file): Reads packages from requirements.txt.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t myapp:v1 .
+
+Explanation:
+Builds a Docker image from the current build context and tags the image as myapp:v1.
+
+Options:
+- -t = --tag (tag): Assigns the image name/tag myapp:v1.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM nginx:alpine AS production
+
+Explanation:
+Starts a Docker build stage from nginx:alpine and names the stage production.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build --target builder -t myapp-builder .
+
+Explanation:
+Builds a Docker image from the current build context and uses the builder stage as the build target and tags the image as myapp-builder.
+
+Options:
+- --target builder = target stage: Uses builder as the final build stage.
+- -t = --tag (tag): Assigns the image name/tag myapp-builder.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM node:22-alpine AS base
+
+Explanation:
+Starts a Docker build stage from node:22-alpine and names the stage base.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM base AS dependencies
+
+Explanation:
+Starts a Docker build stage from base and names the stage dependencies.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM dependencies AS builder
+
+Explanation:
+Starts a Docker build stage from dependencies and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM builder AS test
+
+Explanation:
+Starts a Docker build stage from builder and names the stage test.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN npm test
+
+Explanation:
+Runs the project's npm test command during the image build.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM base AS development
+
+Explanation:
+Starts a Docker build stage from base and names the stage development.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["npm", "run", "dev"]
+
+Explanation:
+Sets npm run dev as the default container command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM base AS builder
+
+Explanation:
+Starts a Docker build stage from base and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build \
+  --target development \
+  -t myapp:dev \
+  .
+
+Explanation:
+Builds a Docker image from the current build context and uses the development stage as the build target and tags the image as myapp:dev.
+
+Options:
+- --target development = target stage: Uses development as the final build stage.
+- -t = --tag (tag): Assigns the image name/tag myapp:dev.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build \
+  --target production \
+  -t myapp:prod \
+  .
+
+Explanation:
+Builds a Docker image from the current build context and uses the production stage as the build target and tags the image as myapp:prod.
+
+Options:
+- --target production = target stage: Uses production as the final build stage.
+- -t = --tag (tag): Assigns the image name/tag myapp:prod.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t multi-demo:v1 .
+
+Explanation:
+Builds a Docker image from the current build context and tags the image as multi-demo:v1.
+
+Options:
+- -t = --tag (tag): Assigns the image name/tag multi-demo:v1.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p ~/labs/multistage-demo
+
+Explanation:
+Creates the lab directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates missing parent directories and does not fail if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd ~/labs/multistage-demo
+
+Explanation:
+Changes the current shell directory to ~/labs/multistage-demo.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > main.go <<'EOF'
+package main
+
+import (
+    "fmt"
+    "net/http"
+)
+
+func main() {
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintln(w, "Multi-stage Build works!")
+    })
+
+    fmt.Println("Server started on :8080")
+    http.ListenAndServe(":8080", nil)
+}
+EOF
+
+Explanation:
+Creates main.go and writes the shown Go source code into it.
+
+Options:
+- > = shell redirection operator: Replaces the target file with redirected input.
+- <<'EOF' = quoted here-document operator: Supplies literal input until EOF without shell expansion.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > go.mod <<'EOF'
+module multistage-demo
+
+go 1.25
+EOF
+
+Explanation:
+Creates go.mod and writes the shown Go module definition into it.
+
+Options:
+- > = shell redirection operator: Replaces the target file with redirected input.
+- <<'EOF' = quoted here-document operator: Supplies literal input until EOF without shell expansion.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY go.mod ./
+
+Explanation:
+Copies go.mod from the build context to ./ in the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY main.go ./
+
+Explanation:
+Copies main.go from the build context to ./ in the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /src/app ./app
+
+Explanation:
+Copies /src/app from stage builder to ./app in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["./app"]
+
+Explanation:
+Runs the application binary as the default container command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t multistage-demo:v1 .
+
+Explanation:
+Builds a Docker image from the current build context and tags the image as multistage-demo:v1.
+
+Options:
+- -t = --tag (tag): Assigns the image name/tag multistage-demo:v1.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls multistage-demo
+
+Explanation:
+Lists local Docker images matching the specified repository name.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  -d \
+  --name multistage-demo \
+  -p 8080:8080 \
+  multistage-demo:v1
+
+Explanation:
+Starts multistage-demo:v1 in the background, names the container, and publishes host port 8080 to container port 8080.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name multistage-demo = container name: Names the container multistage-demo.
+- -p = --publish (publish): Maps host port 8080 to container port 8080.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists running Docker containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs multistage-demo
+
+Explanation:
+Displays logs from the specified running container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://localhost:8080
+
+Explanation:
+Sends an HTTP request to the local application on port 8080.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec multistage-demo go version
+
+Explanation:
+Runs the specified command inside the running container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec -it multistage-demo sh
+
+Explanation:
+Runs an interactive shell inside the specified running container.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-terminal.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -lah /app
+
+Explanation:
+Lists all entries in /app with detailed information and human-readable sizes.
+
+Options:
+- -l = --format=long (long format): Shows detailed file information.
+- -a = --all (all): Includes hidden entries.
+- -h = --human-readable (human readable): Shows sizes in human-readable units.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build \
+  --target builder \
+  -t multistage-demo:builder \
+  .
+
+Explanation:
+Builds a Docker image from the current build context and uses the builder stage as the build target and tags the image as multistage-demo:builder.
+
+Options:
+- --target builder = target stage: Uses builder as the final build stage.
+- -t = --tag (tag): Assigns the image name/tag multistage-demo:builder.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls | grep multistage-demo
+
+Explanation:
+Lists local Docker images and filters the output for lines containing multistage-demo.
+
+Options:
+- | = shell pipe operator: Sends the output of docker image ls to grep multistage-demo.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls \
+  --format 'table {{.Repository}}\t{{.Tag}}\t{{.Size}}'
+
+Explanation:
+Lists local Docker images using a custom table showing repository, tag, and size.
+
+Options:
+- --format = output format: Formats the image list with the supplied Go template.
+- 'table {{.Repository}}\t{{.Tag}}\t{{.Size}}' = format value: Displays Repository, Tag, and Size columns.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image inspect multistage-demo:v1
+
+Explanation:
+Displays detailed metadata for the specified Docker image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image inspect \
+  multistage-demo:v1 \
+  --format '{{.Size}}'
+
+Explanation:
+Inspects the image and prints only its size field.
+
+Options:
+- --format = output format: Formats inspect output with the supplied Go template.
+- '{{.Size}}' = format value: Selects only the image Size field.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker history multistage-demo:v1
+
+Explanation:
+Displays the layer history of the specified Docker image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM node:22-alpine
+
+Explanation:
+Starts a Docker build stage from node:22-alpine.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /app /app
+
+Explanation:
+Copies /app from stage builder to /app in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /app/dist /app/dist
+
+Explanation:
+Copies /app/dist from stage builder to /app/dist in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM maven:3-eclipse-temurin-21 AS builder
+
+Explanation:
+Starts a Docker build stage from maven:3-eclipse-temurin-21 and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY pom.xml .
+
+Explanation:
+Copies pom.xml from the build context to . in the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY src ./src
+
+Explanation:
+Copies src from the build context to ./src in the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN mvn clean package -DskipTests
+
+Explanation:
+Runs the Maven clean and package phases while skipping test execution.
+
+Options:
+- -DskipTests = Maven user property: Sets the skipTests property so test execution is skipped.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM eclipse-temurin:21-jre
+
+Explanation:
+Starts a Docker build stage from eclipse-temurin:21-jre.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /app/target/app.jar app.jar
+
+Explanation:
+Copies /app/target/app.jar from stage builder to app.jar in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# CMD ["java", "-jar", "app.jar"]
+
+Explanation:
+Runs the Java application from app.jar as the default container command.
+
+Options:
+- -jar = JAR execution option: Tells Java to execute app.jar.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build \
+  -t nexus.example.local/myapp:$CI_COMMIT_SHORT_SHA \
+  .
+
+Explanation:
+Builds a Docker image from the current build context and tags the image as nexus.example.local/myapp:$CI_COMMIT_SHORT_SHA.
+
+Options:
+- -t = --tag (tag): Assigns the image name/tag nexus.example.local/myapp:$CI_COMMIT_SHORT_SHA.
+- $CI_COMMIT_SHORT_SHA = shell variable: Expands to GitLab's short commit SHA value.
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push \
+  nexus.example.local/myapp:$CI_COMMIT_SHORT_SHA
+
+Explanation:
+Pushes the specified application image to the configured registry.
+
+Options:
+- $CI_COMMIT_SHORT_SHA = shell variable: Expands to GitLab's short commit SHA value.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM alpine AS builder
+
+Explanation:
+Starts a Docker build stage from alpine and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ARG PASSWORD
+
+Explanation:
+Declares the Docker build argument PASSWORD.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# RUN echo "$PASSWORD" > /tmp/password
+
+Explanation:
+Writes the expanded PASSWORD value into /tmp/password during the image build.
+
+Options:
+- $PASSWORD = shell variable: Expands to the current PASSWORD build-argument value.
+- > = shell redirection operator: Replaces /tmp/password with the command output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM node:22-alpine AS deps
+
+Explanation:
+Starts a Docker build stage from node:22-alpine and names the stage deps.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM deps AS builder
+
+Explanation:
+Starts a Docker build stage from deps and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM nginx:alpine AS runtime
+
+Explanation:
+Starts a Docker build stage from nginx:alpine and names the stage runtime.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /app /
+
+Explanation:
+Copies /app from stage builder to / in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder / /
+
+Explanation:
+Copies / from stage builder to / in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM golang:1.25 AS builder
+
+Explanation:
+Starts a Docker build stage from golang:1.25 and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /source/path /destination/path
+
+Explanation:
+Copies /source/path from stage builder to /destination/path in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM build-image AS builder
+
+Explanation:
+Starts a Docker build stage from build-image and names the stage builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM runtime-image
+
+Explanation:
+Starts a Docker build stage from runtime-image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder /build/output /app
+
+Explanation:
+Copies /build/output from stage builder to /app in the current stage.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull IMAGE
+
+Explanation:
+Technical correction: The lesson showed docker pull without its required image argument. This corrected form pulls the specified image from a registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push IMAGE
+
+Explanation:
+Technical correction: The lesson showed docker push without its required image argument. This corrected form pushes the specified image to a registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=builder SOURCE DESTINATION
+
+Explanation:
+Technical correction: The lesson showed COPY --from=builder without required source and destination paths. This corrected generic form includes both required paths.
+
+Options:
+- --from=builder = source stage: Reads files from the stage or stage index builder.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=0 SOURCE DESTINATION
+
+Explanation:
+Technical correction: The lesson showed COPY --from=0 without required source and destination paths. This corrected generic form includes both required paths.
+
+Options:
+- --from=0 = source stage: Reads files from the stage or stage index 0.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY --from=STAGE SOURCE DESTINATION
+
+Explanation:
+Technical correction: The lesson showed COPY --from without the required stage value, source, and destination. This corrected generic form includes all required values.
+
+Options:
+- --from=STAGE = source stage: Reads files from the stage or stage index STAGE.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build .
+
+Explanation:
+Technical correction: The lesson showed docker build without its required build context. This corrected form uses the current directory as the build context.
+
+Options:
+- . = build context: Uses the current directory as the build context.
+------------------------------------------------------------
