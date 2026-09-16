@@ -1,0 +1,375 @@
+------------------------------------------------------------
+# docker volume create app-data
+
+Explanation:
+Creates a Docker named volume called app-data.
+
+------------------------------------------------------------
+# docker volume ls
+
+Explanation:
+Lists Docker volumes available on the host.
+
+------------------------------------------------------------
+# docker volume inspect app-data
+
+Explanation:
+Shows detailed metadata and configuration for the app-data volume.
+
+------------------------------------------------------------
+# docker run --rm \
+  -v app-data:/data \
+  alpine \
+  sh -c 'echo "Hello from Docker Volume" > /data/file1.txt'
+
+Explanation:
+Runs a temporary Alpine container, mounts app-data at /data, and writes text into /data/file1.txt.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the command finishes.
+- -v = --volume: Mounts app-data from Docker into /data inside the container.
+- -c = command string: Tells sh to execute the following quoted shell command.
+- > = output redirection: Writes the output of echo to /data/file1.txt, replacing the file if it already exists.
+------------------------------------------------------------
+# docker run --rm \
+  -v app-data:/data \
+  alpine \
+  cat /data/file1.txt
+
+Explanation:
+Runs a temporary Alpine container and reads file1.txt from the app-data volume.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the command finishes.
+- -v = --volume: Mounts app-data from Docker into /data inside the container.
+------------------------------------------------------------
+# mkdir -p ~/docker-backups
+
+Explanation:
+Creates the docker-backups directory in the current user's home directory.
+
+Options:
+- -p = --parents: Creates parent directories as needed and does not fail if the directory already exists.
+------------------------------------------------------------
+# ls -ld ~/docker-backups
+
+Explanation:
+Shows detailed information about the docker-backups directory itself.
+
+Options:
+- -l = long listing format: Displays detailed file information.
+- -d = --directory: Lists the directory entry itself instead of listing its contents.
+------------------------------------------------------------
+# docker run --rm \
+  -v app-data:/data:ro \
+  -v ~/docker-backups:/backup \
+  alpine \
+  tar czf /backup/app-data-backup.tar.gz -C /data .
+
+Explanation:
+Runs a temporary Alpine container and creates a gzip-compressed backup of the app-data volume in ~/docker-backups.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the backup command finishes.
+- -v = --volume: Mounts Docker volumes or host paths into the container.
+- :ro = read-only mount mode: Mounts app-data so the backup container cannot modify it.
+- c = --create: Creates a new tar archive.
+- z = --gzip: Compresses the archive with gzip.
+- f = --file: Uses /backup/app-data-backup.tar.gz as the archive file.
+- -C = --directory: Changes to /data before archiving.
+- . = current directory argument: Archives all content under /data.
+------------------------------------------------------------
+# ls -lh ~/docker-backups
+
+Explanation:
+Lists files in ~/docker-backups with detailed, human-readable sizes.
+
+Options:
+- -l = long listing format: Displays detailed file information.
+- -h = --human-readable: Shows file sizes in readable units such as KB or MB.
+------------------------------------------------------------
+# tar tzf ~/docker-backups/app-data-backup.tar.gz
+
+Explanation:
+Lists the files stored inside the gzip-compressed backup archive without extracting them.
+
+Options:
+- t = --list: Lists archive contents.
+- z = --gzip: Reads the archive through gzip decompression.
+- f = --file: Uses ~/docker-backups/app-data-backup.tar.gz as the archive file.
+------------------------------------------------------------
+# docker volume rm app-data
+
+Explanation:
+Removes the Docker volume named app-data.
+
+------------------------------------------------------------
+# docker volume create app-data-restored
+
+Explanation:
+Creates a new Docker named volume called app-data-restored.
+
+------------------------------------------------------------
+# docker run --rm \
+  -v app-data-restored:/data \
+  -v ~/docker-backups:/backup:ro \
+  alpine \
+  tar xzf /backup/app-data-backup.tar.gz -C /data
+
+Explanation:
+Runs a temporary Alpine container and restores the backup archive into app-data-restored.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the restore command finishes.
+- -v = --volume: Mounts the destination volume and backup directory into the container.
+- :ro = read-only mount mode: Mounts the host backup directory so the container cannot modify backup files.
+- x = --extract: Extracts files from the tar archive.
+- z = --gzip: Reads the archive through gzip decompression.
+- f = --file: Uses /backup/app-data-backup.tar.gz as the archive file.
+- -C = --directory: Changes to /data before extracting files.
+------------------------------------------------------------
+# docker run --rm \
+  -v app-data-restored:/data \
+  alpine \
+  cat /data/file1.txt
+
+Explanation:
+Runs a temporary Alpine container and reads file1.txt from the restored volume to verify its data.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the command finishes.
+- -v = --volume: Mounts app-data-restored into /data inside the container.
+------------------------------------------------------------
+# docker run --rm \
+  -v app-data-restored:/data \
+  alpine \
+  find /data -type f
+
+Explanation:
+Runs a temporary Alpine container and lists regular files stored under /data in the restored volume.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the command finishes.
+- -v = --volume: Mounts app-data-restored into /data inside the container.
+- -type f = file-type test: Makes find return regular files only.
+------------------------------------------------------------
+# docker run --rm \
+  -v app-data-restored:/data \
+  alpine \
+  ls -la /data
+
+Explanation:
+Runs a temporary Alpine container and shows detailed information for all files in the restored volume.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the command finishes.
+- -v = --volume: Mounts app-data-restored into /data inside the container.
+- -l = long listing format: Displays detailed file information.
+- -a = --all: Includes hidden entries.
+------------------------------------------------------------
+# docker run --rm \
+  -v app-data:/data \
+  -v ~/docker-backups:/backup:ro \
+  alpine \
+  tar xzf /backup/app-data-backup.tar.gz -C /data
+
+Explanation:
+Runs a temporary Alpine container and restores the backup archive into a volume named app-data.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the restore command finishes.
+- -v = --volume: Mounts the destination volume and backup directory into the container.
+- :ro = read-only mount mode: Mounts the host backup directory so the container cannot modify backup files.
+- x = --extract: Extracts files from the tar archive.
+- z = --gzip: Reads the archive through gzip decompression.
+- f = --file: Uses /backup/app-data-backup.tar.gz as the archive file.
+- -C = --directory: Changes to /data before extracting files.
+------------------------------------------------------------
+# docker stop myapp
+
+Explanation:
+Stops the running Docker container named myapp.
+
+------------------------------------------------------------
+# docker start myapp
+
+Explanation:
+Starts the stopped Docker container named myapp.
+
+------------------------------------------------------------
+# pg_dump
+
+Explanation:
+Runs the PostgreSQL logical backup utility.
+
+------------------------------------------------------------
+# mysqldump
+
+Explanation:
+Runs the MySQL logical backup utility.
+
+------------------------------------------------------------
+# mysqlpump
+
+Explanation:
+Runs the MySQL mysqlpump logical backup utility.
+
+------------------------------------------------------------
+# docker exec mysql-db \
+  mysqldump -u root -p mydatabase > ~/docker-backups/mydatabase.sql
+
+Explanation:
+Runs mysqldump inside mysql-db and writes the SQL dump to ~/docker-backups/mydatabase.sql on the Docker host.
+
+Options:
+- -u = --user: Uses root as the MySQL user.
+- -p = --password: Requests a MySQL password without placing the password value directly in the command.
+- > = output redirection: Writes standard output from docker exec into ~/docker-backups/mydatabase.sql, replacing the file if it already exists.
+------------------------------------------------------------
+# docker exec -i mysql-db \
+  mysql -u root -p mydatabase < ~/docker-backups/mydatabase.sql
+
+Explanation:
+Runs the MySQL client inside mysql-db and sends the SQL backup file to it for restore.
+
+Options:
+- -i = --interactive: Keeps standard input open for the docker exec process.
+- -u = --user: Uses root as the MySQL user.
+- -p = --password: Requests a MySQL password without placing the password value directly in the command.
+- < = input redirection: Sends ~/docker-backups/mydatabase.sql to the standard input of the docker exec command.
+------------------------------------------------------------
+# docker run --rm \
+  -v app-data:/data:ro \
+  -v ~/docker-backups:/backup \
+  alpine \
+  sh -c 'tar czf /backup/app-data-$(date +%F-%H%M).tar.gz -C /data .'
+
+Explanation:
+Runs a temporary Alpine container and creates a timestamped gzip-compressed backup of app-data.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the backup command finishes.
+- -v = --volume: Mounts the Docker volume and host backup directory into the container.
+- :ro = read-only mount mode: Mounts app-data so the backup container cannot modify it.
+- -c = command string: Tells sh to execute the following quoted shell command.
+- c = --create: Creates a new tar archive.
+- z = --gzip: Compresses the archive with gzip.
+- f = --file: Uses the generated timestamped path as the archive file.
+- -C = --directory: Changes to /data before archiving.
+- . = current directory argument: Archives all content under /data.
+- $(...) = command substitution: Runs date +%F-%H%M and inserts its output into the backup filename.
+- +%F-%H%M = date format argument: Produces a date and time value using %F for YYYY-MM-DD, %H for hour, and %M for minute.
+------------------------------------------------------------
+# docker volume create lab-volume
+
+Explanation:
+Creates a Docker named volume called lab-volume.
+
+------------------------------------------------------------
+# docker run --rm \
+  -v lab-volume:/data \
+  alpine \
+  sh -c '
+    echo "Docker" > /data/docker.txt
+    echo "DevOps" > /data/devops.txt
+    echo "Backup Test" > /data/backup.txt
+  '
+
+Explanation:
+Runs a temporary Alpine container and creates three test files inside lab-volume.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the command finishes.
+- -v = --volume: Mounts lab-volume into /data inside the container.
+- -c = command string: Tells sh to execute the following multi-line shell command.
+- > = output redirection: Writes each echo result to its specified file, replacing the file if it already exists.
+------------------------------------------------------------
+# docker run --rm \
+  -v lab-volume:/data \
+  alpine \
+  ls -la /data
+
+Explanation:
+Runs a temporary Alpine container and lists all files in lab-volume with detailed information.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the command finishes.
+- -v = --volume: Mounts lab-volume into /data inside the container.
+- -l = long listing format: Displays detailed file information.
+- -a = --all: Includes hidden entries.
+------------------------------------------------------------
+# docker run --rm \
+  -v lab-volume:/data:ro \
+  -v ~/docker-backups:/backup \
+  alpine \
+  tar czf /backup/lab-volume.tar.gz -C /data .
+
+Explanation:
+Runs a temporary Alpine container and creates a gzip-compressed backup of lab-volume.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the backup command finishes.
+- -v = --volume: Mounts the Docker volume and host backup directory into the container.
+- :ro = read-only mount mode: Mounts lab-volume so the backup container cannot modify it.
+- c = --create: Creates a new tar archive.
+- z = --gzip: Compresses the archive with gzip.
+- f = --file: Uses /backup/lab-volume.tar.gz as the archive file.
+- -C = --directory: Changes to /data before archiving.
+- . = current directory argument: Archives all content under /data.
+------------------------------------------------------------
+# tar tzf ~/docker-backups/lab-volume.tar.gz
+
+Explanation:
+Lists the files stored inside the lab-volume backup archive without extracting them.
+
+Options:
+- t = --list: Lists archive contents.
+- z = --gzip: Reads the archive through gzip decompression.
+- f = --file: Uses ~/docker-backups/lab-volume.tar.gz as the archive file.
+------------------------------------------------------------
+# docker volume rm lab-volume
+
+Explanation:
+Removes the Docker volume named lab-volume.
+
+------------------------------------------------------------
+# docker volume create lab-volume-restored
+
+Explanation:
+Creates a new Docker named volume called lab-volume-restored.
+
+------------------------------------------------------------
+# docker run --rm \
+  -v lab-volume-restored:/data \
+  -v ~/docker-backups:/backup:ro \
+  alpine \
+  tar xzf /backup/lab-volume.tar.gz -C /data
+
+Explanation:
+Runs a temporary Alpine container and restores lab-volume.tar.gz into lab-volume-restored.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the restore command finishes.
+- -v = --volume: Mounts the destination volume and backup directory into the container.
+- :ro = read-only mount mode: Mounts the host backup directory so the container cannot modify backup files.
+- x = --extract: Extracts files from the tar archive.
+- z = --gzip: Reads the archive through gzip decompression.
+- f = --file: Uses /backup/lab-volume.tar.gz as the archive file.
+- -C = --directory: Changes to /data before extracting files.
+------------------------------------------------------------
+# docker run --rm \
+  -v lab-volume-restored:/data \
+  alpine \
+  sh -c 'ls -la /data && cat /data/backup.txt'
+
+Explanation:
+Runs a temporary Alpine container, lists the restored files, and then reads backup.txt if the first command succeeds.
+
+Options:
+- --rm = remove container automatically: Deletes the container after the command finishes.
+- -v = --volume: Mounts lab-volume-restored into /data inside the container.
+- -c = command string: Tells sh to execute the following quoted shell command.
+- -l = long listing format: Displays detailed file information.
+- -a = --all: Includes hidden entries.
+- && = AND operator: Runs cat /data/backup.txt only if ls -la /data succeeds.
+------------------------------------------------------------
