@@ -1,0 +1,186 @@
+------------------------------------------------------------
+# docker run nginx
+
+Explanation:
+Creates and starts a container from the nginx image in the foreground.
+------------------------------------------------------------
+# docker run -d --name web1 nginx
+
+Explanation:
+Creates and starts a container named web1 from the nginx image in detached mode.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints its container ID.
+- --name web1 = --name: Assigns the container name web1.
+------------------------------------------------------------
+# docker run -d --name web2 nginx
+
+Explanation:
+Creates and starts a container named web2 from the nginx image in detached mode.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints its container ID.
+- --name web2 = --name: Assigns the container name web2.
+------------------------------------------------------------
+# docker run -d --name web3 nginx
+
+Explanation:
+Creates and starts a container named web3 from the nginx image in detached mode.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints its container ID.
+- --name web3 = --name: Assigns the container name web3.
+------------------------------------------------------------
+# docker pull nginx
+
+Explanation:
+Downloads the nginx image from the configured container registry.
+------------------------------------------------------------
+# docker images
+
+Explanation:
+Lists Docker images stored on the local Docker host.
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists Docker images stored on the local Docker host.
+------------------------------------------------------------
+# FROM python:3.12-slim
+
+Explanation:
+Sets python:3.12-slim as the base image for the Dockerfile build stage.
+------------------------------------------------------------
+# WORKDIR /app
+
+Explanation:
+Sets /app as the working directory for following Dockerfile instructions and for the container at runtime.
+------------------------------------------------------------
+# COPY requirements.txt .
+
+Explanation:
+Copies requirements.txt from the build context into the current working directory in the image.
+------------------------------------------------------------
+# RUN pip install -r requirements.txt
+
+Explanation:
+Runs pip during the image build and installs the packages listed in requirements.txt.
+
+Options:
+- -r = --requirement (requirement): Installs packages from the specified requirements file.
+------------------------------------------------------------
+# COPY . .
+
+Explanation:
+Copies the current build-context directory into the current working directory in the image.
+------------------------------------------------------------
+# CMD ["python", "app.py"]
+
+Explanation:
+Sets the default container command to run app.py with Python when the container starts.
+------------------------------------------------------------
+# touch /tmp/test.txt
+
+Explanation:
+Creates an empty file named /tmp/test.txt if it does not exist, or updates its timestamps if it already exists.
+------------------------------------------------------------
+# docker rm container
+
+Explanation:
+Removes the Docker container named container.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# docker inspect web1
+
+Explanation:
+Displays detailed low-level information about the container named web1.
+------------------------------------------------------------
+# docker inspect web1 --format '{{.Config.Image}}'
+
+Explanation:
+Displays only the image reference configured for the web1 container by formatting the inspect output.
+
+Options:
+- --format '{{.Config.Image}}' = --format: Uses the Go template {{.Config.Image}} to print the container image field.
+------------------------------------------------------------
+# docker history nginx
+
+Explanation:
+Shows the history of the nginx image, including the commands that created its image layers.
+------------------------------------------------------------
+# docker image inspect nginx
+
+Explanation:
+Displays detailed low-level information about the nginx image.
+------------------------------------------------------------
+# docker inspect 123456abcdef
+
+Explanation:
+Displays detailed low-level information about the Docker object identified by 123456abcdef.
+------------------------------------------------------------
+# COPY . /app
+
+Explanation:
+Copies the current build-context directory into /app inside the image.
+------------------------------------------------------------
+# RUN pip install -r /app/requirements.txt
+
+Explanation:
+Runs pip during the image build and installs the packages listed in /app/requirements.txt.
+
+Options:
+- -r = --requirement (requirement): Installs packages from the specified requirements file.
+------------------------------------------------------------
+# RUN apt-get update
+
+Explanation:
+Refreshes the APT package index during the Docker image build.
+------------------------------------------------------------
+# RUN apt-get install -y curl
+
+Explanation:
+Installs the curl package during the Docker image build and automatically accepts confirmation prompts.
+
+Options:
+- -y = --yes / --assume-yes (assume yes): Automatically answers yes to installation confirmation prompts.
+------------------------------------------------------------
+# RUN apt-get update && \
+    apt-get install -y curl
+
+Explanation:
+Refreshes the APT package index and, only if that succeeds, installs curl in the same Dockerfile RUN instruction.
+
+Options:
+- && = AND operator: Runs the second command only if the first command exits successfully.
+- \ = line continuation: Continues the same shell command on the next line.
+- -y = --yes / --assume-yes (assume yes): Automatically answers yes to installation confirmation prompts.
+------------------------------------------------------------
+# docker run -d --name layer-test nginx
+
+Explanation:
+Creates and starts a container named layer-test from the nginx image in detached mode.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints its container ID.
+- --name layer-test = --name: Assigns the container name layer-test.
+------------------------------------------------------------
+# docker inspect layer-test --format '{{.Config.Image}}'
+
+Explanation:
+Displays only the image reference configured for the layer-test container by formatting the inspect output.
+
+Options:
+- --format '{{.Config.Image}}' = --format: Uses the Go template {{.Config.Image}} to print the container image field.
+------------------------------------------------------------
+# docker rm -f layer-test
+
+Explanation:
+Force-removes the Docker container named layer-test, including when it is running.
+
+Options:
+- -f = --force (force): Forces removal of a running container by stopping it with SIGKILL first.
+------------------------------------------------------------
