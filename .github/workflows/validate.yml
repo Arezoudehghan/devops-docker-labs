@@ -20,8 +20,18 @@ jobs:
 
       - name: Prepare safe environment files
         run: |
+          cp compose/session-34-environment-env-file/.env.example compose/session-34-environment-env-file/.env
           cp compose/session-36-networks/.env.example compose/session-36-networks/.env
           cp compose/session-37-depends-on-restart/.env.example compose/session-37-depends-on-restart/.env
+
+      - name: Validate Session 34 Compose configuration
+        run: docker compose --env-file compose/session-34-environment-env-file/.env -f compose/session-34-environment-env-file/compose.yaml config --quiet
+
+      - name: Validate Session 34 Python syntax
+        run: python3 -m py_compile compose/session-34-environment-env-file/app.py
+
+      - name: Pull Session 34 image
+        run: docker compose --env-file compose/session-34-environment-env-file/.env -f compose/session-34-environment-env-file/compose.yaml pull
 
       - name: Validate Session 36 Compose configuration
         run: docker compose --env-file compose/session-36-networks/.env -f compose/session-36-networks/compose.yaml config --quiet
