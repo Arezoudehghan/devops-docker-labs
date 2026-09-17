@@ -1,0 +1,311 @@
+------------------------------------------------------------
+# docker compose exec app env
+
+Explanation:
+Runs the `env` command inside the running `app` service container and prints its environment variables.
+------------------------------------------------------------
+# docker compose exec app env | sort
+
+Explanation:
+Prints the environment variables inside the `app` container and sorts the output alphabetically.
+
+Options:
+- | = pipe operator: Sends the output of `docker compose exec app env` to `sort`.
+------------------------------------------------------------
+# ssh your-user@192.168.94.90
+
+Explanation:
+Opens an SSH session to the host at `192.168.94.90`. Replace `your-user` with the actual remote username.
+------------------------------------------------------------
+# docker --version
+
+Explanation:
+Prints the installed Docker CLI version.
+
+Options:
+- --version = version information: Displays the Docker version and exits.
+------------------------------------------------------------
+# docker compose version
+
+Explanation:
+Prints the installed Docker Compose version.
+------------------------------------------------------------
+# docker pull python:3.12-alpine
+
+Explanation:
+Downloads the `python:3.12-alpine` image from the configured container registry.
+------------------------------------------------------------
+# sudo mkdir -p /opt/compose-env-lab/env
+
+Explanation:
+Creates the `/opt/compose-env-lab/env` directory with elevated privileges.
+
+Options:
+- -p = --parents (parents): Creates missing parent directories and does not fail if the directory already exists.
+------------------------------------------------------------
+# sudo chown -R "$USER":"$USER" /opt/compose-env-lab
+
+Explanation:
+Changes the owner and group of `/opt/compose-env-lab` to the current shell user recursively.
+
+Options:
+- -R = --recursive (recursive): Applies the ownership change to the directory and all files and subdirectories under it.
+------------------------------------------------------------
+# cd /opt/compose-env-lab
+
+Explanation:
+Changes the current shell directory to `/opt/compose-env-lab`.
+------------------------------------------------------------
+# pwd
+
+Explanation:
+Prints the absolute path of the current working directory.
+------------------------------------------------------------
+# nano app.py
+
+Explanation:
+Opens `app.py` in the Nano text editor.
+------------------------------------------------------------
+# nano env/common.env
+
+Explanation:
+Opens `env/common.env` in the Nano text editor.
+------------------------------------------------------------
+# nano env/dev.env
+
+Explanation:
+Opens `env/dev.env` in the Nano text editor.
+------------------------------------------------------------
+# nano env/prod.env
+
+Explanation:
+Opens `env/prod.env` in the Nano text editor.
+------------------------------------------------------------
+# nano .env
+
+Explanation:
+Opens the `.env` file in the Nano text editor.
+------------------------------------------------------------
+# nano compose.yaml
+
+Explanation:
+Opens `compose.yaml` in the Nano text editor.
+------------------------------------------------------------
+# python app.py
+
+Explanation:
+Runs the Python application defined in `app.py`. This is the executable command represented by the Compose `command` list in the lesson.
+------------------------------------------------------------
+# python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"
+
+Explanation:
+Runs a short Python command that requests the local `/health` endpoint and fails if the request cannot be completed.
+
+Options:
+- -c = command string: Executes the following Python code directly from the command line.
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Parses the Compose configuration, resolves variables, and prints the final normalized configuration without starting services.
+------------------------------------------------------------
+# docker compose config --environment
+
+Explanation:
+Prints the environment values that Docker Compose uses for variable interpolation.
+
+Options:
+- --environment = interpolation environment: Displays the environment used by Compose while resolving variables.
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates or updates the Compose services and starts them in the background.
+
+Options:
+- -d = --detach (detached mode): Runs the containers in the background.
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Shows the status of containers that belong to the current Compose project.
+------------------------------------------------------------
+# docker compose logs app
+
+Explanation:
+Prints the logs of the `app` service.
+------------------------------------------------------------
+# docker compose logs -f app
+
+Explanation:
+Prints the logs of the `app` service and continues showing new log lines as they arrive.
+
+Options:
+- -f = --follow (follow): Follows the log output continuously.
+------------------------------------------------------------
+# curl http://127.0.0.1:18080/
+
+Explanation:
+Sends an HTTP request to the application root endpoint exposed on local host port `18080`.
+------------------------------------------------------------
+# curl http://127.0.0.1:18080/health
+
+Explanation:
+Sends an HTTP request to the application health endpoint exposed on local host port `18080`.
+------------------------------------------------------------
+# docker compose exec app env | grep -E 'APP_|LOG_LEVEL|FEATURE_X|COMPANY'
+
+Explanation:
+Prints the `app` container environment and keeps only lines matching the specified application-related variable names.
+
+Options:
+- | = pipe operator: Sends the output of `env` to `grep`.
+- -E = --extended-regexp (extended regular expression): Enables extended regular-expression syntax in `grep`.
+------------------------------------------------------------
+# curl http://127.0.0.1:18081/
+
+Explanation:
+Sends an HTTP request to the application root endpoint exposed on local host port `18081`.
+------------------------------------------------------------
+# export APP_NAME=override-from-shell
+
+Explanation:
+Sets `APP_NAME` in the current shell environment to `override-from-shell` and exports it to child processes.
+------------------------------------------------------------
+# unset APP_NAME
+
+Explanation:
+Removes the `APP_NAME` variable from the current shell environment.
+------------------------------------------------------------
+# docker compose --env-file .env up -d
+
+Explanation:
+Starts the Compose project in the background while explicitly using `.env` as the Compose environment file for interpolation.
+
+Options:
+- --env-file .env = environment file: Uses `.env` as the file that supplies variables to Docker Compose.
+- -d = --detach (detached mode): Runs the containers in the background.
+------------------------------------------------------------
+# docker compose --env-file .env.prod up -d
+
+Explanation:
+Starts the Compose project in the background while using `.env.prod` as the Compose environment file for interpolation.
+
+Options:
+- --env-file .env.prod = environment file: Uses `.env.prod` as the file that supplies variables to Docker Compose.
+- -d = --detach (detached mode): Runs the containers in the background.
+------------------------------------------------------------
+# docker inspect --format='{{json .State.Health}}' compose-env-lab-app-1
+
+Explanation:
+Inspects the specified container and prints only its health-state data as JSON.
+
+Options:
+- --format='{{json .State.Health}}' = output format template: Uses a Docker Go template and the `json` helper to print only `.State.Health`.
+------------------------------------------------------------
+# docker compose ps -q app
+
+Explanation:
+Prints only the container ID for the `app` service.
+
+Options:
+- -q = --quiet (quiet): Displays only container IDs.
+------------------------------------------------------------
+# docker inspect "$(docker compose ps -q app)"
+
+Explanation:
+Gets the container ID of the `app` service and passes that ID to `docker inspect`.
+
+Options:
+- $() = command substitution: Runs `docker compose ps -q app` first and substitutes its output into the outer command.
+- -q = --quiet (quiet): Makes the inner `docker compose ps` command return only the container ID.
+------------------------------------------------------------
+# nano .gitignore
+
+Explanation:
+Opens the `.gitignore` file in the Nano text editor.
+------------------------------------------------------------
+# git add .
+
+Explanation:
+Stages changes from the current directory for the next Git commit. The `.` argument means the current directory.
+------------------------------------------------------------
+# git commit
+
+Explanation:
+Creates a Git commit from the currently staged changes and normally opens the configured editor for the commit message.
+------------------------------------------------------------
+# git push
+
+Explanation:
+Pushes local commits to the configured upstream remote branch.
+------------------------------------------------------------
+# echo $MY_VAR
+
+Explanation:
+Prints the current value of the shell variable `MY_VAR` after shell variable expansion.
+------------------------------------------------------------
+# docker compose up -d --force-recreate
+
+Explanation:
+Starts the Compose services in the background and recreates their containers even if Docker Compose does not detect a configuration or image change.
+
+Options:
+- -d = --detach (detached mode): Runs the containers in the background.
+- --force-recreate = force container recreation: Recreates containers even when their configuration and image appear unchanged.
+------------------------------------------------------------
+# ls -la
+
+Explanation:
+Lists directory contents in long format and includes hidden entries.
+
+Options:
+- -l = long listing format: Shows detailed file information such as permissions, owner, size, and timestamps.
+- -a = --all (all): Includes entries whose names begin with a dot.
+------------------------------------------------------------
+# cat .env
+
+Explanation:
+Prints the contents of the `.env` file to standard output.
+------------------------------------------------------------
+# cat env/common.env
+
+Explanation:
+Prints the contents of `env/common.env` to standard output.
+------------------------------------------------------------
+# cat env/dev.env
+
+Explanation:
+Prints the contents of `env/dev.env` to standard output.
+------------------------------------------------------------
+# docker compose exec app env | grep LOG_LEVEL
+
+Explanation:
+Prints the `app` container environment and keeps only lines containing `LOG_LEVEL`.
+
+Options:
+- | = pipe operator: Sends the output of `env` to `grep`.
+------------------------------------------------------------
+# docker compose exec app python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8000/health').read().decode())"
+
+Explanation:
+Runs Python inside the `app` container, requests the internal health endpoint, reads the response body, decodes it, and prints it.
+
+Options:
+- -c = command string: Executes the following Python code directly from the command line inside the container.
+------------------------------------------------------------
+# docker compose stop
+
+Explanation:
+Stops the running containers in the current Compose project without removing them.
+------------------------------------------------------------
+# docker compose start
+
+Explanation:
+Starts existing stopped containers in the current Compose project.
+------------------------------------------------------------
+# docker compose down
+
+Explanation:
+Stops and removes the containers and default networks created by the current Compose project.
+------------------------------------------------------------
