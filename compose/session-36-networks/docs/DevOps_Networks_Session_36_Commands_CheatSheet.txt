@@ -1,0 +1,352 @@
+------------------------------------------------------------
+# docker version
+
+Explanation:
+Shows the installed Docker Engine client and server version information. Use it to confirm that Docker is available.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose version
+
+Explanation:
+Shows the installed Docker Compose version. Use it to confirm that the docker compose command is available.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -lntp | grep ':8086 ' || true
+
+Explanation:
+Checks whether TCP port 8086 is already in use. The final shell condition keeps the command sequence successful when grep finds no match.
+
+Options:
+- -l = --listening (listening): show only listening sockets.
+- -n = --numeric (numeric): show numeric addresses and ports instead of resolving names.
+- -t = --tcp (TCP): show TCP sockets.
+- -p = --processes (processes): show the process using each socket when permitted.
+- | = pipe operator: send the output of ss to grep.
+- ':8086 ' = grep search text: match entries containing port 8086 followed by a space.
+- || = OR operator: run the command on the right only if the command on the left fails.
+- true = shell command that returns a successful exit status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo mkdir -p /opt/compose-labs/session36-networks/nginx
+
+Explanation:
+Creates the project directory and its nginx subdirectory. Missing parent directories are created automatically.
+
+Options:
+- -p = --parents (parents): create missing parent directories and do not fail if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo chown -R "$USER":"$USER" /opt/compose-labs/session36-networks
+
+Explanation:
+Changes ownership of the project directory to the current user and the matching group. The change is applied recursively.
+
+Options:
+- -R = --recursive (recursive): operate on files and directories recursively.
+- "$USER":"$USER" = owner and group argument: use the current shell user for both the owner and group values.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd /opt/compose-labs/session36-networks
+
+Explanation:
+Changes the current directory to the session 36 project directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# nano .env
+
+Explanation:
+Opens the .env file in Nano for editing.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# nano .gitignore
+
+Explanation:
+Opens the .gitignore file in Nano for editing.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# nano nginx/default.conf
+
+Explanation:
+Opens the Nginx configuration file used by this lab.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# nano compose.yaml
+
+Explanation:
+Opens the main Docker Compose file for editing.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# wget -q -O /dev/null http://127.0.0.1/health || exit 1
+
+Explanation:
+Checks the local Nginx health endpoint without saving the response body. If the request fails, the healthcheck exits with status 1.
+
+Options:
+- -q = --quiet (quiet): suppress normal wget output.
+- -O /dev/null = --output-document=/dev/null (output document): write the downloaded content to /dev/null instead of a file.
+- || = OR operator: run exit 1 only if wget fails.
+- exit 1 = shell exit command: return exit status 1 to mark the healthcheck as failed.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}
+
+Explanation:
+Checks whether PostgreSQL is ready to accept connections. The double dollar signs are correct in this Compose healthcheck because Compose must pass the variable references to the container shell.
+
+Options:
+- -U $${POSTGRES_USER} = --username=$${POSTGRES_USER} (username): use the PostgreSQL user stored in POSTGRES_USER.
+- -d $${POSTGRES_DB} = --dbname=$${POSTGRES_DB} (database name): check the database stored in POSTGRES_DB.
+- $$ = Compose dollar-sign escape: pass a literal dollar sign so the container shell can expand the environment variable.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Parses and validates compose.yaml. It also shows the final Compose configuration after variable interpolation.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose pull
+
+Explanation:
+Downloads the images defined in compose.yaml from their configured registries.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates and starts the services defined in compose.yaml. They continue running in the background.
+
+Options:
+- -d = --detach (detach): run containers in the background.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Shows the current status of the services in this Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs --tail=50 db
+
+Explanation:
+Shows the last 50 log lines from the db service.
+
+Options:
+- --tail=50 = tail option with value 50: show only the last 50 log lines.
+- db = service argument: select the db service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs --tail=50 adminer
+
+Explanation:
+Shows the last 50 log lines from the adminer service.
+
+Options:
+- --tail=50 = tail option with value 50: show only the last 50 log lines.
+- adminer = service argument: select the adminer service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs --tail=50 proxy
+
+Explanation:
+Shows the last 50 log lines from the proxy service.
+
+Options:
+- --tail=50 = tail option with value 50: show only the last 50 log lines.
+- proxy = service argument: select the proxy service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network ls
+
+Explanation:
+Lists the Docker networks available on the current Docker host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network ls --filter label=com.docker.compose.project=session36-networks
+
+Explanation:
+Lists only networks whose Compose project label matches session36-networks.
+
+Options:
+- --filter label=com.docker.compose.project=session36-networks = filter option: keep only networks with this exact label value.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network inspect session36-networks_frontend_net
+
+Explanation:
+Shows detailed information about the frontend network, including connected containers and network settings.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network inspect session36-networks_backend_net
+
+Explanation:
+Shows detailed information about the backend network, including connected containers and network settings.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec proxy ping -c 2 adminer
+
+Explanation:
+Runs ping inside the proxy container against the adminer service name. It sends exactly two echo requests.
+
+Options:
+- proxy = docker compose exec service argument: run the following command inside the proxy service container.
+- -c 2 = count 2: make ping send two echo requests and then stop.
+- adminer = ping destination: resolve and test the adminer service name.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec proxy wget -qO- http://adminer:8080 | head -n 5
+
+Explanation:
+Requests the Adminer web page from inside the proxy container and prints only the first five response lines.
+
+Options:
+- proxy = docker compose exec service argument: run the following command inside the proxy service container.
+- -q = --quiet (quiet): suppress normal wget output.
+- -O - = --output-document=- (output document): write the downloaded content to standard output.
+- | = pipe operator: send wget output to head.
+- -n 5 = --lines=5 (lines): show the first five lines of input.
+- http://adminer:8080 = URL argument: connect to the adminer service on container port 8080.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec proxy ping -c 1 db
+
+Explanation:
+Runs ping inside the proxy container against the db service name. In this lab, the test is expected to fail because proxy and db do not share a network.
+
+Options:
+- proxy = docker compose exec service argument: run the following command inside the proxy service container.
+- -c 1 = count 1: make ping send one echo request and then stop.
+- db = ping destination: try to resolve and test the db service name.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec adminer php -r 'echo "db=", gethostbyname("db"), PHP_EOL; echo "alias=", gethostbyname("postgres-db"), PHP_EOL;'
+
+Explanation:
+Technical correction: The lesson also used ping inside the adminer container for DNS troubleshooting, but the Adminer image was not shown to include the ping binary. This existing PHP command from the same lesson is the reliable DNS check and also tests the postgres-db alias.
+
+Options:
+- adminer = docker compose exec service argument: run the following command inside the adminer service container.
+- -r = PHP CLI run-code option: execute the supplied PHP code directly without script tags.
+- gethostbyname("db") = PHP function call: resolve the db service name.
+- gethostbyname("postgres-db") = PHP function call: resolve the postgres-db network alias.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec adminer php -r '$s=@fsockopen("db",5432,$errno,$errstr,3); if ($s) { echo "DB TCP OK\n"; fclose($s); } else { fwrite(STDERR,"DB TCP FAIL: $errstr\n"); exit(1); }'
+
+Explanation:
+Tests a real TCP connection from the adminer container to db on port 5432. The connection attempt uses a three-second timeout and exits with status 1 on failure.
+
+Options:
+- adminer = docker compose exec service argument: run the following command inside the adminer service container.
+- -r = PHP CLI run-code option: execute the supplied PHP code directly without script tags.
+- fsockopen("db",5432,...,3) = PHP function call: open a TCP connection to db on port 5432 with a three-second timeout.
+- exit(1) = PHP exit call: return status 1 when the TCP connection fails.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec db psql -U labuser -d labdb -c 'SELECT current_database(), current_user;'
+
+Explanation:
+Runs psql inside the db container and executes one SQL statement against labdb as labuser.
+
+Options:
+- db = docker compose exec service argument: run the following command inside the db service container.
+- -U labuser = --username=labuser (username): connect as PostgreSQL user labuser.
+- -d labdb = --dbname=labdb (database name): connect to database labdb.
+- -c 'SELECT current_database(), current_user;' = --command='SELECT current_database(), current_user;' (command): execute this SQL statement and exit.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network create shared_net
+
+Explanation:
+Creates a Docker network named shared_net.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -lntp | grep ':8086 '
+
+Explanation:
+Checks which process is listening on TCP port 8086. This is useful when Docker reports that the port is already allocated.
+
+Options:
+- -l = --listening (listening): show only listening sockets.
+- -n = --numeric (numeric): show numeric addresses and ports instead of resolving names.
+- -t = --tcp (TCP): show TCP sockets.
+- -p = --processes (processes): show the process using each socket when permitted.
+- | = pipe operator: send the output of ss to grep.
+- ':8086 ' = grep search text: match entries containing port 8086 followed by a space.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps --format 'table {{.Names}}\t{{.Ports}}'
+
+Explanation:
+Shows running containers in a custom table containing their names and published ports.
+
+Options:
+- --format 'table {{.Names}}\t{{.Ports}}' = format option: render the output as a table using the container name and ports fields.
+- \t = tab escape inside the format template: separate the two output columns.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# pwd
+
+Explanation:
+Prints the current working directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -la
+
+Explanation:
+Lists files and directories with detailed information and includes hidden entries.
+
+Options:
+- -l = long listing format: show detailed file information.
+- -a = --all (all): include entries whose names begin with a dot.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose down
+
+Explanation:
+Stops and removes the Compose containers and networks created by this project. Named volumes are kept by default.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose down -v
+
+Explanation:
+Stops and removes the Compose containers, networks, and named volumes created by this project.
+
+Options:
+- -v = --volumes (volumes): remove named volumes declared in the Compose file and anonymous volumes attached to containers.
+------------------------------------------------------------
