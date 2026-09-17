@@ -1,0 +1,15 @@
+name: session33
+
+services:
+
+  web-image:
+    image: nginx:alpine
+    ports:
+      - "18033:80"
+
+  web-build:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "18034:80"
