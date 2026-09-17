@@ -1,0 +1,558 @@
+------------------------------------------------------------
+# services:
+  web:
+    image: nginx:alpine
+
+  database:
+    image: postgres
+
+Explanation:
+Defines two Docker Compose services named web and database. Each service uses a prebuilt image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  web:
+    image: nginx:alpine
+
+Explanation:
+Defines a web service that runs from the nginx:alpine image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  frontend:
+    image: nginx:alpine
+
+  backend:
+    image: my-api
+
+  database:
+    image: postgres
+
+Explanation:
+Defines frontend, backend, and database services in one Compose application. Each service uses the image specified under image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  backend:
+    image: nexus.company.local:8085/devops/backend:1.4.2
+
+Explanation:
+Defines a backend service that uses version 1.4.2 of an image stored in the specified registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  web:
+    build: ./app
+
+Explanation:
+Defines a web service whose image is built from the ./app build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# build: ./app
+
+Explanation:
+Uses ./app as the Docker Compose build context. Compose looks for the default Dockerfile in that context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# build:
+  context: ./app
+  dockerfile: Dockerfile
+
+Explanation:
+Uses ./app as the build context and Dockerfile as the Dockerfile name for the service build.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM nginx:alpine
+
+Explanation:
+Sets nginx:alpine as the base image for the Dockerfile.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY index.html /usr/share/nginx/html/index.html
+
+Explanation:
+Copies index.html from the build context into the Nginx web root inside the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# EXPOSE 80
+
+Explanation:
+Documents that the containerized application uses TCP port 80. EXPOSE does not publish the port on the Docker host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  web:
+    image: mycompany/web:1.0
+    build:
+      context: ./app
+
+Explanation:
+Defines a web service with both an image name and a build configuration. Compose can use the image name together with the build behavior according to its pull policy.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ports:
+  - "8080:80"
+
+Explanation:
+Publishes host port 8080 to container port 80 in a Compose service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ports:
+  - "127.0.0.1:8080:80"
+
+Explanation:
+Publishes host port 8080 only on the loopback address and forwards it to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# version: "3.8"
+
+services:
+
+Explanation:
+Technical correction: The version key was shown only as an old Compose example and the block is incomplete by itself because no services are defined. Modern Docker Compose does not require the top-level version field.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run nginx:alpine
+
+Explanation:
+Runs a container from the nginx:alpine image using Docker's default foreground behavior.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -p 8080:80 nginx
+
+Explanation:
+Technical correction: The later fragment docker run -p is incomplete by itself; this complete command publishes host port 8080 to container port 80 and runs the nginx image.
+
+Options:
+- -p = --publish (publish): Publishes a container port on the host using HOST_PORT:CONTAINER_PORT.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker --version
+
+Explanation:
+Displays the installed Docker CLI version.
+
+Options:
+- --version = version: Prints Docker version information and exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose version
+
+Explanation:
+Displays the installed Docker Compose version.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -lntp | grep -E ':(18033|18034)\b' || true
+
+Explanation:
+Checks whether TCP ports 18033 or 18034 are currently listening. If grep finds no match, true prevents the overall shell command from failing.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -n = --numeric (numeric): Shows numeric addresses and ports without name resolution.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -p = --processes (processes): Shows the process using each socket.
+- | = pipe operator: Sends the output of ss to grep.
+- grep -E = --extended-regexp (extended regular expression): Interprets the search pattern as an extended regular expression.
+- ':(18033|18034)\b' = grep pattern: Matches port 18033 or 18034 at a word boundary.
+- || = OR operator: Runs the command on the right only if the command on the left fails.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo mkdir -p /opt/docker-labs/session33/app
+
+Explanation:
+Creates the session33/app directory path, including missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and does not fail if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd /opt/docker-labs/session33
+
+Explanation:
+Changes the current shell directory to /opt/docker-labs/session33.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > app/index.html <<'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Docker Compose Session 33</title>
+</head>
+<body>
+    <h1>Hello from web-build</h1>
+    <p>Docker Compose Session 33</p>
+</body>
+</html>
+EOF
+
+Explanation:
+Creates app/index.html with the exact HTML content supplied by the here-document.
+
+Options:
+- > = output redirection: Replaces app/index.html with the standard output from cat.
+- <<'EOF' = quoted here-document: Supplies the following lines to cat until EOF and prevents shell expansion inside the content.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat app/index.html
+
+Explanation:
+Prints the contents of app/index.html to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > app/Dockerfile <<'EOF'
+FROM nginx:alpine
+
+COPY index.html /usr/share/nginx/html/index.html
+
+EXPOSE 80
+EOF
+
+Explanation:
+Creates app/Dockerfile with the Nginx base image, COPY instruction, and EXPOSE instruction used in this lesson.
+
+Options:
+- > = output redirection: Replaces app/Dockerfile with the standard output from cat.
+- <<'EOF' = quoted here-document: Supplies the following lines to cat until EOF and prevents shell expansion inside the content.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat app/Dockerfile
+
+Explanation:
+Prints the contents of app/Dockerfile to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > compose.yaml <<'EOF'
+name: session33
+
+services:
+
+  web-image:
+    image: nginx:alpine
+    ports:
+      - "18033:80"
+
+  web-build:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "18034:80"
+EOF
+
+Explanation:
+Creates the lesson compose.yaml file with one image-based service and one build-based service.
+
+Options:
+- > = output redirection: Replaces compose.yaml with the standard output from cat.
+- <<'EOF' = quoted here-document: Supplies the following lines to cat until EOF and prevents shell expansion inside the content.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# name: session33
+
+services:
+
+  web-image:
+    image: nginx:alpine
+    ports:
+      - "18033:80"
+
+  web-build:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - "18034:80"
+
+Explanation:
+Defines the complete Compose project used in the lab. web-image uses nginx:alpine directly, while web-build builds from ./app and publishes its own host port.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Parses the Compose file and prints the resolved configuration. It is useful for checking the file before starting services.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config --quiet
+
+Explanation:
+Validates the Compose configuration without printing the resolved configuration when it is valid.
+
+Options:
+- --quiet = quiet: Validates the configuration and suppresses normal output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config --services
+
+Explanation:
+Prints the service names defined by the resolved Compose model.
+
+Options:
+- --services = services: Prints service names, one per line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose pull web-image
+
+Explanation:
+Pulls the image required by the web-image service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls nginx
+
+Explanation:
+Lists local Docker images whose repository matches nginx.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose build web-build
+
+Explanation:
+Builds the image for the web-build service from its Compose build configuration.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists local Docker images.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates and starts the Compose services in the background.
+
+Options:
+- -d = --detach (detach): Runs the containers in the background.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Shows the containers and current status for the Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -I http://127.0.0.1:18033
+
+Explanation:
+Sends an HTTP request to the web-image service and retrieves only the response headers.
+
+Options:
+- -I = --head (HEAD): Fetches HTTP response headers only.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://127.0.0.1:18033
+
+Explanation:
+Requests the web page served by web-image through host port 18033.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://127.0.0.1:18034
+
+Explanation:
+Requests the custom web page served by web-build through host port 18034.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -lntp | grep -E ':(18033|18034)\b'
+
+Explanation:
+Shows listening TCP sockets and filters the result for ports 18033 and 18034.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -n = --numeric (numeric): Shows numeric addresses and ports without name resolution.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -p = --processes (processes): Shows the process using each socket.
+- | = pipe operator: Sends the output of ss to grep.
+- grep -E = --extended-regexp (extended regular expression): Interprets the pattern as an extended regular expression.
+- ':(18033|18034)\b' = grep pattern: Matches port 18033 or 18034 at a word boundary.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://192.168.94.90:18033
+
+Explanation:
+Requests the web-image service on DEV-1 from another host through port 18033.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://192.168.94.90:18034
+
+Explanation:
+Requests the web-build service on DEV-1 from another host through port 18034.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d -p 18033:80 nginx:alpine
+
+Explanation:
+Runs nginx:alpine in the background and publishes host port 18033 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -p = --publish (publish): Publishes host port 18033 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t session33-web-build ./app
+
+Explanation:
+Builds an image from the ./app build context and tags it as session33-web-build.
+
+Options:
+- -t = --tag (tag): Applies the name session33-web-build to the built image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d -p 18034:80 session33-web-build
+
+Explanation:
+Runs the session33-web-build image in the background and publishes host port 18034 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- -p = --publish (publish): Publishes host port 18034 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d --build
+
+Explanation:
+Builds images when needed, then creates and starts the Compose services in the background.
+
+Options:
+- -d = --detach (detach): Runs the containers in the background.
+- --build = build: Builds images before starting containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# nano app/index.html
+
+Explanation:
+Opens app/index.html in the Nano text editor.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d web-build
+
+Explanation:
+Creates or recreates and starts only the web-build service in the background.
+
+Options:
+- -d = --detach (detach): Runs the service container in the background.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d --build web-build
+
+Explanation:
+Builds the web-build image and starts that service in the background.
+
+Options:
+- -d = --detach (detach): Runs the service container in the background.
+- --build = build: Builds the image before starting the service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs web-image
+
+Explanation:
+Displays logs for the web-image service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs web-build
+
+Explanation:
+Displays logs for the web-build service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs -f web-build
+
+Explanation:
+Displays logs for web-build and continues streaming new log lines.
+
+Options:
+- -f = --follow (follow): Follows log output as new entries are produced.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose down
+
+Explanation:
+Stops and removes the containers and default network created by the Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -lntp | grep ':18033'
+
+Explanation:
+Shows listening TCP sockets and filters the output for port 18033.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -n = --numeric (numeric): Shows numeric addresses and ports without name resolution.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -p = --processes (processes): Shows the process using each socket.
+- | = pipe operator: Sends the output of ss to grep.
+- ':18033' = grep pattern: Matches lines containing :18033.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "9000:5000"
+
+Explanation:
+Defines an app service built from ./backend and publishes host port 9000 to container port 5000.
+------------------------------------------------------------
