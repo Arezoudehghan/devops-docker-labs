@@ -1,0 +1,275 @@
+------------------------------------------------------------
+# docker --version
+
+Explanation:
+Shows the installed Docker CLI version and exits.
+
+Options:
+- --version = version information: Print the Docker version and exit.
+------------------------------------------------------------
+# docker compose version
+
+Explanation:
+Shows the installed Docker Compose version.
+------------------------------------------------------------
+# docker info >/dev/null && echo "Docker Engine: OK"
+
+Explanation:
+Checks whether the Docker Engine can return system information, discards that output, and prints a success message only if the check succeeds.
+
+Options:
+- > = shell output redirection: Send standard output to the specified file or device.
+- /dev/null = null device: Discard the redirected standard output.
+- && = shell AND operator: Run the next command only if the previous command exits successfully.
+------------------------------------------------------------
+# sudo ss -lntp | grep ':5433 ' || echo "Port 5433 is free"
+
+Explanation:
+Checks listening TCP sockets for port 5433. If no matching socket is found, it prints that the port is free.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -n = --numeric (numeric): Show numeric addresses and port numbers instead of resolving names.
+- -t = --tcp (TCP): Show TCP sockets.
+- -p = --processes (processes): Show the process using each socket when permitted.
+- | = shell pipe operator: Send the output of `ss` to `grep`.
+- || = shell OR operator: Run the final `echo` command only if the previous pipeline fails or finds no match.
+------------------------------------------------------------
+# sudo mkdir -p /opt/docker-labs/compose-volumes
+
+Explanation:
+Creates the Compose lab directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Create missing parent directories and do not fail if the directory already exists.
+------------------------------------------------------------
+# sudo chown -R "$USER":"$USER" /opt/docker-labs/compose-volumes
+
+Explanation:
+Changes the owner and group of the lab directory and everything inside it to the current user.
+
+Options:
+- -R = --recursive (recursive): Apply the ownership change recursively to directories and files.
+- "$USER":"$USER" = owner and group argument: Use the current shell user's name for both owner and group.
+------------------------------------------------------------
+# cd /opt/docker-labs/compose-volumes
+
+Explanation:
+Changes the current working directory to the Compose lab directory.
+------------------------------------------------------------
+# pwd
+
+Explanation:
+Prints the full path of the current working directory.
+------------------------------------------------------------
+# nano .env
+
+Explanation:
+Opens the `.env` file in the Nano text editor.
+------------------------------------------------------------
+# chmod 600 .env
+
+Explanation:
+Sets the `.env` file so only its owner can read and write it.
+
+Options:
+- 600 = permission mode: Owner gets read and write permission; group and others get no permissions.
+------------------------------------------------------------
+# ls -la .env
+
+Explanation:
+Shows detailed information about the `.env` file, including hidden files and permissions.
+
+Options:
+- -l = long listing format: Show permissions, owner, group, size, and modification time.
+- -a = --all (all): Include entries whose names begin with a dot.
+------------------------------------------------------------
+# nano compose.yaml
+
+Explanation:
+Opens the `compose.yaml` file in the Nano text editor.
+------------------------------------------------------------
+# pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}
+
+Explanation:
+Checks whether PostgreSQL is ready to accept connections in the Compose healthcheck. The doubled dollar signs prevent Docker Compose from interpolating the variables before the container shell receives them.
+
+Options:
+- -U = username: Use the PostgreSQL user specified by `POSTGRES_USER`.
+- -d = database name: Check the PostgreSQL database specified by `POSTGRES_DB`.
+- $$ = Compose dollar-sign escape: Pass a literal `$` through Compose so the variable can be expanded inside the container.
+------------------------------------------------------------
+# docker compose config --quiet
+
+Explanation:
+Parses and validates the Compose configuration without printing the resolved configuration.
+
+Options:
+- --quiet = quiet validation mode: Validate the configuration and suppress normal output.
+------------------------------------------------------------
+# docker compose config --services
+
+Explanation:
+Prints the service names defined by the resolved Compose configuration.
+
+Options:
+- --services = service list output: Print only service names.
+------------------------------------------------------------
+# docker compose config --images
+
+Explanation:
+Prints the image names used by the resolved Compose configuration.
+
+Options:
+- --images = image list output: Print only image names.
+------------------------------------------------------------
+# docker compose pull
+
+Explanation:
+Pulls the images required by the services in the Compose project without starting containers.
+------------------------------------------------------------
+# docker image ls postgres
+
+Explanation:
+Lists local Docker images that match the `postgres` repository name.
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates or updates the Compose services and starts them in the background.
+
+Options:
+- -d = --detach (detach): Run containers in the background and return control to the shell.
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Shows the containers and current status of services in the Compose project.
+------------------------------------------------------------
+# docker compose logs db --tail=50
+
+Explanation:
+Shows the last 50 log lines for the `db` service.
+
+Options:
+- --tail=50 = tail line count: Show only the last 50 log lines.
+------------------------------------------------------------
+# docker compose logs -f db
+
+Explanation:
+Shows logs for the `db` service and keeps following new log output.
+
+Options:
+- -f = --follow (follow): Continue streaming new log lines until the command is stopped.
+------------------------------------------------------------
+# docker compose exec db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+
+Explanation:
+Runs a shell inside the running `db` service and checks whether PostgreSQL is ready using the container's environment variables.
+
+Options:
+- -c = shell command string: Tell `sh` to execute the following quoted command string.
+- -U = username: Use the PostgreSQL user stored in `POSTGRES_USER`.
+- -d = database name: Check the PostgreSQL database stored in `POSTGRES_DB`.
+------------------------------------------------------------
+# docker volume ls
+
+Explanation:
+Lists Docker volumes available on the current Docker host.
+------------------------------------------------------------
+# docker volume inspect compose-volumes-postgres-data
+
+Explanation:
+Shows detailed metadata for the `compose-volumes-postgres-data` Docker volume.
+------------------------------------------------------------
+# docker inspect "$(docker compose ps -q db)" --format '{{range .Mounts}}{{println .Type .Name .Source "->" .Destination}}{{end}}'
+
+Explanation:
+Finds the container ID for the `db` service and prints each mount type, name, source, and destination using a Go template.
+
+Options:
+- -q = --quiet (quiet): In `docker compose ps`, print only container IDs.
+- $(...) = command substitution: Run the inner command and substitute its output into the outer `docker inspect` command.
+- --format = output format template: Format the inspect output with the supplied Go template.
+------------------------------------------------------------
+# docker compose exec db psql -U appuser -d appdb -c "CREATE TABLE IF NOT EXISTS students (id SERIAL PRIMARY KEY, name TEXT NOT NULL);"
+
+Explanation:
+Runs `psql` inside the `db` service and creates the `students` table if it does not already exist.
+
+Options:
+- -U = --username (username): Connect as PostgreSQL user `appuser`.
+- -d = --dbname (database name): Connect to database `appdb`.
+- -c = --command (command): Execute the supplied SQL statement and then exit.
+------------------------------------------------------------
+# docker compose exec db psql -U appuser -d appdb -c "INSERT INTO students (name) VALUES ('student-01');"
+
+Explanation:
+Runs `psql` inside the `db` service and inserts one row named `student-01` into the `students` table.
+
+Options:
+- -U = --username (username): Connect as PostgreSQL user `appuser`.
+- -d = --dbname (database name): Connect to database `appdb`.
+- -c = --command (command): Execute the supplied SQL statement and then exit.
+------------------------------------------------------------
+# docker compose exec db psql -U appuser -d appdb -c "SELECT * FROM students;"
+
+Explanation:
+Runs `psql` inside the `db` service and returns all rows from the `students` table.
+
+Options:
+- -U = --username (username): Connect as PostgreSQL user `appuser`.
+- -d = --dbname (database name): Connect to database `appdb`.
+- -c = --command (command): Execute the supplied SQL statement and then exit.
+------------------------------------------------------------
+# docker compose down
+
+Explanation:
+Stops and removes the Compose containers and project network while leaving named volumes in place by default.
+------------------------------------------------------------
+# docker compose ps -a
+
+Explanation:
+Shows all Compose service containers, including stopped containers.
+
+Options:
+- -a = --all (all): Include stopped containers in the output.
+------------------------------------------------------------
+# docker compose down -v
+
+Explanation:
+Stops and removes the Compose resources and also removes named volumes declared by the Compose project.
+
+Options:
+- -v = --volumes (volumes): Remove named volumes declared in the Compose file and anonymous volumes attached to containers.
+------------------------------------------------------------
+# docker volume create production-db-data
+
+Explanation:
+Creates a Docker named volume called `production-db-data`.
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Parses, resolves, and prints the effective Compose configuration.
+------------------------------------------------------------
+# sudo ss -lntp | grep ':5433 '
+
+Explanation:
+Shows listening TCP sockets and filters the result for port 5433.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -n = --numeric (numeric): Show numeric addresses and port numbers instead of resolving names.
+- -t = --tcp (TCP): Show TCP sockets.
+- -p = --processes (processes): Show the process using each socket when permitted.
+- | = shell pipe operator: Send the output of `ss` to `grep`.
+------------------------------------------------------------
+# docker compose logs db --tail=100
+
+Explanation:
+Shows the last 100 log lines for the `db` service.
+
+Options:
+- --tail=100 = tail line count: Show only the last 100 log lines.
+------------------------------------------------------------
