@@ -1,0 +1,437 @@
+------------------------------------------------------------
+# services:
+  app:
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+
+Explanation:
+This Compose YAML defines an app service that depends on the db service. The db service uses the postgres image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# restart: on-failure:3
+
+Explanation:
+This Compose service setting restarts the container only after a failure and limits the restart attempts to three.
+
+Options:
+- on-failure:3 = restart policy value: Restart after a non-zero exit and retry at most 3 times.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# restart: unless-stopped
+
+Explanation:
+This Compose service setting restarts the container automatically unless it was explicitly stopped by an administrator.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# depends_on:
+  db:
+    restart: true
+
+Explanation:
+This Compose dependency setting allows the dependent service to be restarted when Compose explicitly restarts or updates the db dependency.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# hostname
+
+Explanation:
+Shows the hostname of the current Linux system.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ip addr
+
+Explanation:
+Displays the network interfaces, IP addresses, and related address information on the system.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker --version
+
+Explanation:
+Displays the installed Docker CLI version.
+
+Options:
+- --version = version: Print version information and exit.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose version
+
+Explanation:
+Displays the installed Docker Compose version.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo mkdir -p /opt/docker-labs/session37
+
+Explanation:
+Creates the /opt/docker-labs/session37 directory with elevated privileges and also creates missing parent directories.
+
+Options:
+- -p = --parents (parents): Create parent directories as needed and do not report an error if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo chown -R "$USER":"$USER" /opt/docker-labs/session37
+
+Explanation:
+Changes the owner and group of /opt/docker-labs/session37 to the current user recursively.
+
+Options:
+- -R = --recursive (recursive): Apply the ownership change to the directory and everything inside it.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd /opt/docker-labs/session37
+
+Explanation:
+Changes the current shell directory to /opt/docker-labs/session37.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > .env <<'EOF'
+POSTGRES_DB=compose_lab
+POSTGRES_USER=labuser
+POSTGRES_PASSWORD=Lab37-Postgres-2026
+ADMINER_PORT=8086
+EOF
+
+Explanation:
+Creates the .env file with the PostgreSQL and Adminer environment variables used by this lab.
+
+Options:
+- > = output redirection: Write the command output to .env, replacing the file if it already exists.
+- <<'EOF' = quoted here-document: Pass all lines up to EOF to cat without expanding shell variables inside the here-document.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# chmod 600 .env
+
+Explanation:
+Sets the .env file so only its owner can read and write it.
+
+Options:
+- 600 = permission mode: Give the owner read and write permissions and give no permissions to group or others.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat .env
+
+Explanation:
+Prints the contents of the .env file to the terminal.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > compose.yaml <<'EOF'
+name: compose-lab37
+
+services:
+  db:
+    image: postgres:17.11-alpine
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+    networks:
+      - backend
+
+  adminer:
+    image: adminer:6.0.1
+    restart: unless-stopped
+
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+
+    ports:
+      - "${ADMINER_PORT}:8080"
+
+    networks:
+      - backend
+
+volumes:
+  db_data:
+
+networks:
+  backend:
+    driver: bridge
+EOF
+
+Explanation:
+Creates the complete compose.yaml file for PostgreSQL and Adminer, including health checking, dependency handling, networking, persistent storage, and restart policies.
+
+Options:
+- > = output redirection: Write the command output to compose.yaml, replacing the file if it already exists.
+- <<'EOF' = quoted here-document: Pass all lines up to EOF to cat without shell expansion inside the here-document.
+- -U = --username (username): In pg_isready, use the value of POSTGRES_USER as the PostgreSQL user name.
+- -d = --dbname (database name): In pg_isready, use the value of POSTGRES_DB as the database name or connection string.
+- $$ = escaped dollar sign for Compose: Preserve a single dollar sign so the variable is expanded inside the container instead of by Compose.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# pg_isready
+
+Explanation:
+Checks whether a PostgreSQL server is ready to accept connections.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}
+
+Explanation:
+Checks PostgreSQL readiness by using the configured user and database variables inside the container.
+
+Options:
+- -U = --username (username): Specify the PostgreSQL user name.
+- $${POSTGRES_USER} = Compose-escaped variable: Preserve ${POSTGRES_USER} for expansion inside the container.
+- -d = --dbname (database name): Specify the database name or connection string.
+- $${POSTGRES_DB} = Compose-escaped variable: Preserve ${POSTGRES_DB} for expansion inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Parses and validates the Compose configuration and prints the resolved configuration.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config --services
+
+Explanation:
+Prints the service names defined in the resolved Compose configuration.
+
+Options:
+- --services = services: Print service names, one per line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose pull
+
+Explanation:
+Pulls the images required by the services in the Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates and starts the services in the background.
+
+Options:
+- -d = --detach (detach): Run containers in the background and return control to the shell.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Shows the containers and current status of services in the Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect "$(docker compose ps -q db)" \
+  --format '{{.State.Health.Status}}'
+
+Explanation:
+Finds the container ID for the db service and prints only its Docker health status.
+
+Options:
+- -q = --quiet (quiet): In docker compose ps, print only the container ID.
+- $(...) = command substitution: Run the inner command and use its output as the docker inspect argument.
+- --format = format: Format the inspect output with the provided Go template.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs db
+
+Explanation:
+Displays logs from the db service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs -f db
+
+Explanation:
+Displays db service logs and continues following new log messages.
+
+Options:
+- -f = --follow (follow): Continue streaming new log output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -I http://192.168.94.91:8086
+
+Explanation:
+Sends an HTTP request to the Adminer endpoint and displays the response headers.
+
+Options:
+- -I = --head (head): Fetch headers only instead of downloading the response body.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect "$(docker compose ps -q db)" \
+  --format 'Status={{.State.Status}} RestartCount={{.RestartCount}}'
+
+Explanation:
+Finds the db container and prints its current state plus the number of times Docker has restarted it.
+
+Options:
+- -q = --quiet (quiet): In docker compose ps, print only the container ID.
+- $(...) = command substitution: Run the inner command and use its output as the docker inspect argument.
+- --format = format: Format the inspect output with the provided Go template.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker kill "$(docker compose ps -q db)"
+
+Explanation:
+Sends Docker's default kill signal to the db container selected from the Compose project.
+
+Options:
+- -q = --quiet (quiet): In docker compose ps, print only the container ID.
+- $(...) = command substitution: Run the inner command and use its output as the docker kill container argument.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sleep 5
+
+Explanation:
+Pauses the shell for 5 seconds before the next command runs.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect "$(docker compose ps -q adminer)" \
+  --format '{{.State.StartedAt}}'
+
+Explanation:
+Finds the Adminer container and prints the timestamp when that container instance started.
+
+Options:
+- -q = --quiet (quiet): In docker compose ps, print only the container ID.
+- $(...) = command substitution: Run the inner command and use its output as the docker inspect argument.
+- --format = format: Format the inspect output with the provided Go template.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose restart db
+
+Explanation:
+Restarts the db service through Docker Compose.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose restart --no-deps db
+
+Explanation:
+Restarts only the db service without restarting dependent services.
+
+Options:
+- --no-deps = no dependencies: Do not restart services that depend on the selected service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# depends_on:
+  - db
+
+Explanation:
+This Compose YAML fragment makes the current service depend on the db service using the short depends_on syntax.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# depends_on:
+  db:
+    condition: service_healthy
+
+Explanation:
+This Compose YAML fragment waits for the db service health check to become healthy before starting the dependent service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# healthcheck:
+
+Explanation:
+This Compose YAML key begins a service healthcheck definition.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose down
+
+Explanation:
+Stops and removes the containers and default network created by the Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose down -v
+
+Explanation:
+Stops the Compose project and also removes its named and anonymous volumes.
+
+Options:
+- -v = --volumes (volumes): Remove named volumes declared in the Compose file and anonymous volumes attached to containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs adminer
+
+Explanation:
+Displays logs from the adminer service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network ls
+
+Explanation:
+Lists Docker networks available on the host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec adminer getent hosts db
+
+Explanation:
+Runs getent hosts db inside the running Adminer container to check whether Docker DNS resolves the db service name.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect "$(docker compose ps -q db)" \
+  --format '{{json .State.Health}}'
+
+Explanation:
+Finds the db container and prints its complete Docker health information as JSON.
+
+Options:
+- -q = --quiet (quiet): In docker compose ps, print only the container ID.
+- $(...) = command substitution: Run the inner command and use its output as the docker inspect argument.
+- --format = format: Format the inspect output with the provided Go template.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume ls
+
+Explanation:
+Lists Docker volumes available on the host.
+------------------------------------------------------------
