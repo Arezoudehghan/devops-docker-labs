@@ -44,6 +44,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 ├── compose/
 │   ├── session-32-first-compose-yaml/
 │   ├── session-33-service-image-build-ports/
+│   ├── session-34-environment-env-file/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
 ├── production/
@@ -101,6 +102,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 |---|---|---|---|
 | 32 | First `compose.yaml` | [`compose/session-32-first-compose-yaml`](compose/session-32-first-compose-yaml/) | `DEV-1` |
 | 33 | `service`, `image`, `build`, and `ports` | [`compose/session-33-service-image-build-ports`](compose/session-33-service-image-build-ports/) | `DEV-1` |
+| 34 | `environment`, `env_file`, and `.env` interpolation | [`compose/session-34-environment-env-file`](compose/session-34-environment-env-file/) | `DEV-1` + `DEV-2` |
 | 36 | Docker Compose networks | [`compose/session-36-networks`](compose/session-36-networks/) | `DEV-1` |
 | 37 | `depends_on` and restart policy | [`compose/session-37-depends-on-restart`](compose/session-37-depends-on-restart/) | `DEV-2` |
 
