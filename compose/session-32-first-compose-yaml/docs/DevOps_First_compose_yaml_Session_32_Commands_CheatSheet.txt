@@ -1,0 +1,308 @@
+------------------------------------------------------------
+# docker version
+
+Explanation:
+Shows Docker client and server version information.
+------------------------------------------------------------
+# docker compose version
+
+Explanation:
+Shows the installed Docker Compose version.
+------------------------------------------------------------
+# docker compose
+
+Explanation:
+Invokes the Docker Compose CLI command group. With no subcommand, it displays Compose help or usage information.
+------------------------------------------------------------
+# docker-compose
+
+Explanation:
+Invokes the legacy standalone Docker Compose command used by older Compose installations. With no subcommand, it displays help or usage information when the legacy tool is installed.
+------------------------------------------------------------
+# ss -lntp | grep ':8080 ' || true
+
+Explanation:
+Lists listening TCP sockets numerically, shows the owning processes, and filters the result for port 8080. If grep finds no match, || true prevents the overall shell command from failing.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -n = --numeric (numeric): Do not resolve service names; show numeric addresses and ports.
+- -t = --tcp (TCP): Show TCP sockets.
+- -p = --processes (processes): Show the process using each socket.
+- | = pipe operator: Send the output of ss to grep as input.
+- ':8080 ' = grep search pattern: Match text containing port 8080 followed by a space.
+- || = OR operator: Run the command on the right only if the command on the left fails.
+------------------------------------------------------------
+# docker ps --format 'table {{.Names}}\t{{.Ports}}'
+
+Explanation:
+Lists running containers and formats the output as a table containing only container names and published ports.
+
+Options:
+- --format = output format: Apply the Go template supplied as its value.
+- 'table {{.Names}}\t{{.Ports}}' = format value: Create a table with the container name and port columns separated by a tab.
+------------------------------------------------------------
+# mkdir -p ~/docker-labs/compose-session32
+
+Explanation:
+Creates the compose-session32 project directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Create parent directories as needed and do not report an error if the directory already exists.
+------------------------------------------------------------
+# cd ~/docker-labs/compose-session32
+
+Explanation:
+Changes the current shell directory to the Compose session project directory.
+------------------------------------------------------------
+# pwd
+
+Explanation:
+Prints the absolute path of the current working directory.
+------------------------------------------------------------
+# nano compose.yaml
+
+Explanation:
+Opens compose.yaml in the Nano text editor for editing.
+------------------------------------------------------------
+# docker compose logs web
+
+Explanation:
+Shows logs for the Compose service named web.
+------------------------------------------------------------
+# docker run nginx:alpine
+
+Explanation:
+Creates and starts a container from the nginx:alpine image in the foreground using the image's default command.
+------------------------------------------------------------
+# docker images
+
+Explanation:
+Lists Docker images stored on the local Docker host.
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Parses the Compose configuration and prints the resolved configuration that Docker Compose will use.
+------------------------------------------------------------
+# docker compose config -q
+
+Explanation:
+Validates the Compose configuration without printing the resolved configuration.
+
+Options:
+- -q = --quiet (quiet): Validate only and suppress normal configuration output.
+------------------------------------------------------------
+# echo $?
+
+Explanation:
+Prints the exit status of the previously executed shell command.
+
+Options:
+- $? = shell special parameter: Expands to the previous command's numeric exit status.
+------------------------------------------------------------
+# docker compose config --services
+
+Explanation:
+Prints the service names defined in the resolved Compose configuration.
+
+Options:
+- --services = services listing: Print only service names.
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates or recreates the Compose services and starts them in the background.
+
+Options:
+- -d = --detach (detach): Run containers in the background and leave them running after the command returns.
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Shows the containers that belong to the current Compose project and their status.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# curl http://localhost:8080
+
+Explanation:
+Sends an HTTP request to port 8080 on the local host and prints the response body.
+------------------------------------------------------------
+# curl -I http://localhost:8080
+
+Explanation:
+Sends an HTTP HEAD request to the local service on port 8080 and prints the response headers.
+
+Options:
+- -I = --head (head): Fetch headers only by using a HEAD request.
+------------------------------------------------------------
+# ss -lntp | grep 8080
+
+Explanation:
+Lists listening TCP sockets numerically, shows the owning processes, and filters the output for text containing 8080.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -n = --numeric (numeric): Do not resolve service names; show numeric addresses and ports.
+- -t = --tcp (TCP): Show TCP sockets.
+- -p = --processes (processes): Show the process using each socket.
+- | = pipe operator: Send the output of ss to grep as input.
+- 8080 = grep search pattern: Match lines containing 8080.
+------------------------------------------------------------
+# docker compose logs
+
+Explanation:
+Shows logs from the services in the current Compose project.
+------------------------------------------------------------
+# docker compose logs -f web
+
+Explanation:
+Shows logs for the web service and continues streaming new log entries until you stop following them.
+
+Options:
+- -f = --follow (follow): Continue following new log output.
+------------------------------------------------------------
+# docker compose exec web sh
+
+Explanation:
+Runs an interactive shell process named sh inside the running web service container.
+------------------------------------------------------------
+# hostname
+
+Explanation:
+Prints the hostname of the current system or container.
+------------------------------------------------------------
+# nginx -v
+
+Explanation:
+Prints the installed Nginx version and exits.
+
+Options:
+- -v = version information: Show the Nginx version.
+------------------------------------------------------------
+# exit
+
+Explanation:
+Exits the current shell session.
+------------------------------------------------------------
+# docker run -d \
+  --name session32-nginx \
+  -p 8080:80 \
+  --restart unless-stopped \
+  nginx:alpine
+
+Explanation:
+Creates and starts a detached Nginx container named session32-nginx, publishes host port 8080 to container port 80, and applies the unless-stopped restart policy.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name = container name: Set the container name to session32-nginx.
+- -p = --publish (publish): Publish a container port to the host.
+- 8080:80 = publish value: Map host port 8080 to container port 80.
+- --restart = restart policy: Apply the restart policy supplied as its value.
+- unless-stopped = restart policy value: Restart the container unless it was explicitly stopped.
+- \ = shell line continuation: Continue the same command on the next line.
+------------------------------------------------------------
+# docker network ls
+
+Explanation:
+Lists Docker networks on the local Docker host.
+------------------------------------------------------------
+# docker network inspect compose-session32_default
+
+Explanation:
+Shows detailed configuration and runtime information for the Docker network named compose-session32_default.
+------------------------------------------------------------
+# docker compose stop
+
+Explanation:
+Stops the containers in the current Compose project without removing them.
+------------------------------------------------------------
+# docker compose ps -a
+
+Explanation:
+Shows all containers belonging to the current Compose project, including stopped containers.
+
+Options:
+- -a = --all (all): Include stopped containers in the output.
+------------------------------------------------------------
+# docker compose start
+
+Explanation:
+Starts existing stopped containers for the current Compose project.
+------------------------------------------------------------
+# docker compose down
+
+Explanation:
+Stops and removes the current Compose project's containers and default network.
+------------------------------------------------------------
+# ls -l
+
+Explanation:
+Lists files and directories in long listing format.
+
+Options:
+- -l = long listing format: Show detailed file information such as permissions, owner, size, and modification time.
+------------------------------------------------------------
+# docker compose -f compose.yaml up -d
+
+Explanation:
+Starts the Compose application in the background using compose.yaml explicitly as the Compose file.
+
+Options:
+- -f = --file (file): Specify the Compose configuration file to use.
+- compose.yaml = file value: Use this file as the Compose configuration.
+- -d = --detach (detach): Run containers in the background.
+------------------------------------------------------------
+# ss -lntp | grep ':8080 '
+
+Explanation:
+Lists listening TCP sockets numerically, shows the owning processes, and filters the result for port 8080.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -n = --numeric (numeric): Do not resolve service names; show numeric addresses and ports.
+- -t = --tcp (TCP): Show TCP sockets.
+- -p = --processes (processes): Show the process using each socket.
+- | = pipe operator: Send the output of ss to grep as input.
+- ':8080 ' = grep search pattern: Match text containing port 8080 followed by a space.
+------------------------------------------------------------
+# docker compose -f ~/docker-labs/compose-session32/compose.yaml ps
+
+Explanation:
+Shows the Compose project containers by explicitly using the Compose file at the given path.
+
+Options:
+- -f = --file (file): Specify the Compose configuration file to use.
+- ~/docker-labs/compose-session32/compose.yaml = file value: Use this path as the Compose configuration file.
+------------------------------------------------------------
+# cd /path/to/project
+
+Explanation:
+Changes the current shell directory to /path/to/project.
+------------------------------------------------------------
+# cat > compose.yaml <<'EOF'
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+EOF
+
+Explanation:
+Creates or overwrites compose.yaml and writes the shown YAML content into it using a quoted here-document.
+
+Options:
+- > = output redirection operator: Create or truncate compose.yaml and write command output to it.
+- <<'EOF' = quoted here-document operator: Feed the following lines to cat until the ending EOF; quoting prevents shell expansion inside the here-document.
+------------------------------------------------------------
+# cat compose.yaml
+
+Explanation:
+Prints the contents of compose.yaml to standard output.
+------------------------------------------------------------
