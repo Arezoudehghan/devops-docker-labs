@@ -1,0 +1,429 @@
+------------------------------------------------------------
+# docker run -d \
+  --name postgres \
+  -e POSTGRES_PASSWORD=123456 \
+  -v postgres-data:/var/lib/postgresql/data \
+  postgres
+
+Explanation:
+Runs a PostgreSQL container in the background with a fixed name, password environment variable, and persistent named volume.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name postgres = name: Assigns postgres as the container name.
+- -e = --env (environment): Sets POSTGRES_PASSWORD=123456 inside the container.
+- -v = --volume (volume): Mounts the named volume postgres-data at /var/lib/postgresql/data.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name redis \
+  redis:alpine
+
+Explanation:
+Runs a Redis container from the redis:alpine image in the background.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name redis = name: Assigns redis as the container name.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name backend \
+  -p 8080:8080 \
+  my-backend:latest
+
+Explanation:
+Runs the backend container in the background and publishes host port 8080 to container port 8080.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name backend = name: Assigns backend as the container name.
+- -p = --publish (publish): Maps host port 8080 to container port 8080.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name nginx \
+  -p 80:80 \
+  nginx:alpine
+
+Explanation:
+Runs an Nginx container in the background and publishes host port 80 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name nginx = name: Assigns nginx as the container name.
+- -p = --publish (publish): Maps host port 80 to container port 80.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+
+Explanation:
+Defines a Compose service named web from nginx:alpine. It maps host port 8080 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates or recreates the Compose services and starts them in the background.
+
+Options:
+- -d = --detach (detach): Runs the services in the background.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network create app-net
+
+Explanation:
+Creates a Docker network named app-net.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume create db-data
+
+Explanation:
+Creates a Docker named volume called db-data.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  web:
+    image: nginx:alpine
+
+Explanation:
+Defines a Compose service named web that uses the nginx:alpine image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM python:3.13-slim
+
+WORKDIR /app
+
+COPY . .
+
+CMD ["python", "app.py"]
+
+Explanation:
+Defines a Docker image based on python:3.13-slim, sets /app as the working directory, copies the build context, and starts app.py with Python.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t myapp:1.0 .
+
+Explanation:
+Builds a Docker image from the current directory and tags it as myapp:1.0.
+
+Options:
+- -t = --tag (tag): Sets the image name and tag to myapp:1.0.
+- . = current directory: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  app:
+    image: myapp:1.0
+    ports:
+      - "8080:8080"
+
+Explanation:
+Defines an app service using the myapp:1.0 image. It maps host port 8080 to container port 8080.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  -p 18031:80 \
+  nginx:alpine
+
+Explanation:
+Runs an Nginx container named web in the background and publishes host port 18031 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = name: Assigns web as the container name.
+- -p = --publish (publish): Maps host port 18031 to container port 80.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "18031:80"
+
+Explanation:
+Defines the web Compose service with nginx:alpine. It publishes host port 18031 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name app \
+  -p 8080:8080 \
+  -e APP_ENV=production \
+  -e DB_HOST=db \
+  -v app-data:/data \
+  --restart unless-stopped \
+  myapp:1.0
+
+Explanation:
+Runs myapp:1.0 in the background with port mapping, environment variables, persistent storage, and a restart policy.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name app = name: Assigns app as the container name.
+- -p = --publish (publish): Maps host port 8080 to container port 8080.
+- -e = --env (environment): Sets APP_ENV=production and DB_HOST=db inside the container.
+- -v = --volume (volume): Mounts the named volume app-data at /data.
+- --restart unless-stopped = restart policy: Restarts the container automatically unless it was explicitly stopped.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker-compose up -d
+
+Explanation:
+Runs the Compose project with the legacy hyphenated Docker Compose command.
+
+Options:
+- -d = --detach (detach): Runs the services in the background.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker-compose
+
+Explanation:
+Invokes the legacy hyphenated Docker Compose CLI without a subcommand, normally showing its help output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose
+
+Explanation:
+Invokes the current Docker Compose command group without a subcommand, normally showing Compose help.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose version
+
+Explanation:
+Displays the installed Docker Compose version.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker --version
+
+Explanation:
+Displays the installed Docker CLI version.
+
+Options:
+- --version = version: Prints version information and exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -lntp | grep ':18031' || true
+
+Explanation:
+Checks whether a TCP process is listening on port 18031. The final true prevents the overall shell command from failing when grep finds no match.
+
+Options:
+- sudo = superuser execution: Runs ss with elevated privileges.
+- -l = --listening (listening): Shows only listening sockets.
+- -n = --numeric (numeric): Shows numeric addresses and ports instead of resolving names.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -p = --processes (processes): Shows the process using each socket when permissions allow.
+- | = pipe operator: Sends the output of ss to grep.
+- grep ':18031' = pattern filter: Keeps lines containing :18031.
+- || = shell OR operator: Runs true only if the command on the left returns a non-zero status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p /opt/docker-labs/session31
+
+Explanation:
+Creates the /opt/docker-labs/session31 directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates missing parent directories and does not fail if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd /opt/docker-labs/session31
+
+Explanation:
+Changes the current working directory to /opt/docker-labs/session31.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# pwd
+
+Explanation:
+Prints the current working directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# nano compose.yaml
+
+Explanation:
+Opens compose.yaml in the Nano text editor.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up
+
+Explanation:
+Creates or recreates the Compose services and starts them in the foreground.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Parses, resolves, and prints the effective Compose configuration.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config -q
+
+Explanation:
+Validates the Compose configuration without printing the resolved configuration.
+
+Options:
+- -q = --quiet (quiet): Validates only and suppresses normal configuration output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Shows the containers that belong to the current Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists running Docker containers on the Docker host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -I http://127.0.0.1:18031
+
+Explanation:
+Sends an HTTP request to the local service on port 18031 and displays response headers only.
+
+Options:
+- -I = --head (head): Fetches and displays HTTP response headers without downloading the response body.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -I http://192.168.94.90:18031
+
+Explanation:
+Sends an HTTP request to 192.168.94.90 on port 18031 and displays response headers only.
+
+Options:
+- -I = --head (head): Fetches and displays HTTP response headers without downloading the response body.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs
+
+Explanation:
+Displays logs from the services in the current Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs -f
+
+Explanation:
+Displays Compose service logs and continues following new log output.
+
+Options:
+- -f = --follow (follow): Continues streaming new log entries.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs web
+
+Explanation:
+Displays logs only for the Compose service named web.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  frontend:
+    image: frontend:1.0
+
+  backend:
+    image: backend:1.0
+
+  database:
+    image: postgres:18
+
+  redis:
+    image: redis:alpine
+
+Explanation:
+Defines four Compose services: frontend, backend, database, and redis, each using the image shown in the configuration.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose stop
+
+Explanation:
+Stops the containers in the current Compose project without removing them.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose start
+
+Explanation:
+Starts existing stopped containers in the current Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose down
+
+Explanation:
+Stops and removes the Compose project's containers and networks created by Compose.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs --tail=50
+
+Explanation:
+Shows the last 50 log lines from the services in the current Compose project.
+
+Options:
+- --tail=50 = tail: Shows 50 lines from the end of each service log.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd project
+
+Explanation:
+Changes the current working directory to a directory named project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs --tail=20
+
+Explanation:
+Shows the last 20 log lines from the services in the current Compose project.
+
+Options:
+- --tail=20 = tail: Shows 20 lines from the end of each service log.
+------------------------------------------------------------
