@@ -1,0 +1,346 @@
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists the currently running Docker containers.
+
+Options:
+- ps = process status: Shows running containers.
+------------------------------------------------------------
+# docker inspect \
+  --format='{{.Config.Image}}' \
+  cicd-session2-app
+
+Explanation:
+Shows the image reference used by the container named cicd-session2-app.
+
+Options:
+- --format = format the output using a Go template: Prints only the value selected by the template.
+- '{{.Config.Image}}' = Go template value: Selects the container image reference from its configuration.
+------------------------------------------------------------
+# git log --oneline -5
+
+Explanation:
+Shows the latest five Git commits in a compact one-line format.
+
+Options:
+- --oneline = one-line commit format: Displays each commit in a shortened single-line form.
+- -5 = maximum count of 5 commits: Limits the output to the latest five commits.
+------------------------------------------------------------
+# export NEXUS_REGISTRY="192.168.94.90:8085"
+
+Explanation:
+Creates or updates the NEXUS_REGISTRY environment variable and exports it to child processes.
+------------------------------------------------------------
+# export IMAGE_NAME="cicd-session2-app"
+
+Explanation:
+Creates or updates the IMAGE_NAME environment variable and exports it to child processes.
+------------------------------------------------------------
+# export ROLLBACK_TAG="b72de91"
+
+Explanation:
+Creates or updates the ROLLBACK_TAG environment variable and exports it to child processes.
+------------------------------------------------------------
+# export CONTAINER_NAME="cicd-session2-app"
+
+Explanation:
+Creates or updates the CONTAINER_NAME environment variable and exports it to child processes.
+------------------------------------------------------------
+# export DEPLOY_PORT="8088"
+
+Explanation:
+Creates or updates the DEPLOY_PORT environment variable and exports it to child processes.
+------------------------------------------------------------
+# docker pull \
+  "${NEXUS_REGISTRY}/${IMAGE_NAME}:${ROLLBACK_TAG}"
+
+Explanation:
+Pulls the selected rollback image tag from the configured Docker registry.
+------------------------------------------------------------
+# docker image inspect \
+  "${NEXUS_REGISTRY}/${IMAGE_NAME}:${ROLLBACK_TAG}" \
+  >/dev/null
+
+Explanation:
+Checks whether the specified Docker image exists locally and discards normal output.
+
+Options:
+- >/dev/null = shell output redirection: Sends standard output to /dev/null so only the command exit status is used.
+------------------------------------------------------------
+# docker image ls \
+  "${NEXUS_REGISTRY}/${IMAGE_NAME}"
+
+Explanation:
+Lists local Docker images that match the specified repository name.
+
+Options:
+- ls = list: Lists Docker images.
+------------------------------------------------------------
+# CURRENT_IMAGE="$(docker inspect \
+  --format='{{.Config.Image}}' \
+  "${CONTAINER_NAME}")"
+
+Explanation:
+Stores the current container image reference in the CURRENT_IMAGE shell variable.
+
+Options:
+- $(...) = command substitution: Runs the enclosed command and inserts its standard output into the assignment.
+- --format = format the output using a Go template: Prints only the value selected by the template.
+- '{{.Config.Image}}' = Go template value: Selects the container image reference from its configuration.
+------------------------------------------------------------
+# echo "${CURRENT_IMAGE}"
+
+Explanation:
+Prints the value stored in the CURRENT_IMAGE shell variable.
+------------------------------------------------------------
+# docker rm -f \
+  "${CONTAINER_NAME}"
+
+Explanation:
+Removes the specified container and forces it to stop first if it is running.
+
+Options:
+- -f = --force (force): Forces removal of a running container.
+------------------------------------------------------------
+# docker run -d \
+  --name "${CONTAINER_NAME}" \
+  --restart unless-stopped \
+  -p "${DEPLOY_PORT}:8000" \
+  "${NEXUS_REGISTRY}/${IMAGE_NAME}:${ROLLBACK_TAG}"
+
+Explanation:
+Starts the rollback image as a detached container with the configured name, restart policy, and port mapping.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = assign a name: Sets the container name to ${CONTAINER_NAME}.
+- --restart = restart policy: Uses unless-stopped so Docker restarts the container unless it was explicitly stopped.
+- -p = --publish (publish): Maps host port ${DEPLOY_PORT} to container port 8000.
+------------------------------------------------------------
+# docker ps \
+  --filter "name=${CONTAINER_NAME}"
+
+Explanation:
+Lists running Docker containers whose name matches the configured container name.
+
+Options:
+- ps = process status: Shows running containers.
+- --filter = filter output: Restricts the result using the name=${CONTAINER_NAME} filter.
+------------------------------------------------------------
+# docker inspect \
+  --format='{{.Config.Image}}' \
+  "${CONTAINER_NAME}"
+
+Explanation:
+Shows the image reference currently used by the configured container.
+
+Options:
+- --format = format the output using a Go template: Prints only the value selected by the template.
+- '{{.Config.Image}}' = Go template value: Selects the container image reference from its configuration.
+------------------------------------------------------------
+# curl -fsS \
+  "http://127.0.0.1:${DEPLOY_PORT}/"
+
+Explanation:
+Requests the application endpoint and returns an error exit status when the HTTP request fails.
+
+Options:
+- -f = --fail (fail): Returns a failure exit code for HTTP response codes 400 and above without printing the response body.
+- -s = --silent (silent): Hides the progress meter and normal informational output.
+- -S = --show-error (show error): Shows an error message when used together with --silent.
+------------------------------------------------------------
+# curl -sS \
+  -o /dev/null \
+  -w 'HTTP Status: %{http_code}\n' \
+  "http://127.0.0.1:${DEPLOY_PORT}/"
+
+Explanation:
+Requests the application endpoint, discards the response body, and prints only the HTTP status code.
+
+Options:
+- -s = --silent (silent): Hides the progress meter and normal informational output.
+- -S = --show-error (show error): Shows an error message when used together with --silent.
+- -o = --output (output): Writes the response body to /dev/null.
+- /dev/null = output target: Discards the response body.
+- -w = --write-out (write out): Prints the specified information after the request completes.
+- 'HTTP Status: %{http_code}\n' = write-out format: Prints the HTTP status code followed by a newline.
+------------------------------------------------------------
+# docker logs \
+  --tail 50 \
+  "${CONTAINER_NAME}"
+
+Explanation:
+Shows the last 50 log lines from the configured container.
+
+Options:
+- --tail 50 = show the last 50 lines: Limits the output to the newest 50 log lines.
+------------------------------------------------------------
+# docker inspect \
+  --format='{{.State.Status}}' \
+  "${CONTAINER_NAME}"
+
+Explanation:
+Shows the current runtime status of the configured container.
+
+Options:
+- --format = format the output using a Go template: Prints only the value selected by the template.
+- '{{.State.Status}}' = Go template value: Selects the container state status.
+------------------------------------------------------------
+# docker inspect \
+  --format='{{json .State.Health}}' \
+  "${CONTAINER_NAME}"
+
+Explanation:
+Shows the container health information as JSON when the image defines a Docker HEALTHCHECK.
+
+Options:
+- --format = format the output using a Go template: Prints only the value selected by the template.
+- '{{json .State.Health}}' = Go template expression: Converts the container health object to JSON.
+------------------------------------------------------------
+# if [ -z "${ROLLBACK_TAG:-}" ]; then
+  echo "ERROR: ROLLBACK_TAG is required"
+  exit 1
+fi
+
+Explanation:
+Stops the job with exit code 1 when ROLLBACK_TAG is empty or unset.
+
+Options:
+- -z = shell test operator for zero-length string: Returns true when the tested string is empty.
+- ${ROLLBACK_TAG:-} = shell parameter expansion: Uses an empty value when ROLLBACK_TAG is unset or null.
+- exit 1 = nonzero exit status: Terminates the shell block and marks the command as failed.
+------------------------------------------------------------
+# case "${ROLLBACK_TAG}" in
+  *[!A-Za-z0-9_.-]*)
+    echo "ERROR: Invalid ROLLBACK_TAG"
+    exit 1
+    ;;
+esac
+
+Explanation:
+Validates ROLLBACK_TAG and fails when it contains a character outside the allowed set.
+
+Options:
+- case ... in ... esac = shell case statement: Matches a value against one or more patterns.
+- *[!A-Za-z0-9_.-]* = shell pattern: Matches any value containing a character that is not a letter, digit, underscore, dot, or dash.
+- exit 1 = nonzero exit status: Terminates the shell block and marks the command as failed.
+------------------------------------------------------------
+# ROLLBACK_IMAGE="${NEXUS_REGISTRY}/${IMAGE_NAME}:${ROLLBACK_TAG}"
+echo "Rollback image: ${ROLLBACK_IMAGE}"
+
+Explanation:
+Builds the full rollback image reference and prints it to the job log.
+------------------------------------------------------------
+# chmod 600 "${SSH_PRIVATE_KEY}"
+
+Explanation:
+Sets the SSH private key file so only its owner can read and write it.
+
+Options:
+- 600 = file permission mode: Gives read and write permission to the owner and no permissions to group or others.
+------------------------------------------------------------
+# printf '%s' "${NEXUS_PASSWORD}" |
+ssh \
+  -i "${SSH_PRIVATE_KEY}" \
+  -o UserKnownHostsFile="${SSH_KNOWN_HOSTS}" \
+  -o StrictHostKeyChecking=yes \
+  "${DEPLOY_USER}@${DEPLOY_HOST}" \
+  "docker login '${NEXUS_REGISTRY}' -u '${NEXUS_USER}' --password-stdin"
+
+Explanation:
+Sends the Nexus password through SSH standard input and logs Docker in to the registry on the deployment server.
+
+Options:
+- '%s' = printf format string: Prints the password exactly as a string without adding a newline.
+- | = shell pipe operator: Sends the standard output of printf to the standard input of ssh and then to the remote docker login command.
+- -i = SSH identity file: Uses ${SSH_PRIVATE_KEY} as the private key for authentication.
+- -o = SSH configuration option: Passes an OpenSSH configuration setting on the command line.
+- UserKnownHostsFile="${SSH_KNOWN_HOSTS}" = SSH host-key file setting: Uses the specified known_hosts file.
+- StrictHostKeyChecking=yes = SSH host-key checking setting: Requires the server host key to match a trusted entry.
+- -u = --username (username): Sets the Docker registry username to ${NEXUS_USER}.
+- --password-stdin = read password from standard input: Prevents the password from being supplied directly as a command-line argument.
+------------------------------------------------------------
+# ssh \
+  -i "${SSH_PRIVATE_KEY}" \
+  -o UserKnownHostsFile="${SSH_KNOWN_HOSTS}" \
+  -o StrictHostKeyChecking=yes \
+  "${DEPLOY_USER}@${DEPLOY_HOST}" \
+  "docker pull '${ROLLBACK_IMAGE}'"
+
+Explanation:
+Connects to the deployment server over SSH and pulls the selected rollback image there.
+
+Options:
+- -i = SSH identity file: Uses ${SSH_PRIVATE_KEY} as the private key for authentication.
+- -o = SSH configuration option: Passes an OpenSSH configuration setting on the command line.
+- UserKnownHostsFile="${SSH_KNOWN_HOSTS}" = SSH host-key file setting: Uses the specified known_hosts file.
+- StrictHostKeyChecking=yes = SSH host-key checking setting: Requires the server host key to match a trusted entry.
+------------------------------------------------------------
+# ssh \
+  -i "${SSH_PRIVATE_KEY}" \
+  -o UserKnownHostsFile="${SSH_KNOWN_HOSTS}" \
+  -o StrictHostKeyChecking=yes \
+  "${DEPLOY_USER}@${DEPLOY_HOST}" \
+  "docker rm -f '${CONTAINER_NAME}' || true"
+
+Explanation:
+Connects to the deployment server, removes the current container if it exists, and prevents a missing-container error from failing the job.
+
+Options:
+- -i = SSH identity file: Uses ${SSH_PRIVATE_KEY} as the private key for authentication.
+- -o = SSH configuration option: Passes an OpenSSH configuration setting on the command line.
+- UserKnownHostsFile="${SSH_KNOWN_HOSTS}" = SSH host-key file setting: Uses the specified known_hosts file.
+- StrictHostKeyChecking=yes = SSH host-key checking setting: Requires the server host key to match a trusted entry.
+- -f = --force (force): Forces removal of a running Docker container.
+- || = shell OR operator: Runs true only if docker rm returns a nonzero exit status.
+- true = shell success command: Returns exit status 0 so the remote command succeeds when removal fails.
+------------------------------------------------------------
+# ssh \
+  -i "${SSH_PRIVATE_KEY}" \
+  -o UserKnownHostsFile="${SSH_KNOWN_HOSTS}" \
+  -o StrictHostKeyChecking=yes \
+  "${DEPLOY_USER}@${DEPLOY_HOST}" \
+  "docker run -d \
+  --name '${CONTAINER_NAME}' \
+  --restart unless-stopped \
+  -p '${DEPLOY_PORT}:8000' \
+  '${ROLLBACK_IMAGE}'"
+
+Explanation:
+Connects to the deployment server and starts the selected rollback image as the application container.
+
+Options:
+- -i = SSH identity file: Uses ${SSH_PRIVATE_KEY} as the private key for authentication.
+- -o = SSH configuration option: Passes an OpenSSH configuration setting on the command line.
+- UserKnownHostsFile="${SSH_KNOWN_HOSTS}" = SSH host-key file setting: Uses the specified known_hosts file.
+- StrictHostKeyChecking=yes = SSH host-key checking setting: Requires the server host key to match a trusted entry.
+- -d = --detach (detach): Runs the Docker container in the background.
+- --name = assign a name: Sets the Docker container name to ${CONTAINER_NAME}.
+- --restart = restart policy: Uses unless-stopped so Docker restarts the container unless it was explicitly stopped.
+- -p = --publish (publish): Maps host port ${DEPLOY_PORT} to container port 8000.
+------------------------------------------------------------
+# curl \
+  --fail \
+  --silent \
+  --show-error \
+  --retry 5 \
+  --retry-delay 2 \
+  "http://${DEPLOY_HOST}:${DEPLOY_PORT}/"
+
+Explanation:
+Checks the deployed application and retries failed requests up to five times with a two-second delay.
+
+Options:
+- --fail = fail on HTTP errors: Returns a failure exit code for HTTP response codes 400 and above without printing the response body.
+- --silent = silent mode: Hides the progress meter and normal informational output.
+- --show-error = show errors in silent mode: Prints an error message when a request fails.
+- --retry 5 = retry count: Retries transient failures up to five times.
+- --retry-delay 2 = retry delay: Waits two seconds between retries.
+------------------------------------------------------------
+# docker pull \
+  192.168.94.90:8085/cicd-session2-app:latest
+
+Explanation:
+Pulls the image currently referenced by the latest tag from the Nexus Docker registry.
+------------------------------------------------------------
