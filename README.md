@@ -74,7 +74,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-58-gitleaks-secret-scanning/
 │   └── session-59-docker-bench-security/
 ├── monitoring/
-│   └── session-60-docker-logging/
+│   ├── session-60-docker-logging/
+│   └── session-62-cadvisor/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -177,11 +178,6 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
 | 60 | Docker logs, stdout/stderr, logging drivers, log rotation, and daemon logs | [`monitoring/session-60-docker-logging`](monitoring/session-60-docker-logging/) | `DEV-1` |
-
-### Docker Logging and Monitoring
-
-| Session | Topic | Lab directory | Execution host |
-|---|---|---|---|
 | 62 | Monitor Docker containers with cAdvisor and inspect Prometheus metrics | [`monitoring/session-62-cadvisor`](monitoring/session-62-cadvisor/) | `DEV-2` |
 
 ### Docker in Production
