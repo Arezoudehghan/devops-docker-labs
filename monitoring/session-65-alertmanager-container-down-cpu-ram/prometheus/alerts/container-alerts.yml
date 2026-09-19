@@ -1,0 +1,42 @@
+groups:
+  - name: container-alerts
+    rules:
+      - alert: ContainerDown
+        expr: absent(container_last_seen{name="alert-demo"})
+        for: 30s
+        labels:
+          severity: critical
+          container: alert-demo
+        annotations:
+          summary: "Container alert-demo is down"
+          description: "Prometheus cannot find cAdvisor metrics for alert-demo."
+
+      - alert: ContainerHighCPU
+        expr: |
+          100 *
+          sum by (name) (
+            rate(container_cpu_usage_seconds_total{name="alert-demo"}[1m])
+          ) > 80
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.name }}"
+          description: "Container {{ $labels.name }} CPU usage is above 80% for more than 1 minute."
+
+      - alert: ContainerHighMemory
+        expr: |
+          100 *
+          sum by (name) (
+            container_memory_working_set_bytes{name="alert-demo"}
+          )
+          /
+          sum by (name) (
+            container_spec_memory_limit_bytes{name="alert-demo"}
+          ) > 70
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.name }}"
+          description: "Container {{ $labels.name }} memory usage is above 70% of its configured limit for more than 1 minute."

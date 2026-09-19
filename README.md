@@ -2,7 +2,7 @@
 
 [![Validate DevOps Docker Labs](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml/badge.svg)](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml)
 
-A structured collection of hands-on Docker labs covering Docker fundamentals, persistent storage, Docker Compose, networking, registry and Nexus workflows, security practices, container monitoring, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
+A structured collection of hands-on Docker labs covering Docker fundamentals, persistent storage, Docker Compose, networking, registry and Nexus workflows, security practices, container monitoring and alerting, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
 
 ## Lab environment
 
@@ -76,7 +76,10 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 ├── monitoring/
 │   ├── session-60-docker-logging/
 │   ├── session-61-docker-logs-log-driver/
-│   └── session-62-cadvisor/
+│   ├── session-62-cadvisor/
+│   ├── session-63-node-exporter-docker-host/
+│   ├── session-64-prometheus-grafana-docker/
+│   └── session-65-alertmanager-container-down-cpu-ram/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -181,6 +184,9 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 60 | Docker logs, stdout/stderr, logging drivers, log rotation, and daemon logs | [`monitoring/session-60-docker-logging`](monitoring/session-60-docker-logging/) | `DEV-1` |
 | 61 | Docker logs, log drivers, log rotation, and Compose logging | [`monitoring/session-61-docker-logs-log-driver`](monitoring/session-61-docker-logs-log-driver/) | `DEV-1` |
 | 62 | Monitor Docker containers with cAdvisor and inspect Prometheus metrics | [`monitoring/session-62-cadvisor`](monitoring/session-62-cadvisor/) | `DEV-2` |
+| 63 | Node Exporter and Docker host metrics | [`monitoring/session-63-node-exporter-docker-host`](monitoring/session-63-node-exporter-docker-host/) | `DEV-2` |
+| 64 | Prometheus + Grafana for Docker host and container monitoring | [`monitoring/session-64-prometheus-grafana-docker`](monitoring/session-64-prometheus-grafana-docker/) | `DEV-2` |
+| 65 | Alertmanager for container down, high CPU, and high memory | [`monitoring/session-65-alertmanager-container-down-cpu-ram`](monitoring/session-65-alertmanager-container-down-cpu-ram/) | `DEV-2` |
 
 ### Docker in Production
 

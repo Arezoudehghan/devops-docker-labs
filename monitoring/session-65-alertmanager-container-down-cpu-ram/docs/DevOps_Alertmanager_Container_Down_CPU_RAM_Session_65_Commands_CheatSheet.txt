@@ -1,0 +1,452 @@
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists the currently running Docker containers.
+
+------------------------------------------------------------
+# curl -s http://localhost:8080/metrics | grep '^container_cpu_usage_seconds_total' | head
+
+Explanation:
+Reads cAdvisor metrics, keeps only lines that start with the container CPU metric name, and shows the first lines.
+
+Options:
+- -s = --silent (silent): Makes curl run without the progress meter or normal status messages.
+- | = pipe operator: Sends the output of one command to the next command.
+------------------------------------------------------------
+# curl -s http://localhost:8080/metrics | grep '^container_memory_working_set_bytes' | head
+
+Explanation:
+Reads cAdvisor metrics, keeps only lines that start with the container working-set memory metric name, and shows the first lines.
+
+Options:
+- -s = --silent (silent): Makes curl run without the progress meter or normal status messages.
+- | = pipe operator: Sends the output of one command to the next command.
+------------------------------------------------------------
+# curl -s http://localhost:8080/metrics | grep '^container_last_seen' | head
+
+Explanation:
+Reads cAdvisor metrics, keeps only lines that start with the container last-seen metric name, and shows the first lines.
+
+Options:
+- -s = --silent (silent): Makes curl run without the progress meter or normal status messages.
+- | = pipe operator: Sends the output of one command to the next command.
+------------------------------------------------------------
+# docker version
+
+Explanation:
+Shows Docker client and server version information.
+
+------------------------------------------------------------
+# docker logs cadvisor 2>&1 | tail -50
+
+Explanation:
+Reads the cAdvisor container logs, combines standard error with standard output, and shows the last 50 lines.
+
+Options:
+- 2>&1 = shell redirection: Redirects file descriptor 2, standard error, to file descriptor 1, standard output.
+- | = pipe operator: Sends the combined log output to tail.
+- -50 = last 50 lines: GNU tail shorthand for showing the last 50 lines, equivalent to -n 50.
+------------------------------------------------------------
+# docker rm -f alert-demo 2>/dev/null || true
+
+Explanation:
+Removes the alert-demo container if it exists and prevents the shell command from failing when the container is missing.
+
+Options:
+- -f = --force (force): Forces removal of the container, including stopping it first if necessary.
+- 2>/dev/null = shell redirection: Sends standard error to /dev/null so error messages are hidden.
+- || = OR operator: Runs the command on the right only if the command on the left fails.
+------------------------------------------------------------
+# docker run -d \
+  --name alert-demo \
+  --memory=128m \
+  --cpus=1 \
+  python:3.12-slim \
+  sleep infinity
+
+Explanation:
+Creates a detached container named alert-demo with a 128 MiB memory limit and a one-CPU limit, then keeps it running with sleep infinity.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name alert-demo = container name: Assigns the name alert-demo.
+- --memory=128m = memory limit: Limits container memory to 128 MiB.
+- --cpus=1 = CPU limit: Limits the container to one CPU.
+- python:3.12-slim = image argument: Uses the Python 3.12 slim image.
+- sleep infinity = container command: Keeps the container alive indefinitely.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker ps --filter name=alert-demo
+
+Explanation:
+Lists running containers whose name matches alert-demo.
+
+Options:
+- --filter name=alert-demo = filter: Restricts the result to containers matching the name filter.
+------------------------------------------------------------
+# docker stats alert-demo --no-stream
+
+Explanation:
+Shows one snapshot of CPU, memory, network, and other runtime statistics for alert-demo.
+
+Options:
+- --no-stream = no streaming: Prints one statistics sample and exits instead of continuously updating.
+------------------------------------------------------------
+# curl -s http://localhost:8080/metrics | grep 'alert-demo' | head -20
+
+Explanation:
+Reads cAdvisor metrics, keeps lines containing alert-demo, and shows the first 20 matching lines.
+
+Options:
+- -s = --silent (silent): Makes curl run without the progress meter or normal status messages.
+- | = pipe operator: Sends output from one command to the next command.
+- -20 = first 20 lines: GNU head shorthand for showing the first 20 lines, equivalent to -n 20.
+------------------------------------------------------------
+# curl -s http://localhost:8080/metrics | grep '^container_last_seen' | grep 'alert-demo'
+
+Explanation:
+Reads cAdvisor metrics and keeps only container_last_seen lines that also contain alert-demo.
+
+Options:
+- -s = --silent (silent): Makes curl run without the progress meter or normal status messages.
+- | = pipe operator: Sends output from one command to the next command.
+------------------------------------------------------------
+# curl -s http://localhost:8080/metrics | grep '^container_cpu_usage_seconds_total' | grep 'alert-demo'
+
+Explanation:
+Reads cAdvisor metrics and keeps only CPU usage metric lines that also contain alert-demo.
+
+Options:
+- -s = --silent (silent): Makes curl run without the progress meter or normal status messages.
+- | = pipe operator: Sends output from one command to the next command.
+------------------------------------------------------------
+# curl -s http://localhost:8080/metrics | grep '^container_memory_working_set_bytes' | grep 'alert-demo'
+
+Explanation:
+Reads cAdvisor metrics and keeps only working-set memory metric lines that also contain alert-demo.
+
+Options:
+- -s = --silent (silent): Makes curl run without the progress meter or normal status messages.
+- | = pipe operator: Sends output from one command to the next command.
+------------------------------------------------------------
+# container_last_seen{name="alert-demo"}
+
+Explanation:
+Returns the last-seen timestamp series for the container whose name label is alert-demo.
+
+------------------------------------------------------------
+# container_memory_working_set_bytes{name="alert-demo"}
+
+Explanation:
+Returns the current working-set memory usage in bytes for alert-demo.
+
+------------------------------------------------------------
+# rate(container_cpu_usage_seconds_total{name="alert-demo"}[1m])
+
+Explanation:
+Calculates the per-second rate of CPU time consumed by alert-demo over the last one minute.
+
+------------------------------------------------------------
+# container_cpu_usage_seconds_total
+
+Explanation:
+Returns the cumulative CPU time counter exposed for containers.
+
+------------------------------------------------------------
+# rate(container_cpu_usage_seconds_total[1m])
+
+Explanation:
+Technical correction: The lesson explicitly marked container_cpu_usage_seconds_total > 80 as incorrect for CPU percentage because the metric is a counter. This corrected query calculates the per-second increase of that counter over a one-minute range.
+
+------------------------------------------------------------
+# 100 * sum by (name) (
+  rate(container_cpu_usage_seconds_total{name="alert-demo"}[1m])
+)
+
+Explanation:
+Calculates alert-demo CPU usage as a percentage of one CPU core and aggregates the result by container name.
+
+------------------------------------------------------------
+# 100 * sum by (name) (
+  rate(container_cpu_usage_seconds_total{name="alert-demo"}[1m])
+) > 80
+
+Explanation:
+Returns a result when alert-demo uses more than 80 percent of one CPU core based on the one-minute CPU rate.
+
+------------------------------------------------------------
+# container_memory_working_set_bytes
+
+Explanation:
+Returns the working-set memory usage metric for containers in bytes.
+
+------------------------------------------------------------
+# container_spec_memory_limit_bytes
+
+Explanation:
+Returns the configured container memory limit metric in bytes.
+
+------------------------------------------------------------
+# 100 *
+sum by (name) (
+  container_memory_working_set_bytes{name="alert-demo"}
+)
+/
+sum by (name) (
+  container_spec_memory_limit_bytes{name="alert-demo"}
+)
+
+Explanation:
+Calculates alert-demo working-set memory usage as a percentage of its configured memory limit.
+
+------------------------------------------------------------
+# up{job="cadvisor"} == 0
+
+Explanation:
+Returns cAdvisor scrape targets whose up metric is zero, meaning Prometheus cannot successfully scrape them.
+
+------------------------------------------------------------
+# container_last_seen
+
+Explanation:
+Returns the last-seen timestamp metric for container series exposed by cAdvisor.
+
+------------------------------------------------------------
+# absent(container_last_seen{name="alert-demo"})
+
+Explanation:
+Returns a value when the expected container_last_seen series for alert-demo is missing.
+
+------------------------------------------------------------
+# absent(container_last_seen{name="payment-api"})
+
+Explanation:
+Returns a value when the expected container_last_seen series for payment-api is missing.
+
+------------------------------------------------------------
+# cd /opt/monitoring
+
+Explanation:
+Changes the current shell directory to /opt/monitoring.
+
+------------------------------------------------------------
+# sudo mkdir -p /opt/monitoring/prometheus/alerts
+
+Explanation:
+Creates the Prometheus alerts directory with root privileges and also creates missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and does not fail if the directory already exists.
+------------------------------------------------------------
+# sudo nano /opt/monitoring/prometheus/alerts/container-alerts.yml
+
+Explanation:
+Opens the container-alerts.yml file in the nano editor with root privileges.
+
+------------------------------------------------------------
+# sudo nano /opt/monitoring/prometheus/prometheus.yml
+
+Explanation:
+Opens the Prometheus configuration file in the nano editor with root privileges.
+
+------------------------------------------------------------
+# docker compose config -q
+
+Explanation:
+Validates the Docker Compose configuration and exits without printing the rendered configuration when it is valid.
+
+Options:
+- -q = --quiet (quiet): Only validates the configuration and suppresses normal output.
+------------------------------------------------------------
+# docker compose exec -T prometheus \
+  promtool check config /etc/prometheus/prometheus.yml
+
+Explanation:
+Runs promtool inside the Prometheus service container to validate the Prometheus configuration file.
+
+Options:
+- -T = --no-TTY (no TTY): Disables pseudo-TTY allocation for the exec command.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker compose exec -T prometheus \
+  promtool check rules /etc/prometheus/alerts/container-alerts.yml
+
+Explanation:
+Runs promtool inside the Prometheus service container to validate the alert rule file.
+
+Options:
+- -T = --no-TTY (no TTY): Disables pseudo-TTY allocation for the exec command.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker compose restart prometheus alertmanager
+
+Explanation:
+Restarts the Prometheus and Alertmanager services defined in the current Compose project.
+
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Shows the current status of services in the Docker Compose project.
+
+------------------------------------------------------------
+# docker compose logs --tail=50 prometheus
+
+Explanation:
+Shows the last 50 log lines from the Prometheus service.
+
+Options:
+- --tail=50 = tail limit: Shows only the most recent 50 log lines.
+------------------------------------------------------------
+# docker compose logs --tail=50 alertmanager
+
+Explanation:
+Shows the last 50 log lines from the Alertmanager service.
+
+Options:
+- --tail=50 = tail limit: Shows only the most recent 50 log lines.
+------------------------------------------------------------
+# docker exec -d alert-demo \
+  python -c 'while True: pass'
+
+Explanation:
+Starts a detached Python process inside alert-demo that continuously consumes CPU.
+
+Options:
+- -d = --detach (detach): Runs the process in the background.
+- -c = Python command string: Executes the following Python code supplied as a string.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker restart alert-demo
+
+Explanation:
+Restarts the alert-demo container.
+
+------------------------------------------------------------
+# docker exec -d alert-demo \
+  python -c 'import time; x=bytearray(90*1024*1024); time.sleep(300)'
+
+Explanation:
+Starts a detached Python process inside alert-demo that allocates about 90 MiB of memory and keeps it allocated for 300 seconds.
+
+Options:
+- -d = --detach (detach): Runs the process in the background.
+- -c = Python command string: Executes the following Python code supplied as a string.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# 100 *
+sum by (name) (
+  container_memory_working_set_bytes{name="alert-demo"}
+)
+/
+sum by (name) (
+  container_spec_memory_limit_bytes{name="alert-demo"}
+) > 70
+
+Explanation:
+Returns a result when alert-demo working-set memory usage is greater than 70 percent of its configured memory limit.
+
+------------------------------------------------------------
+# docker stop alert-demo
+
+Explanation:
+Stops the running alert-demo container.
+
+------------------------------------------------------------
+# docker start alert-demo
+
+Explanation:
+Starts the existing alert-demo container.
+
+------------------------------------------------------------
+# up == 0
+
+Explanation:
+Returns any Prometheus scrape target whose up metric is zero.
+
+------------------------------------------------------------
+# 100 *
+sum by (name) (
+  rate(
+    container_cpu_usage_seconds_total{
+      name!="",
+      image!=""
+    }[5m]
+  )
+) > 80
+
+Explanation:
+Returns named container series with a non-empty image label whose aggregated CPU usage is above 80 percent of one CPU core over a five-minute rate window.
+
+------------------------------------------------------------
+# container_spec_cpu_quota
+
+Explanation:
+Returns the container CPU quota metric when cAdvisor exposes it.
+
+------------------------------------------------------------
+# container_spec_cpu_period
+
+Explanation:
+Returns the container CPU scheduling period metric when cAdvisor exposes it.
+
+------------------------------------------------------------
+# (
+  100 *
+  sum by (name) (
+    container_memory_working_set_bytes{
+      name!="",
+      image!=""
+    }
+  )
+  /
+  sum by (name) (
+    container_spec_memory_limit_bytes{
+      name!="",
+      image!=""
+    }
+  )
+) > 85
+
+Explanation:
+Returns named container series with a non-empty image label when working-set memory usage is above 85 percent of the configured memory limit.
+
+------------------------------------------------------------
+# absent(container_last_seen{name="backend"})
+
+Explanation:
+Returns a value when the expected container_last_seen series for backend is missing.
+
+------------------------------------------------------------
+# absent(container_last_seen{name="redis"})
+
+Explanation:
+Returns a value when the expected container_last_seen series for redis is missing.
+
+------------------------------------------------------------
+# curl -s http://localhost:9090/-/ready
+
+Explanation:
+Checks the Prometheus readiness endpoint and prints its response.
+
+Options:
+- -s = --silent (silent): Makes curl run without the progress meter or normal status messages.
+------------------------------------------------------------
+# curl -s http://localhost:9093/-/ready
+
+Explanation:
+Checks the Alertmanager readiness endpoint and prints its response.
+
+Options:
+- -s = --silent (silent): Makes curl run without the progress meter or normal status messages.
+------------------------------------------------------------
+# curl -s http://localhost:8080/metrics | grep 'alert-demo' | head
+
+Explanation:
+Reads cAdvisor metrics, keeps lines containing alert-demo, and shows the first matching lines.
+
+Options:
+- -s = --silent (silent): Makes curl run without the progress meter or normal status messages.
+- | = pipe operator: Sends output from one command to the next command.
+------------------------------------------------------------
