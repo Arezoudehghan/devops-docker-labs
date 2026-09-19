@@ -45,6 +45,9 @@ jobs:
       - name: Pull Session 37 images
         run: docker compose --env-file compose/session-37-depends-on-restart/.env -f compose/session-37-depends-on-restart/compose.yaml pull
 
+      - name: Validate Session 63 Compose configuration
+        run: docker compose -f monitoring/session-63-node-exporter-docker-host/compose.yaml config --quiet
+
       - name: Validate shell scripts
         run: |
           bash -n compose/session-36-networks/scripts/verify.sh
