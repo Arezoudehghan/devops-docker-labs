@@ -1,0 +1,323 @@
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists running Docker containers. It is used in this lesson to check whether a container is still running and to view its health status.
+------------------------------------------------------------
+# curl -f http://localhost:8080/health
+
+Explanation:
+Sends an HTTP request to the local health endpoint and fails if the server returns an HTTP error status.
+
+Options:
+- -f = --fail (fail): Return a failure exit code for HTTP responses with status 400 or higher and suppress the response body for those errors.
+------------------------------------------------------------
+# wget -q --spider http://localhost:8080/health
+
+Explanation:
+Checks whether the health URL is reachable without downloading the page content.
+
+Options:
+- -q = quiet mode: Suppress normal wget output.
+- --spider = spider mode: Check that the resource exists without downloading it.
+------------------------------------------------------------
+# HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD wget -q --spider http://127.0.0.1:8080/ || exit 1
+
+Explanation:
+Defines a Docker image health check that tests the HTTP service on port 8080. Docker marks the container unhealthy after the configured number of consecutive failed checks.
+
+Options:
+- --interval=30s = health check interval: Run the health check every 30 seconds.
+- --timeout=5s = health check timeout: Treat a check as failed if it runs longer than 5 seconds.
+- --retries=3 = health check retries: Mark the container unhealthy after 3 consecutive failures.
+- -q = quiet mode: Suppress normal wget output.
+- --spider = spider mode: Check that the resource exists without downloading it.
+- || = logical OR operator: Run `exit 1` only if the wget command fails.
+------------------------------------------------------------
+# HEALTHCHECK --interval=30s \
+            --timeout=5s \
+            --start-period=20s \
+            --retries=3 \
+  CMD wget -q --spider http://127.0.0.1:8000/health || exit 1
+
+Explanation:
+Defines a Docker health check for the application health endpoint on port 8000. The start period gives the application time to initialize before failed checks affect health status.
+
+Options:
+- --interval=30s = health check interval: Run the health check every 30 seconds.
+- --timeout=5s = health check timeout: Treat a check as failed if it runs longer than 5 seconds.
+- --start-period=20s = health check start period: Give the container 20 seconds of startup time before normal failure counting begins.
+- --retries=3 = health check retries: Mark the container unhealthy after 3 consecutive failed checks.
+- -q = quiet mode: Suppress normal wget output.
+- --spider = spider mode: Check that the resource exists without downloading it.
+- || = logical OR operator: Run `exit 1` only if the wget command fails.
+------------------------------------------------------------
+# wget -q --spider http://127.0.0.1:8000/health || exit 1
+
+Explanation:
+Checks the application health endpoint and returns exit code 1 if wget cannot reach it successfully.
+
+Options:
+- -q = quiet mode: Suppress normal wget output.
+- --spider = spider mode: Check that the resource exists without downloading it.
+- || = logical OR operator: Run `exit 1` only if the wget command fails.
+------------------------------------------------------------
+# docker run -d \
+  --name health-demo \
+  --health-cmd='wget -q --spider http://127.0.0.1:8080 || exit 1' \
+  --health-interval=10s \
+  --health-timeout=3s \
+  --health-retries=3 \
+  alpine \
+  sh -c 'busybox httpd -p 8080; tail -f /dev/null'
+
+Explanation:
+Starts an Alpine container named health-demo with a Docker health check and a BusyBox HTTP server on port 8080. The tail command keeps the container's main shell process running.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name health-demo = container name: Assign the name `health-demo` to the container.
+- --health-cmd='...' = health check command: Define the command Docker runs to test container health.
+- --health-interval=10s = health check interval: Run the health check every 10 seconds.
+- --health-timeout=3s = health check timeout: Treat a health check as failed if it runs longer than 3 seconds.
+- --health-retries=3 = health check retries: Mark the container unhealthy after 3 consecutive failed checks.
+- -q = quiet mode for wget: Suppress normal wget output.
+- --spider = spider mode for wget: Check that the resource exists without downloading it.
+- || = logical OR operator: Run `exit 1` only if wget fails.
+- -c = command string for sh: Execute the following quoted string as shell commands.
+- -p 8080 = port option for BusyBox httpd: Listen for HTTP connections on port 8080.
+- ; = shell command separator: Run the next command after the previous command finishes, regardless of success.
+- -f = follow mode for tail: Keep following the file and wait for additional data.
+------------------------------------------------------------
+# tail -f /dev/null
+
+Explanation:
+Keeps the process running by continuously following `/dev/null`, which never reaches a normal end-of-file state for this use.
+
+Options:
+- -f = follow mode: Keep running and wait for additional data instead of exiting.
+------------------------------------------------------------
+# docker inspect --format='{{.State.Health.Status}}' health-demo
+
+Explanation:
+Displays only the Docker health status of the health-demo container, such as `starting`, `healthy`, or `unhealthy`.
+
+Options:
+- --format='{{.State.Health.Status}}' = format output: Use a Go template to print only the container health status field.
+------------------------------------------------------------
+# docker inspect --format='{{json .State.Health}}' health-demo
+
+Explanation:
+Displays the complete Docker health information for the health-demo container as JSON-formatted data.
+
+Options:
+- --format='{{json .State.Health}}' = format output: Use a Go template and the `json` function to print the Health object in JSON form.
+------------------------------------------------------------
+# docker exec health-demo killall httpd
+
+Explanation:
+Runs `killall httpd` inside the health-demo container to stop the HTTP server while leaving the container itself running.
+------------------------------------------------------------
+# docker exec health-demo busybox httpd -p 8080
+
+Explanation:
+Starts the BusyBox HTTP server again inside the running health-demo container on port 8080.
+
+Options:
+- -p 8080 = port option for BusyBox httpd: Listen for HTTP connections on port 8080.
+------------------------------------------------------------
+# FROM nginx:alpine
+
+Explanation:
+Sets `nginx:alpine` as the base image for the Dockerfile.
+------------------------------------------------------------
+# HEALTHCHECK --interval=30s \
+            --timeout=5s \
+            --start-period=10s \
+            --retries=3 \
+  CMD wget -q --spider http://127.0.0.1/ || exit 1
+
+Explanation:
+Defines a Docker image health check that verifies the local Nginx HTTP service. Docker allows a 10-second startup period and then applies the normal interval, timeout, and retry rules.
+
+Options:
+- --interval=30s = health check interval: Run the health check every 30 seconds.
+- --timeout=5s = health check timeout: Treat a check as failed if it runs longer than 5 seconds.
+- --start-period=10s = health check start period: Give the container 10 seconds of startup time before normal failure counting begins.
+- --retries=3 = health check retries: Mark the container unhealthy after 3 consecutive failed checks.
+- -q = quiet mode: Suppress normal wget output.
+- --spider = spider mode: Check that the resource exists without downloading it.
+- || = logical OR operator: Run `exit 1` only if the wget command fails.
+------------------------------------------------------------
+# docker build -t my-nginx:1.0 .
+
+Explanation:
+Builds a Docker image from the Dockerfile in the current directory and tags it as `my-nginx:1.0`.
+
+Options:
+- -t = --tag (tag): Assign the name and tag `my-nginx:1.0` to the built image.
+------------------------------------------------------------
+# docker run -d \
+  --name my-nginx \
+  -p 8080:80 \
+  my-nginx:1.0
+
+Explanation:
+Starts the `my-nginx:1.0` image in the background as a container named my-nginx and publishes the Nginx service to host port 8080.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name my-nginx = container name: Assign the name `my-nginx` to the container.
+- -p = --publish (publish): Map host port 8080 to container port 80.
+------------------------------------------------------------
+# test:
+  - CMD
+  - wget
+  - -q
+  - --spider
+  - http://127.0.0.1/
+
+Explanation:
+Defines a Docker Compose healthcheck test in exec form. Docker runs wget directly without starting a shell.
+
+Options:
+- -q = quiet mode: Suppress normal wget output.
+- --spider = spider mode: Check that the resource exists without downloading it.
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates and starts the services defined in the Compose file in the background.
+
+Options:
+- -d = --detach (detach): Run the Compose services in the background.
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Lists the containers managed by the current Docker Compose project and shows their state and health information.
+------------------------------------------------------------
+# test:
+  - CMD
+  - curl
+  - -f
+  - http://localhost:8080/health
+
+Explanation:
+Defines a Docker Compose healthcheck test in exec form using curl. Docker runs curl directly and treats HTTP error responses as failures.
+
+Options:
+- -f = --fail (fail): Return a failure exit code for HTTP responses with status 400 or higher and suppress the response body for those errors.
+------------------------------------------------------------
+# test:
+  - CMD-SHELL
+  - curl -f http://localhost:8080/health || exit 1
+
+Explanation:
+Defines a Docker Compose healthcheck test that runs through a shell. The shell can process operators such as `||`.
+
+Options:
+- -f = --fail (fail): Return a failure exit code for HTTP responses with status 400 or higher.
+- || = logical OR operator: Run `exit 1` only if curl fails.
+------------------------------------------------------------
+# curl -f http://localhost:8080/health || exit 1
+
+Explanation:
+Requests the health endpoint and explicitly returns exit code 1 if curl fails.
+
+Options:
+- -f = --fail (fail): Return a failure exit code for HTTP responses with status 400 or higher.
+- || = logical OR operator: Run `exit 1` only if curl fails.
+------------------------------------------------------------
+# curl -fsS http://127.0.0.1:8000/health
+
+Explanation:
+Checks the health endpoint quietly while still showing an error message if the request fails.
+
+Options:
+- -f = --fail (fail): Return a failure exit code for HTTP responses with status 400 or higher.
+- -s = --silent (silent): Suppress the progress meter and normal error output.
+- -S = --show-error (show error): Show an error message when used together with `--silent`.
+------------------------------------------------------------
+# HEALTHCHECK CMD curl -f http://localhost:8080/health || exit 1
+
+Explanation:
+Defines a Dockerfile health check that uses curl to test the local application endpoint. The command fails the health check when curl cannot complete successfully.
+
+Options:
+- -f = --fail (fail): Return a failure exit code for HTTP responses with status 400 or higher.
+- || = logical OR operator: Run `exit 1` only if curl fails.
+------------------------------------------------------------
+# docker exec my-container which curl
+
+Explanation:
+Runs `which curl` inside `my-container` to check whether the curl executable is available in that container.
+------------------------------------------------------------
+# docker exec my-container curl --version
+
+Explanation:
+Runs curl inside `my-container` and prints its installed version information.
+
+Options:
+- --version = version information: Print the curl version, supported protocols, and build features, then exit.
+------------------------------------------------------------
+# curl http://127.0.0.1:8000/health
+
+Explanation:
+Sends an HTTP request to the health endpoint on container-local port 8000.
+------------------------------------------------------------
+# docker run -p 8088:8000 my-app
+
+Explanation:
+Starts the `my-app` image and publishes container port 8000 on host port 8088.
+
+Options:
+- -p = --publish (publish): Map host port 8088 to container port 8000.
+------------------------------------------------------------
+# curl http://127.0.0.1:8088/health
+
+Explanation:
+Sends an HTTP request to port 8088 on the local network namespace. In the lesson, this is shown as the wrong port to use from inside the container when the application listens on port 8000.
+------------------------------------------------------------
+# mysqladmin ping
+
+Explanation:
+Checks whether a MySQL server is available and responding to administrative connections.
+------------------------------------------------------------
+# pg_isready
+
+Explanation:
+Checks the connection status of a PostgreSQL server and returns an exit status that indicates whether it is accepting connections.
+------------------------------------------------------------
+# docker exec -it health-demo sh
+
+Explanation:
+Technical correction: The original troubleshooting example used the placeholder `<container-name>`, which is not directly runnable. This version uses the actual `health-demo` container created in this lesson and opens an interactive shell inside it.
+
+Options:
+- -i = --interactive (interactive): Keep standard input open for the command.
+- -t = --tty (TTY): Allocate a pseudo-terminal.
+------------------------------------------------------------
+# wget -q --spider http://127.0.0.1:8000/health
+
+Explanation:
+Checks the health endpoint without downloading the response body and is useful for manually testing the same probe used by Docker.
+
+Options:
+- -q = quiet mode: Suppress normal wget output.
+- --spider = spider mode: Check that the resource exists without downloading it.
+------------------------------------------------------------
+# echo $?
+
+Explanation:
+Prints the exit status of the previously executed shell command.
+
+Options:
+- $? = previous command exit status: Expands to the numeric exit code returned by the last command.
+------------------------------------------------------------
+# docker logs my-app
+
+Explanation:
+Displays the standard output and standard error logs produced by the `my-app` container.
+------------------------------------------------------------
