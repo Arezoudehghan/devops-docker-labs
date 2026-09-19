@@ -1,0 +1,37 @@
+stages:
+  - build
+  - push
+
+variables:
+  NEXUS_REGISTRY: "192.0.2.10:8085"
+  IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
+
+build_image:
+  stage: build
+  tags:
+    - dev-shell
+  script:
+    - IMAGE_NAME="${NEXUS_REGISTRY}/${CI_PROJECT_PATH_SLUG}"
+    - echo "Building ${IMAGE_NAME}:${IMAGE_TAG}"
+    - docker build --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+    - docker image inspect "${IMAGE_NAME}:${IMAGE_TAG}" > /dev/null
+
+push_to_nexus:
+  stage: push
+  tags:
+    - dev-shell
+  needs:
+    - build_image
+  before_script:
+    - mkdir -p "${CI_PROJECT_DIR}/.docker"
+  script:
+    - IMAGE_NAME="${NEXUS_REGISTRY}/${CI_PROJECT_PATH_SLUG}"
+    - printf '%s' "${NEXUS_PASSWORD}" | docker --config "${CI_PROJECT_DIR}/.docker" login "${NEXUS_REGISTRY}" --username "${NEXUS_USERNAME}" --password-stdin
+    - docker --config "${CI_PROJECT_DIR}/.docker" push "${IMAGE_NAME}:${IMAGE_TAG}"
+    - docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:latest"
+    - docker --config "${CI_PROJECT_DIR}/.docker" push "${IMAGE_NAME}:latest"
+  after_script:
+    - docker --config "${CI_PROJECT_DIR}/.docker" logout "${NEXUS_REGISTRY}" || true
+    - rm -rf "${CI_PROJECT_DIR}/.docker"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
