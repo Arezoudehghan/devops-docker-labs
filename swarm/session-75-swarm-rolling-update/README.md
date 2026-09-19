@@ -16,6 +16,7 @@ Practical DevOps lab for learning rolling updates, health checks, automatic roll
 - `app.py` — Small Python HTTP service with `/` and `/health` endpoints.
 - `Dockerfile` — Builds the application image and defines the container health check.
 - `stack.yml` — Swarm stack with 4 replicas, rolling-update policy, and rollback policy.
+- `CHEATSHEET.md` — Session-only command reference for deployment, rolling update, rollback, verification, and troubleshooting.
 
 ## Application behavior
 
