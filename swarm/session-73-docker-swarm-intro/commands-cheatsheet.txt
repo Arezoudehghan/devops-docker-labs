@@ -1,0 +1,147 @@
+DEVOPS COMMAND CHEAT SHEET — SESSION 73
+Docker Swarm Introduction
+
+Source scope: commands used in this lesson only.
+Repeated identical commands are listed once.
+Commands with different options, paths, addresses, or purposes are kept separately.
+
+01) Start a detached Nginx container.
+docker run -d nginx:alpine
+
+02) Create a replicated Swarm service named web with three replicas.
+docker service create --name web --replicas 3 nginx:alpine
+
+03) Create a global Swarm service.
+docker service create --name agent --mode global alpine top
+
+04) Show the current hostname.
+hostname
+
+05) Show interface addresses in brief format.
+ip -br addr
+
+06) Verify that the Docker service is active.
+systemctl is-active docker
+
+07) Show Docker client and server version information.
+docker version
+
+08) Show local Swarm state and node ID.
+docker info --format 'Swarm={{.Swarm.LocalNodeState}} NodeID={{.Swarm.NodeID}}'
+
+09) Check whether TCP/UDP port 8088 is already in use.
+ss -lntup | grep ':8088 ' || true
+
+10) Show UFW firewall status.
+sudo ufw status
+
+11) Allow Swarm manager traffic from the lab subnet.
+sudo ufw allow from 192.168.94.0/24 to any port 2377 proto tcp
+
+12) Allow Swarm node communication over TCP.
+sudo ufw allow from 192.168.94.0/24 to any port 7946 proto tcp
+
+13) Allow Swarm node communication over UDP.
+sudo ufw allow from 192.168.94.0/24 to any port 7946 proto udp
+
+14) Allow Swarm overlay VXLAN traffic.
+sudo ufw allow from 192.168.94.0/24 to any port 4789 proto udp
+
+15) Initialize DEV-1 as a Swarm manager using its management IP.
+docker swarm init --advertise-addr 192.168.94.90
+
+16) Show Swarm state, manager control availability, and node ID.
+docker info --format 'Swarm={{.Swarm.LocalNodeState}} ControlAvailable={{.Swarm.ControlAvailable}} NodeID={{.Swarm.NodeID}}'
+
+17) List Swarm nodes. Run this on a manager.
+docker node ls
+
+18) Display the worker join command and worker token.
+docker swarm join-token worker
+
+19) Join DEV-2 as a worker. Replace the placeholder with the real generated token.
+docker swarm join --token YOUR_WORKER_TOKEN 192.168.94.90:2377
+
+20) List Docker networks.
+docker network ls
+
+21) Test whether nginx:alpine exists locally.
+docker image inspect nginx:alpine >/dev/null 2>&1 && echo "IMAGE EXISTS" || echo "IMAGE NOT FOUND"
+
+22) Pull the nginx:alpine image.
+docker pull nginx:alpine
+
+23) Create the two-replica web-demo service and publish port 8088.
+docker service create \
+  --name web-demo \
+  --replicas 2 \
+  --publish published=8088,target=80 \
+  nginx:alpine
+
+24) List Swarm services.
+docker service ls
+
+25) Show tasks for web-demo.
+docker service ps web-demo
+
+26) Show web-demo task containers on the current node.
+docker ps --filter label=com.docker.swarm.service.name=web-demo
+
+27) Test the published service through DEV-1.
+curl -I http://192.168.94.90:8088
+
+28) Test the published service through DEV-2.
+curl -I http://192.168.94.91:8088
+
+29) Scale web-demo to four replicas.
+docker service scale web-demo=4
+
+30) Kill one task container intentionally for the self-healing lab.
+docker kill CONTAINER_ID
+
+31) Create another three-replica web-demo example service.
+docker service create --name web-demo --replicas 3 nginx:alpine
+
+32) Scale web-demo to six replicas.
+docker service scale web-demo=6
+
+33) Show full Docker information.
+docker info
+
+34) Inspect web-demo in human-readable form.
+docker service inspect web-demo --pretty
+
+35) Show service logs for web-demo.
+docker service logs web-demo
+
+36) Test connectivity from DEV-2 to the Swarm manager.
+ping -c 3 192.168.94.90
+
+37) Show only the local Swarm state.
+docker info --format '{{.Swarm.LocalNodeState}}'
+
+38) Check whether the Swarm manager port is listening.
+ss -lntp | grep 2377
+
+39) Show Docker service status without invoking a pager.
+systemctl status docker --no-pager
+
+40) Show complete task errors without truncation.
+docker service ps web-demo --no-trunc
+
+41) Show environment variables configured for the Docker systemd service.
+systemctl show --property=Environment docker
+
+42) Remove the web-demo service.
+docker service rm web-demo
+
+43) Leave the Swarm from a worker node.
+docker swarm leave
+
+44) Force the final manager to leave the Swarm.
+docker swarm leave --force
+
+SAFETY NOTES
+- Do not commit a real Swarm join token.
+- Restrict 2377/tcp, 7946/tcp+udp, and 4789/udp to trusted cluster networks.
+- docker swarm leave --force is destructive for a manager and should only be used intentionally.
