@@ -1,0 +1,122 @@
+------------------------------------------------------------
+# docker save myapp:1.0 -o myapp.tar
+
+Explanation:
+Saves the local image myapp:1.0 into a tar archive named myapp.tar.
+
+Options:
+- -o = --output (output): Writes the saved image archive to myapp.tar instead of standard output.
+------------------------------------------------------------
+# scp myapp.tar deploy@192.168.94.91:/tmp/
+
+Explanation:
+Copies myapp.tar from the local machine to /tmp/ on 192.168.94.91 using the remote user deploy.
+------------------------------------------------------------
+# docker load -i /tmp/myapp.tar
+
+Explanation:
+Loads Docker images and tags from the archive file /tmp/myapp.tar into the local Docker image store.
+
+Options:
+- -i = --input (input): Reads the image archive from /tmp/myapp.tar instead of standard input.
+------------------------------------------------------------
+# docker tag myapp:1.0 registry.example.com/myapp:1.0
+
+Explanation:
+Creates the image reference registry.example.com/myapp:1.0 for the existing local image myapp:1.0.
+------------------------------------------------------------
+# docker push registry.example.com/myapp:1.0
+
+Explanation:
+Uploads the image registry.example.com/myapp:1.0 to the specified Docker registry.
+------------------------------------------------------------
+# docker pull registry.example.com/myapp:1.0
+
+Explanation:
+Downloads the image registry.example.com/myapp:1.0 from the specified Docker registry.
+------------------------------------------------------------
+# docker run -d registry.example.com/myapp:1.0
+
+Explanation:
+Creates and starts a container from registry.example.com/myapp:1.0 in the background.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints the container ID.
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/devops/myapp:1.0
+
+Explanation:
+Downloads the devops/myapp image with tag 1.0 from the registry endpoint 192.168.94.90:8085.
+------------------------------------------------------------
+# docker pull nginx
+
+Explanation:
+Downloads the nginx image from the default configured registry. Because no tag is specified, Docker uses the default tag behavior.
+------------------------------------------------------------
+# docker pull nginx:1.27
+
+Explanation:
+Downloads the nginx image with the explicit tag 1.27.
+------------------------------------------------------------
+# docker pull nginx:latest
+
+Explanation:
+Downloads the nginx image with the tag latest.
+------------------------------------------------------------
+# docker pull redis
+
+Explanation:
+Downloads the redis image from the default configured registry. Because no tag is specified, Docker uses the default tag behavior.
+------------------------------------------------------------
+# docker build -t myapp:1.0 .
+
+Explanation:
+Builds a Docker image from the current directory and names it myapp with tag 1.0.
+
+Options:
+- -t = --tag (tag): Sets the image name and optional tag to myapp:1.0.
+- . = build context: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists Docker images stored on the local Docker host.
+------------------------------------------------------------
+# docker tag myapp:1.0 registry.company.local/myapp:1.0
+
+Explanation:
+Creates the image reference registry.company.local/myapp:1.0 for the existing local image myapp:1.0.
+------------------------------------------------------------
+# docker push registry.company.local/myapp:1.0
+
+Explanation:
+Uploads the image registry.company.local/myapp:1.0 to the specified private registry.
+------------------------------------------------------------
+# docker pull registry.company.local/myapp:1.0
+
+Explanation:
+Downloads the image registry.company.local/myapp:1.0 from the specified private registry.
+------------------------------------------------------------
+# docker login registry.company.local
+
+Explanation:
+Authenticates the Docker client to registry.company.local so protected registry operations can use stored credentials.
+------------------------------------------------------------
+# docker logout registry.company.local
+
+Explanation:
+Removes the stored Docker authentication credentials for registry.company.local.
+------------------------------------------------------------
+# docker pull nginx:alpine
+
+Explanation:
+Downloads the nginx image with the tag alpine.
+------------------------------------------------------------
+# docker image ls --digests
+
+Explanation:
+Lists local Docker images and also displays their content digests when available.
+
+Options:
+- --digests = show digests: Displays image digests in the image list.
+------------------------------------------------------------
