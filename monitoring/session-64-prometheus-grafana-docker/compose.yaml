@@ -1,0 +1,62 @@
+services:
+
+  prometheus:
+    image: prom/prometheus:v3.14.0
+    container_name: session64-prometheus
+    restart: unless-stopped
+
+    ports:
+      - "9094:9090"
+
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    networks:
+      - monitoring
+
+
+  grafana:
+    image: grafana/grafana:13.2.0
+    container_name: session64-grafana
+    restart: unless-stopped
+
+    ports:
+      - "3004:3000"
+
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+
+    depends_on:
+      - prometheus
+
+    networks:
+      - monitoring
+
+
+networks:
+  monitoring:
+    name: session64-monitoring
+    driver: bridge
+
+
+volumes:
+  prometheus_data:
+    name: session64-prometheus-data
+
+  grafana_data:
+    name: session64-grafana-data
