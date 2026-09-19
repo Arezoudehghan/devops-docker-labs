@@ -1,0 +1,567 @@
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists the currently running Docker containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}' | grep -i node
+
+Explanation:
+Lists running containers in a custom table and filters the result for lines containing "node" regardless of letter case.
+
+Options:
+- --format = format: Formats the `docker ps` output using the supplied Go template.
+- | = pipe operator: Sends the output of `docker ps` to `grep`.
+- -i = --ignore-case (ignore case): Makes `grep` match "node" without case sensitivity.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -lntp | grep ':9100' || true
+
+Explanation:
+Shows listening TCP sockets in numeric form with process information, filters for port 9100, and prevents the shell command from failing if no match is found.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -n = --numeric (numeric): Shows numeric addresses and ports instead of resolving names.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -p = --processes (processes): Shows the process using each socket.
+- | = pipe operator: Sends the output of `ss` to `grep`.
+- || = OR operator: Runs `true` only if the previous pipeline returns a non-zero status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# NODE_EXPORTER_CONTAINER=$(docker ps --format '{{.Names}} {{.Image}}' | awk 'tolower($0) ~ /node.?exporter/ {print $1; exit}')
+
+Explanation:
+Finds the first running container whose name or image matches a Node Exporter pattern and stores its container name in `NODE_EXPORTER_CONTAINER`.
+
+Options:
+- $() = command substitution: Runs the command inside the parentheses and substitutes its output.
+- --format = format: Formats `docker ps` output as container name followed by image name.
+- | = pipe operator: Sends the formatted Docker output to `awk`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "$NODE_EXPORTER_CONTAINER"
+
+Explanation:
+Prints the current value of the `NODE_EXPORTER_CONTAINER` shell variable.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect "$NODE_EXPORTER_CONTAINER" \
+  --format 'NetworkMode={{.HostConfig.NetworkMode}} PIDMode={{.HostConfig.PidMode}}'
+
+Explanation:
+Inspects the Node Exporter container and prints only its Docker network mode and PID mode.
+
+Options:
+- --format = format: Uses a Go template to select the `NetworkMode` and `PidMode` fields from Docker inspection data.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect "$NODE_EXPORTER_CONTAINER" \
+  --format '{{range .Mounts}}{{println .Source "->" .Destination "(" .Mode ")"}}{{end}}'
+
+Explanation:
+Inspects the Node Exporter container and prints each mount source, destination, and mode.
+
+Options:
+- --format = format: Uses a Go template to iterate over the container mount list.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect "$NODE_EXPORTER_CONTAINER" \
+  --format '{{json .Config.Cmd}}'
+
+Explanation:
+Inspects the Node Exporter container and prints its configured command arguments as JSON.
+
+Options:
+- --format = format: Uses a Go template and the `json` helper to print `.Config.Cmd`.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:v1.12.1
+    container_name: node-exporter
+
+    command:
+      - '--path.rootfs=/host'
+
+    network_mode: host
+
+    pid: host
+
+    restart: unless-stopped
+
+    volumes:
+      - '/:/host:ro,rslave'
+
+Explanation:
+Defines a Docker Compose service for Node Exporter so it can monitor the Linux host instead of only its own container environment.
+
+Options:
+- image = `quay.io/prometheus/node-exporter:v1.12.1`: Pins the Node Exporter container image to version `v1.12.1`.
+- container_name = `node-exporter`: Sets the container name explicitly.
+- command = `--path.rootfs=/host`: Tells Node Exporter to treat `/host` as the host root filesystem.
+- network_mode = `host`: Uses the host network namespace.
+- pid = `host`: Uses the host PID namespace.
+- restart = `unless-stopped`: Restarts the container automatically unless it was intentionally stopped.
+- volumes = `/:/host:ro,rslave`: Mounts the host root filesystem at `/host` as read-only with recursive slave mount propagation.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect "$NODE_EXPORTER_CONTAINER" \
+  --format '{{index .Config.Labels "com.docker.compose.project.working_dir"}}'
+
+Explanation:
+Prints the Docker Compose project working directory recorded in the container labels.
+
+Options:
+- --format = format: Uses a Go template to read the `com.docker.compose.project.working_dir` label.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect "$NODE_EXPORTER_CONTAINER" \
+  --format '{{index .Config.Labels "com.docker.compose.project.config_files"}}'
+
+Explanation:
+Prints the Docker Compose configuration file path recorded in the container labels.
+
+Options:
+- --format = format: Uses a Go template to read the `com.docker.compose.project.config_files` label.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -s http://127.0.0.1:9100/metrics | head
+
+Explanation:
+Fetches the local Node Exporter metrics endpoint quietly and shows the first lines of output.
+
+Options:
+- -s = --silent (silent): Hides curl progress and error messages.
+- | = pipe operator: Sends the metrics output to `head`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -s http://127.0.0.1:9100/metrics | grep '^node_' | head
+
+Explanation:
+Fetches Node Exporter metrics, keeps only metric lines that start with `node_`, and shows the first matches.
+
+Options:
+- -s = --silent (silent): Hides curl progress and error messages.
+- | = pipe operator: Passes output first to `grep` and then to `head`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -s http://127.0.0.1:9100/metrics \
+  | grep '^node_cpu_seconds_total' \
+  | head
+
+Explanation:
+Fetches Node Exporter metrics and shows the first CPU time metrics.
+
+Options:
+- -s = --silent (silent): Hides curl progress and error messages.
+- | = pipe operator: Passes the metrics through `grep` and then `head`.
+- \ = line continuation: Continues the same shell pipeline on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -s http://127.0.0.1:9100/metrics \
+  | grep 'node_memory_MemTotal_bytes'
+
+Explanation:
+Fetches Node Exporter metrics and displays the total-memory metric.
+
+Options:
+- -s = --silent (silent): Hides curl progress and error messages.
+- | = pipe operator: Sends the metrics output to `grep`.
+- \ = line continuation: Continues the same shell pipeline on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -s http://127.0.0.1:9100/metrics \
+  | grep 'node_memory_MemAvailable_bytes'
+
+Explanation:
+Fetches Node Exporter metrics and displays the available-memory metric.
+
+Options:
+- -s = --silent (silent): Hides curl progress and error messages.
+- | = pipe operator: Sends the metrics output to `grep`.
+- \ = line continuation: Continues the same shell pipeline on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -s http://127.0.0.1:9100/metrics \
+  | grep '^node_filesystem_size_bytes' \
+  | head
+
+Explanation:
+Fetches Node Exporter metrics and shows the first filesystem-size metrics.
+
+Options:
+- -s = --silent (silent): Hides curl progress and error messages.
+- | = pipe operator: Passes the metrics through `grep` and then `head`.
+- \ = line continuation: Continues the same shell pipeline on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -s http://127.0.0.1:9100/metrics \
+  | grep '^node_filesystem_avail_bytes' \
+  | head
+
+Explanation:
+Fetches Node Exporter metrics and shows the first filesystem-available-space metrics.
+
+Options:
+- -s = --silent (silent): Hides curl progress and error messages.
+- | = pipe operator: Passes the metrics through `grep` and then `head`.
+- \ = line continuation: Continues the same shell pipeline on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -s http://127.0.0.1:9100/metrics \
+  | grep '^node_network_receive_bytes_total' \
+  | head
+
+Explanation:
+Fetches Node Exporter metrics and shows the first network receive-byte counters.
+
+Options:
+- -s = --silent (silent): Hides curl progress and error messages.
+- | = pipe operator: Passes the metrics through `grep` and then `head`.
+- \ = line continuation: Continues the same shell pipeline on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -s http://127.0.0.1:9100/metrics \
+  | grep '^node_network_transmit_bytes_total' \
+  | head
+
+Explanation:
+Fetches Node Exporter metrics and shows the first network transmit-byte counters.
+
+Options:
+- -s = --silent (silent): Hides curl progress and error messages.
+- | = pipe operator: Passes the metrics through `grep` and then `head`.
+- \ = line continuation: Continues the same shell pipeline on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -s http://192.168.94.91:9100/metrics \
+  | grep '^node_cpu_seconds_total' \
+  | head
+
+Explanation:
+Fetches Node Exporter metrics from DEV-2 over the network and shows the first CPU time metrics.
+
+Options:
+- -s = --silent (silent): Hides curl progress and error messages.
+- | = pipe operator: Passes the metrics through `grep` and then `head`.
+- \ = line continuation: Continues the same shell pipeline on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# PROM_CONTAINER=$(docker ps --format '{{.Names}} {{.Image}}' \
+  | awk 'tolower($0) ~ /prom\/prometheus/ {print $1; exit}')
+
+Explanation:
+Finds the first running Prometheus container and stores its container name in `PROM_CONTAINER`.
+
+Options:
+- $() = command substitution: Runs the command inside the parentheses and substitutes its output.
+- --format = format: Formats `docker ps` output as container name followed by image name.
+- | = pipe operator: Sends the formatted Docker output to `awk`.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "$PROM_CONTAINER"
+
+Explanation:
+Prints the current value of the `PROM_CONTAINER` shell variable.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect "$PROM_CONTAINER" \
+  --format '{{range .Mounts}}{{println .Source "->" .Destination}}{{end}}'
+
+Explanation:
+Inspects the Prometheus container and prints each mount source and destination.
+
+Options:
+- --format = format: Uses a Go template to iterate over the Prometheus container mounts.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# - job_name: 'node-exporter'
+
+  static_configs:
+    - targets:
+        - '192.168.94.91:9100'
+
+Explanation:
+Adds a Prometheus scrape job named `node-exporter` and tells Prometheus to scrape Node Exporter on DEV-2 port 9100.
+
+Options:
+- job_name = `node-exporter`: Sets the Prometheus job label for this scrape configuration.
+- static_configs = static target configuration: Defines manually listed scrape targets.
+- targets = `192.168.94.91:9100`: Sets the Node Exporter endpoint that Prometheus will scrape.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec "$PROM_CONTAINER" \
+  promtool check config /etc/prometheus/prometheus.yml
+
+Explanation:
+Runs `promtool` inside the Prometheus container to validate the Prometheus configuration file syntax.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker restart "$PROM_CONTAINER"
+
+Explanation:
+Restarts the Prometheus container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps --filter "name=$PROM_CONTAINER"
+
+Explanation:
+Lists running Docker containers but keeps only containers whose name matches the value of `PROM_CONTAINER`.
+
+Options:
+- --filter = filter: Applies the filter expression `name=$PROM_CONTAINER` to the container list.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs --tail 50 "$PROM_CONTAINER"
+
+Explanation:
+Shows the last 50 log lines from the Prometheus container.
+
+Options:
+- --tail 50 = tail count: Limits the output to the last 50 log lines.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# up{job="node-exporter"}
+
+Explanation:
+PromQL query that checks whether the `node-exporter` scrape target is reachable. A value of `1` means the target is up, while `0` means it is down.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# node_cpu_seconds_total
+
+Explanation:
+PromQL query that returns the raw CPU time counters exported by Node Exporter.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# 100 - (
+  avg by(instance) (
+    rate(node_cpu_seconds_total{mode="idle"}[5m])
+  ) * 100
+)
+
+Explanation:
+PromQL query that estimates host CPU usage percentage by subtracting the five-minute average idle CPU rate from 100 percent.
+
+Options:
+- [5m] = range selector: Uses samples from the previous five minutes.
+- mode="idle" = label matcher: Selects only CPU time spent in idle mode.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# 100 * (
+  1 -
+  (
+    node_memory_MemAvailable_bytes
+    /
+    node_memory_MemTotal_bytes
+  )
+)
+
+Explanation:
+PromQL query that calculates the percentage of host memory currently in use.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# 100 * (
+  1 -
+  (
+    node_filesystem_avail_bytes{mountpoint="/"}
+    /
+    node_filesystem_size_bytes{mountpoint="/"}
+  )
+)
+
+Explanation:
+PromQL query that calculates disk usage percentage for the root filesystem.
+
+Options:
+- mountpoint="/" = label matcher: Selects only metrics for the root mount point.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# rate(node_network_receive_bytes_total{device="ens160"}[5m])
+
+Explanation:
+PromQL query that calculates the per-second receive-byte rate for network interface `ens160` over the last five minutes.
+
+Options:
+- device="ens160" = label matcher: Selects the `ens160` network interface.
+- [5m] = range selector: Uses samples from the previous five minutes.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# rate(node_network_transmit_bytes_total{device="ens160"}[5m])
+
+Explanation:
+PromQL query that calculates the per-second transmit-byte rate for network interface `ens160` over the last five minutes.
+
+Options:
+- device="ens160" = label matcher: Selects the `ens160` network interface.
+- [5m] = range selector: Uses samples from the previous five minutes.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# node_load1
+
+Explanation:
+PromQL query that returns the one-minute system load average.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# node_load5
+
+Explanation:
+PromQL query that returns the five-minute system load average.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# node_load15
+
+Explanation:
+PromQL query that returns the fifteen-minute system load average.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# time() - node_boot_time_seconds
+
+Explanation:
+PromQL query that calculates host uptime in seconds by subtracting the boot time from the current Prometheus server time.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm -d \
+  --name session63-cpu-load \
+  alpine \
+  sh -c 'while true; do :; done'
+
+Explanation:
+Starts a temporary Alpine container that continuously runs an empty shell loop to create CPU load for the monitoring test.
+
+Options:
+- --rm = remove automatically: Deletes the container automatically when it stops.
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Sets the container name to `session63-cpu-load`.
+- -c = command string: Tells `sh` to execute the following string as a shell command.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# 100 - (
+  avg by(instance) (
+    rate(node_cpu_seconds_total{mode="idle"}[1m])
+  ) * 100
+)
+
+Explanation:
+PromQL query that estimates host CPU usage percentage using a one-minute rate window so the temporary load change appears faster.
+
+Options:
+- [1m] = range selector: Uses samples from the previous one minute.
+- mode="idle" = label matcher: Selects only CPU time spent in idle mode.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f session63-cpu-load
+
+Explanation:
+Removes the temporary CPU load container immediately.
+
+Options:
+- -f = --force (force): Force-removes the container, stopping it first if necessary.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Image}}' | grep -i node
+
+Explanation:
+Lists running containers in a custom table and filters the output for Node-related containers without case sensitivity.
+
+Options:
+- --format = format: Formats the `docker ps` output using the supplied Go template.
+- | = pipe operator: Sends the output of `docker ps` to `grep`.
+- -i = --ignore-case (ignore case): Makes `grep` match without case sensitivity.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs --tail 100 "$NODE_EXPORTER_CONTAINER"
+
+Explanation:
+Shows the last 100 log lines from the Node Exporter container.
+
+Options:
+- --tail 100 = tail count: Limits the output to the last 100 log lines.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -v http://127.0.0.1:9100/metrics
+
+Explanation:
+Requests the local Node Exporter metrics endpoint and shows detailed connection and HTTP information for troubleshooting.
+
+Options:
+- -v = --verbose (verbose): Shows detailed request, connection, and response information.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -v http://192.168.94.91:9100/metrics
+
+Explanation:
+Requests the DEV-2 Node Exporter metrics endpoint over the network and shows detailed connection and HTTP information.
+
+Options:
+- -v = --verbose (verbose): Shows detailed request, connection, and response information.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs --tail 100 "$PROM_CONTAINER"
+
+Explanation:
+Shows the last 100 log lines from the Prometheus container.
+
+Options:
+- --tail 100 = tail count: Limits the output to the last 100 log lines.
+------------------------------------------------------------
