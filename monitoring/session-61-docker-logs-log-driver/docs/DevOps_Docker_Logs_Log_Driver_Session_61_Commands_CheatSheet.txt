@@ -1,0 +1,856 @@
+------------------------------------------------------------
+# docker logs my-container
+
+Explanation:
+Shows the logs available for the container named my-container.
+------------------------------------------------------------
+# docker info --format 'Default Logging Driver: {{.LoggingDriver}}'
+
+Explanation:
+Shows the Docker daemon's default logging driver using a custom output format.
+
+Options:
+- --format = format: Formats the output with the provided Go template.
+- 'Default Logging Driver: {{.LoggingDriver}}' = option value: Prints a label followed by the current default logging driver.
+------------------------------------------------------------
+# docker rm -f session61-log-demo 2>/dev/null || true
+
+Explanation:
+Removes the container named session61-log-demo if it exists. Errors are hidden, and the command sequence still succeeds if the container is absent.
+
+Options:
+- -f = --force (force): Force-removes the container, including a running container.
+- 2>/dev/null = stderr redirection: Sends standard error to /dev/null.
+- || = OR operator: Runs true only if docker rm fails.
+------------------------------------------------------------
+# docker run -d \
+  --name session61-log-demo \
+  python:3.12-slim \
+  sh -c 'i=1; while true; do echo "INFO request_id=$i status=200"; echo "ERROR request_id=$i simulated=true" >&2; i=$((i+1)); sleep 2; done'
+
+Explanation:
+Starts a detached Python container that continuously writes INFO messages to stdout and ERROR messages to stderr.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints its container ID.
+- --name session61-log-demo = name: Assigns session61-log-demo as the container name.
+- python:3.12-slim = image argument: Uses the python:3.12-slim image.
+- sh -c = command string: Runs the following quoted shell program; -c tells sh to execute the supplied command string.
+- >&2 = file-descriptor redirection: Sends the second echo command to stderr.
+- $((i+1)) = arithmetic expansion: Increments the shell variable i.
+- ; = command separator: Runs multiple shell statements in sequence.
+------------------------------------------------------------
+# docker ps --filter name=session61-log-demo
+
+Explanation:
+Lists running containers and keeps only entries whose name matches session61-log-demo.
+
+Options:
+- --filter name=session61-log-demo = filter: Applies the name=session61-log-demo filter.
+------------------------------------------------------------
+# echo "INFO request_id=$i status=200"
+
+Explanation:
+Prints an INFO log line to standard output.
+------------------------------------------------------------
+# echo "ERROR request_id=$i simulated=true" >&2
+
+Explanation:
+Prints an ERROR log line and redirects it to standard error.
+
+Options:
+- >&2 = file-descriptor redirection: Redirects stdout from echo to file descriptor 2, stderr.
+------------------------------------------------------------
+# docker logs session61-log-demo
+
+Explanation:
+Shows the logs available for session61-log-demo.
+------------------------------------------------------------
+# docker logs --tail 10 session61-log-demo
+
+Explanation:
+Shows only the last 10 log lines from session61-log-demo.
+
+Options:
+- --tail 10 = tail: Limits the output to the last 10 log lines.
+------------------------------------------------------------
+# docker logs -n 10 session61-log-demo
+
+Explanation:
+Shows only the last 10 log lines from session61-log-demo.
+
+Options:
+- -n = --tail (tail): Uses 10 as the number of log lines to show.
+------------------------------------------------------------
+# docker logs --tail 100 my-container
+
+Explanation:
+Shows only the last 100 log lines from my-container.
+
+Options:
+- --tail 100 = tail: Limits the output to the last 100 log lines.
+------------------------------------------------------------
+# docker logs -f session61-log-demo
+
+Explanation:
+Shows the current logs and keeps following new log output from session61-log-demo.
+
+Options:
+- -f = --follow (follow): Continues streaming new log output.
+------------------------------------------------------------
+# tail -f
+
+Explanation:
+Shows the end of standard input and keeps following for new data. It was used in the lesson as the shell comparison for live log following.
+
+Options:
+- -f = --follow (follow): Keeps watching for appended data.
+------------------------------------------------------------
+# docker logs -f --tail 20 session61-log-demo
+
+Explanation:
+Shows the last 20 log lines and then continues following new logs.
+
+Options:
+- -f = --follow (follow): Continues streaming new log output.
+- --tail 20 = tail: Starts with only the last 20 log lines.
+------------------------------------------------------------
+# docker logs -t --tail 5 session61-log-demo
+
+Explanation:
+Shows the last five log lines with Docker timestamps.
+
+Options:
+- -t = --timestamps (timestamps): Adds timestamps to each displayed log line.
+- --tail 5 = tail: Limits the initial output to the last five log lines.
+------------------------------------------------------------
+# docker logs --timestamps --tail 5 session61-log-demo
+
+Explanation:
+Shows the last five log lines with Docker timestamps.
+
+Options:
+- --timestamps = timestamps: Adds timestamps to each displayed log line.
+- --tail 5 = tail: Limits the output to the last five log lines.
+------------------------------------------------------------
+# docker logs --since 30s session61-log-demo
+
+Explanation:
+Shows logs generated during the last 30 seconds.
+
+Options:
+- --since 30s = since: Uses 30 seconds ago as the start time.
+------------------------------------------------------------
+# docker logs --since 5m session61-log-demo
+
+Explanation:
+Shows logs generated during the last five minutes.
+
+Options:
+- --since 5m = since: Uses five minutes ago as the start time.
+------------------------------------------------------------
+# docker logs --since 1h session61-log-demo
+
+Explanation:
+Shows logs generated during the last hour.
+
+Options:
+- --since 1h = since: Uses one hour ago as the start time.
+------------------------------------------------------------
+# docker logs \
+  --since 2m \
+  --until 30s \
+  session61-log-demo
+
+Explanation:
+Shows logs from the time window starting two minutes ago and ending 30 seconds ago.
+
+Options:
+- --since 2m = since: Sets the beginning of the log time window to two minutes ago.
+- --until 30s = until: Sets the end of the log time window to 30 seconds ago.
+------------------------------------------------------------
+# docker logs \
+  -f \
+  --tail 100 \
+  -t \
+  session61-log-demo
+
+Explanation:
+Shows the last 100 timestamped log lines and then follows new logs live.
+
+Options:
+- -f = --follow (follow): Continues streaming new log output.
+- --tail 100 = tail: Starts with the last 100 log lines.
+- -t = --timestamps (timestamps): Adds timestamps to displayed log lines.
+------------------------------------------------------------
+# docker inspect \
+  -f '{{.HostConfig.LogConfig.Type}}' \
+  session61-log-demo
+
+Explanation:
+Reads the logging driver type configured for session61-log-demo.
+
+Options:
+- -f = --format (format): Formats inspect output with the provided Go template.
+- '{{.HostConfig.LogConfig.Type}}' = format value: Selects the container logging driver type.
+------------------------------------------------------------
+# docker inspect \
+  -f '{{json .HostConfig.LogConfig}}' \
+  session61-log-demo
+
+Explanation:
+Shows the complete logging configuration for session61-log-demo as JSON.
+
+Options:
+- -f = --format (format): Formats inspect output with the provided Go template.
+- '{{json .HostConfig.LogConfig}}' = format value: Converts the LogConfig object to JSON.
+------------------------------------------------------------
+# docker inspect \
+  -f '{{.LogPath}}' \
+  session61-log-demo
+
+Explanation:
+Prints the host-side log path recorded by Docker for session61-log-demo.
+
+Options:
+- -f = --format (format): Formats inspect output with the provided Go template.
+- '{{.LogPath}}' = format value: Selects the LogPath field.
+------------------------------------------------------------
+# LOG_PATH="$(docker inspect -f '{{.LogPath}}' session61-log-demo)"
+
+Explanation:
+Stores the container log path in the shell variable LOG_PATH.
+
+Options:
+- $(...) = command substitution: Runs docker inspect and inserts its output into the assignment.
+- -f = --format (format): Formats docker inspect output with the provided Go template.
+- '{{.LogPath}}' = format value: Selects the LogPath field.
+------------------------------------------------------------
+# sudo ls -lh "$LOG_PATH"
+
+Explanation:
+Lists detailed information about the log file stored in LOG_PATH, including a human-readable size.
+
+Options:
+- -l = long listing format: Shows permissions, owner, size, time, and filename details.
+- -h = --human-readable (human-readable): Prints file sizes using units such as K, M, or G.
+- sudo = privilege command: Runs ls with elevated privileges.
+- "$LOG_PATH" = variable argument: Expands the saved log path while preserving it as one argument.
+------------------------------------------------------------
+# docker rm -f session61-rotate 2>/dev/null || true
+
+Explanation:
+Removes session61-rotate if it exists while hiding removal errors.
+
+Options:
+- -f = --force (force): Force-removes the container.
+- 2>/dev/null = stderr redirection: Sends standard error to /dev/null.
+- || = OR operator: Runs true if docker rm fails.
+------------------------------------------------------------
+# docker run -d \
+  --name session61-rotate \
+  --log-driver json-file \
+  --log-opt max-size=20k \
+  --log-opt max-file=3 \
+  python:3.12-slim \
+  sh -c 'payload=$(printf "%02048d" 0); i=1; while true; do echo "line=$i $payload"; i=$((i+1)); sleep 0.05; done'
+
+Explanation:
+Starts a detached container with the json-file log driver and small rotation limits for the lab. The shell loop generates log lines continuously.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name session61-rotate = name: Assigns the container name.
+- --log-driver json-file = log driver: Selects json-file as the logging driver.
+- --log-opt max-size=20k = log option: Rotates the current log file when it reaches about 20 KB.
+- --log-opt max-file=3 = log option: Keeps up to three rotated log files.
+- sh -c = command string: Executes the quoted shell program; -c tells sh to run the supplied string.
+- $(printf "%02048d" 0) = command substitution: Inserts printf output into the payload assignment.
+- $((i+1)) = arithmetic expansion: Increments i.
+- ; = command separator: Runs the shell statements in sequence.
+------------------------------------------------------------
+# sleep 3
+
+Explanation:
+Pauses the shell for three seconds.
+------------------------------------------------------------
+# docker inspect \
+  -f '{{json .HostConfig.LogConfig}}' \
+  session61-rotate
+
+Explanation:
+Shows the logging configuration of session61-rotate as JSON.
+
+Options:
+- -f = --format (format): Formats inspect output with the provided Go template.
+- '{{json .HostConfig.LogConfig}}' = format value: Converts the LogConfig object to JSON.
+------------------------------------------------------------
+# LOG_PATH="$(docker inspect -f '{{.LogPath}}' session61-rotate)"
+
+Explanation:
+Stores the host-side log path of session61-rotate in LOG_PATH.
+
+Options:
+- $(...) = command substitution: Runs docker inspect and inserts its output.
+- -f = --format (format): Formats docker inspect output.
+- '{{.LogPath}}' = format value: Selects the LogPath field.
+------------------------------------------------------------
+# sudo find "$(dirname "$LOG_PATH")" \
+  -maxdepth 1 \
+  -type f \
+  -name '*-json.log*' \
+  -printf '%f  %s bytes\n' \
+  | sort
+
+Explanation:
+Lists json-file log files in the container log directory and sorts the result.
+
+Options:
+- sudo = privilege command: Runs find with elevated privileges.
+- "$(dirname "$LOG_PATH")" = command substitution: Runs dirname on LOG_PATH and uses the returned directory as the search path.
+- -maxdepth 1 = find expression: Searches only the specified directory and not deeper subdirectories.
+- -type f = find expression: Matches regular files only.
+- -name '*-json.log*' = find expression: Matches filenames containing -json.log.
+- -printf '%f  %s bytes\n' = find action: Prints each filename and its size in bytes.
+- | = pipe operator: Sends find output to sort.
+------------------------------------------------------------
+# docker logs --tail 5 session61-rotate
+
+Explanation:
+Shows the last five logs available for session61-rotate.
+
+Options:
+- --tail 5 = tail: Limits output to the last five log lines.
+------------------------------------------------------------
+# docker rm -f session61-local 2>/dev/null || true
+
+Explanation:
+Removes session61-local if it exists while hiding removal errors.
+
+Options:
+- -f = --force (force): Force-removes the container.
+- 2>/dev/null = stderr redirection: Sends standard error to /dev/null.
+- || = OR operator: Runs true if docker rm fails.
+------------------------------------------------------------
+# docker run -d \
+  --name session61-local \
+  --log-driver local \
+  --log-opt max-size=20k \
+  --log-opt max-file=3 \
+  python:3.12-slim \
+  sh -c 'i=1; while true; do echo "LOCAL log_id=$i"; i=$((i+1)); sleep 1; done'
+
+Explanation:
+Starts a detached container using Docker's local log driver with small rotation limits.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name session61-local = name: Assigns the container name.
+- --log-driver local = log driver: Selects the local logging driver.
+- --log-opt max-size=20k = log option: Sets the approximate rotation size to 20 KB.
+- --log-opt max-file=3 = log option: Keeps up to three rotated log files.
+- sh -c = command string: Executes the quoted shell loop; -c tells sh to run the supplied string.
+- $((i+1)) = arithmetic expansion: Increments i.
+- ; = command separator: Runs the shell statements in sequence.
+------------------------------------------------------------
+# docker inspect \
+  -f '{{.HostConfig.LogConfig.Type}}' \
+  session61-local
+
+Explanation:
+Shows the logging driver type used by session61-local.
+
+Options:
+- -f = --format (format): Formats inspect output.
+- '{{.HostConfig.LogConfig.Type}}' = format value: Selects the logging driver type.
+------------------------------------------------------------
+# docker logs --tail 5 session61-local
+
+Explanation:
+Shows the last five logs available for session61-local.
+
+Options:
+- --tail 5 = tail: Limits output to the last five log lines.
+------------------------------------------------------------
+# docker rm -f session61-file-only 2>/dev/null || true
+
+Explanation:
+Removes session61-file-only if it exists while hiding removal errors.
+
+Options:
+- -f = --force (force): Force-removes the container.
+- 2>/dev/null = stderr redirection: Sends standard error to /dev/null.
+- || = OR operator: Runs true if docker rm fails.
+------------------------------------------------------------
+# docker run -d \
+  --name session61-file-only \
+  python:3.12-slim \
+  sh -c 'while true; do echo "$(date) application-running" >> /tmp/app.log; sleep 2; done'
+
+Explanation:
+Starts a detached container that writes application messages only to /tmp/app.log inside the container.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name session61-file-only = name: Assigns the container name.
+- sh -c = command string: Executes the quoted shell loop; -c tells sh to run the supplied string.
+- $(date) = command substitution: Inserts the current date and time into each log line.
+- >> = append redirection: Appends echo output to /tmp/app.log instead of overwriting the file.
+- ; = command separator: Runs the shell statements in sequence.
+------------------------------------------------------------
+# sleep 5
+
+Explanation:
+Pauses the shell for five seconds.
+------------------------------------------------------------
+# docker logs session61-file-only
+
+Explanation:
+Attempts to show Docker-managed logs for session61-file-only.
+------------------------------------------------------------
+# docker exec \
+  session61-file-only \
+  tail -n 5 /tmp/app.log
+
+Explanation:
+Runs tail inside session61-file-only to display the last five lines of /tmp/app.log.
+
+Options:
+- -n = --lines (lines): Tells tail to display five lines.
+- 5 = option value: Sets the number of lines to five.
+------------------------------------------------------------
+# docker rm -f session61-none 2>/dev/null || true
+
+Explanation:
+Removes session61-none if it exists while hiding removal errors.
+
+Options:
+- -f = --force (force): Force-removes the container.
+- 2>/dev/null = stderr redirection: Sends standard error to /dev/null.
+- || = OR operator: Runs true if docker rm fails.
+------------------------------------------------------------
+# docker run -d \
+  --name session61-none \
+  --log-driver none \
+  python:3.12-slim \
+  sh -c 'while true; do echo "THIS IS A LOG"; sleep 2; done'
+
+Explanation:
+Starts a detached container with Docker logging disabled by the none log driver.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name session61-none = name: Assigns the container name.
+- --log-driver none = log driver: Disables Docker-managed logging for the container.
+- sh -c = command string: Executes the quoted shell loop; -c tells sh to run the supplied string.
+- ; = command separator: Runs the shell statements in sequence.
+------------------------------------------------------------
+# docker logs session61-none
+
+Explanation:
+Attempts to read Docker-managed logs from a container whose log driver is none.
+------------------------------------------------------------
+# docker inspect \
+  -f '{{.HostConfig.LogConfig.Type}}' \
+  session61-none
+
+Explanation:
+Shows the logging driver type used by session61-none.
+
+Options:
+- -f = --format (format): Formats inspect output.
+- '{{.HostConfig.LogConfig.Type}}' = format value: Selects the logging driver type.
+------------------------------------------------------------
+# mkdir -p /opt/docker-labs/session61
+
+Explanation:
+Creates the session61 lab directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates missing parent directories and does not fail if the directory already exists.
+------------------------------------------------------------
+# cd /opt/docker-labs/session61
+
+Explanation:
+Changes the current shell directory to /opt/docker-labs/session61.
+------------------------------------------------------------
+# cat > compose.yaml <<'EOF'
+services:
+
+  app:
+    image: python:3.12-slim
+
+    command:
+      - sh
+      - -c
+      - |
+        i=1
+        while true; do
+          echo "compose-log id=$$i"
+          i=$$((i+1))
+          sleep 2
+        done
+
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
+EOF
+
+Explanation:
+Creates compose.yaml with a Python service that generates logs and uses the local logging driver with rotation settings.
+
+Options:
+- > compose.yaml = output redirection: Creates or overwrites compose.yaml with cat output.
+- <<'EOF' = quoted here-document: Feeds the following lines to cat until EOF and prevents the current shell from expanding variables in the body.
+- $$ = Docker Compose dollar escape: Preserves a literal $ for the shell command that runs inside the container.
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Parses and renders the Compose configuration so syntax and interpolation problems can be detected.
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates and starts the services defined in the Compose file in the background.
+
+Options:
+- -d = --detach (detach): Runs the Compose services in the background.
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Lists the containers for the current Compose project.
+------------------------------------------------------------
+# docker compose logs app
+
+Explanation:
+Shows logs for the Compose service named app.
+------------------------------------------------------------
+# docker compose logs --tail 5 app
+
+Explanation:
+Shows only the last five log lines for the app service.
+
+Options:
+- --tail 5 = tail: Limits output to the last five log lines.
+------------------------------------------------------------
+# docker compose logs -f --tail 10 app
+
+Explanation:
+Shows the last 10 app log lines and then follows new logs.
+
+Options:
+- -f = --follow (follow): Continues streaming new log output.
+- --tail 10 = tail: Starts with the last 10 log lines.
+------------------------------------------------------------
+# CID="$(docker compose ps -q app)"
+
+Explanation:
+Stores the container ID of the Compose app service in the shell variable CID.
+
+Options:
+- $(...) = command substitution: Runs docker compose ps and inserts its output into the assignment.
+- -q = --quiet (quiet): Prints only container IDs.
+------------------------------------------------------------
+# docker inspect \
+  -f 'Driver={{.HostConfig.LogConfig.Type}} Config={{json .HostConfig.LogConfig.Config}}' \
+  "$CID"
+
+Explanation:
+Shows the logging driver and logging option map for the container ID stored in CID.
+
+Options:
+- -f = --format (format): Formats inspect output with the provided Go template.
+- 'Driver={{.HostConfig.LogConfig.Type}} Config={{json .HostConfig.LogConfig.Config}}' = format value: Prints both the driver type and its configuration.
+- "$CID" = variable argument: Uses the container ID stored in CID.
+------------------------------------------------------------
+# sudo cat /etc/docker/daemon.json 2>/dev/null || true
+
+Explanation:
+Displays /etc/docker/daemon.json if it exists while hiding read errors.
+
+Options:
+- sudo = privilege command: Runs cat with elevated privileges.
+- 2>/dev/null = stderr redirection: Sends standard error to /dev/null.
+- || = OR operator: Runs true if cat fails.
+------------------------------------------------------------
+# sudo install -d -m 0755 /etc/docker
+
+Explanation:
+Ensures /etc/docker exists with directory mode 0755.
+
+Options:
+- sudo = privilege command: Runs install with elevated privileges.
+- -d = --directory (directory): Creates directories instead of copying files.
+- -m = --mode (mode): Sets the directory permission mode.
+- 0755 = mode value: Gives the owner read/write/execute and group/others read/execute permissions.
+------------------------------------------------------------
+# if [ -f /etc/docker/daemon.json ]; then
+  sudo cp -a \
+    /etc/docker/daemon.json \
+    /etc/docker/daemon.json.bak-session61
+fi
+
+Explanation:
+Creates an archive-style backup of daemon.json only when the file already exists.
+
+Options:
+- [ -f /etc/docker/daemon.json ] = test expression: Checks whether the path exists and is a regular file.
+- -f = test operator: Means regular file in the [ ... ] test command.
+- sudo = privilege command: Runs cp with elevated privileges.
+- -a = --archive (archive): Preserves metadata and recursively copies when needed.
+- if ...; then ... fi = shell conditional: Runs the copy command only when the test succeeds.
+------------------------------------------------------------
+# sudo python3 - <<'PY'
+import json
+from pathlib import Path
+
+path = Path("/etc/docker/daemon.json")
+
+if path.exists() and path.read_text().strip():
+    config = json.loads(path.read_text())
+else:
+    config = {}
+
+config["log-driver"] = "local"
+config["log-opts"] = {
+    "max-size": "10m",
+    "max-file": "3"
+}
+
+path.write_text(json.dumps(config, indent=2) + "\n")
+PY
+
+Explanation:
+Runs a Python script as root to preserve existing daemon.json settings while setting the default Docker log driver to local with rotation options.
+
+Options:
+- sudo = privilege command: Runs python3 with elevated privileges.
+- - = stdin script argument: Tells python3 to read the program from standard input.
+- <<'PY' = quoted here-document: Feeds the Python program to python3 without shell expansion inside the body.
+------------------------------------------------------------
+# sudo dockerd \
+  --validate \
+  --config-file=/etc/docker/daemon.json
+
+Explanation:
+Validates the Docker daemon configuration file without starting a new daemon.
+
+Options:
+- sudo = privilege command: Runs dockerd with elevated privileges.
+- --validate = validate: Checks the configuration and exits.
+- --config-file=/etc/docker/daemon.json = config file: Uses /etc/docker/daemon.json as the daemon configuration file.
+------------------------------------------------------------
+# sudo systemctl restart docker
+
+Explanation:
+Restarts the Docker systemd service with elevated privileges.
+
+Options:
+- sudo = privilege command: Runs systemctl with elevated privileges.
+------------------------------------------------------------
+# sudo systemctl is-active docker
+
+Explanation:
+Checks whether the Docker systemd service is currently active.
+
+Options:
+- sudo = privilege command: Runs systemctl with elevated privileges.
+------------------------------------------------------------
+# docker run -d \
+  --name session61-default-test \
+  python:3.12-slim \
+  sh -c 'while true; do echo "default-driver-test"; sleep 5; done'
+
+Explanation:
+Starts a detached test container so the daemon's current default logging driver can be verified on a newly created container.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name session61-default-test = name: Assigns the container name.
+- sh -c = command string: Executes the quoted shell loop; -c tells sh to run the supplied string.
+- ; = command separator: Runs the shell statements in sequence.
+------------------------------------------------------------
+# docker inspect \
+  -f '{{.HostConfig.LogConfig.Type}}' \
+  session61-default-test
+
+Explanation:
+Shows the logging driver type used by the newly created default-driver test container.
+
+Options:
+- -f = --format (format): Formats inspect output.
+- '{{.HostConfig.LogConfig.Type}}' = format value: Selects the logging driver type.
+------------------------------------------------------------
+# docker run -d \
+  --name session61-nonblocking \
+  --log-opt mode=non-blocking \
+  --log-opt max-buffer-size=4m \
+  python:3.12-slim \
+  sh -c 'while true; do echo "application-log"; sleep 1; done'
+
+Explanation:
+Starts a detached container with non-blocking log delivery and a 4 MB logging buffer.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name session61-nonblocking = name: Assigns the container name.
+- --log-opt mode=non-blocking = log option: Enables non-blocking log delivery.
+- --log-opt max-buffer-size=4m = log option: Sets the non-blocking log buffer size to 4 MB.
+- sh -c = command string: Executes the quoted shell loop; -c tells sh to run the supplied string.
+- ; = command separator: Runs the shell statements in sequence.
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all Docker containers, including stopped containers.
+
+Options:
+- -a = --all (all): Shows all containers instead of only running containers.
+------------------------------------------------------------
+# docker logs \
+  --tail 100 \
+  -t \
+  web
+
+Explanation:
+Shows the last 100 timestamped log lines from the container named web.
+
+Options:
+- --tail 100 = tail: Limits output to the last 100 log lines.
+- -t = --timestamps (timestamps): Adds timestamps to each displayed log line.
+------------------------------------------------------------
+# docker logs \
+  -f \
+  --tail 100 \
+  -t \
+  web
+
+Explanation:
+Shows the last 100 timestamped logs from web and then follows new logs.
+
+Options:
+- -f = --follow (follow): Continues streaming new log output.
+- --tail 100 = tail: Starts with the last 100 log lines.
+- -t = --timestamps (timestamps): Adds timestamps to displayed log lines.
+------------------------------------------------------------
+# docker logs \
+  --since 15m \
+  -t \
+  web
+
+Explanation:
+Shows timestamped logs from web generated during the last 15 minutes.
+
+Options:
+- --since 15m = since: Uses 15 minutes ago as the start time.
+- -t = --timestamps (timestamps): Adds timestamps to displayed log lines.
+------------------------------------------------------------
+# docker inspect \
+  -f '{{json .HostConfig.LogConfig}}' \
+  web
+
+Explanation:
+Shows the complete logging configuration of the web container as JSON.
+
+Options:
+- -f = --format (format): Formats inspect output.
+- '{{json .HostConfig.LogConfig}}' = format value: Converts the LogConfig object to JSON.
+------------------------------------------------------------
+# docker inspect \
+  -f '{{.HostConfig.LogConfig.Type}}' \
+  CONTAINER_NAME
+
+Explanation:
+Shows the logging driver type for the container whose name replaces CONTAINER_NAME.
+
+Options:
+- -f = --format (format): Formats inspect output.
+- '{{.HostConfig.LogConfig.Type}}' = format value: Selects the logging driver type.
+------------------------------------------------------------
+# sudo systemctl status docker --no-pager -l
+
+Explanation:
+Shows detailed status information for the Docker systemd service without opening a pager.
+
+Options:
+- sudo = privilege command: Runs systemctl with elevated privileges.
+- --no-pager = no pager: Prints directly to the terminal instead of opening a pager.
+- -l = --full (full): Does not ellipsize long unit names, process tree entries, or log lines.
+------------------------------------------------------------
+# sudo journalctl \
+  -u docker \
+  -n 100 \
+  --no-pager
+
+Explanation:
+Shows the last 100 journal entries for the Docker systemd unit without opening a pager.
+
+Options:
+- sudo = privilege command: Runs journalctl with elevated privileges.
+- -u = --unit (unit): Filters journal entries to the docker unit.
+- -n = --lines (lines): Limits output to the specified number of recent entries.
+- 100 = option value: Requests the last 100 entries.
+- --no-pager = no pager: Prints directly to the terminal.
+------------------------------------------------------------
+# docker run -d \
+  --name log-test \
+  --log-driver json-file \
+  --log-opt max-size=10m \
+  --log-opt max-file=3 \
+  python:3.12-slim \
+  sh -c 'i=1; while true; do echo "request=$i"; i=$((i+1)); sleep 2; done'
+
+Explanation:
+Starts a detached lab container using json-file logging with 10 MB rotation size and three retained log files.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name log-test = name: Assigns the container name.
+- --log-driver json-file = log driver: Selects json-file logging.
+- --log-opt max-size=10m = log option: Rotates the current log file at about 10 MB.
+- --log-opt max-file=3 = log option: Keeps up to three rotated log files.
+- sh -c = command string: Executes the quoted shell loop; -c tells sh to run the supplied string.
+- $((i+1)) = arithmetic expansion: Increments i.
+- ; = command separator: Runs the shell statements in sequence.
+------------------------------------------------------------
+# docker logs --tail 10 log-test
+
+Explanation:
+Shows the last 10 log lines from log-test.
+
+Options:
+- --tail 10 = tail: Limits output to the last 10 log lines.
+------------------------------------------------------------
+# docker logs -f --tail 10 -t log-test
+
+Explanation:
+Shows the last 10 timestamped log lines from log-test and then follows new logs.
+
+Options:
+- -f = --follow (follow): Continues streaming new log output.
+- --tail 10 = tail: Starts with the last 10 log lines.
+- -t = --timestamps (timestamps): Adds timestamps to displayed log lines.
+------------------------------------------------------------
+# docker logs --since 1m log-test
+
+Explanation:
+Shows log-test logs generated during the last minute.
+
+Options:
+- --since 1m = since: Uses one minute ago as the start time.
+------------------------------------------------------------
+# docker inspect \
+  -f '{{json .HostConfig.LogConfig}}' \
+  log-test
+
+Explanation:
+Shows the complete logging configuration of log-test as JSON.
+
+Options:
+- -f = --format (format): Formats inspect output.
+- '{{json .HostConfig.LogConfig}}' = format value: Converts the LogConfig object to JSON.
+------------------------------------------------------------
