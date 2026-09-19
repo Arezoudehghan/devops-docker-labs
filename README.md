@@ -2,7 +2,7 @@
 
 [![Validate DevOps Docker Labs](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml/badge.svg)](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml)
 
-A structured collection of hands-on Docker labs covering Docker fundamentals, persistent storage, Docker Compose, networking, registry and Nexus workflows, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
+A structured collection of hands-on Docker labs covering Docker fundamentals, persistent storage, Docker Compose, networking, registry and Nexus workflows, security practices, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
 
 ## Lab environment
 
@@ -66,7 +66,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-51-simple-rollback-previous-tag/
 │   └── session-52-complete-gitlab-ci-yml-for-docker/
 ├── security/
-│   └── session-53-container-vs-vm-security/
+│   ├── session-53-container-vs-vm-security/
+│   └── session-54-non-root-container-user/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -157,6 +158,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
 | 53 | Why a container is not safer than a VM | [`security/session-53-container-vs-vm-security`](security/session-53-container-vs-vm-security/) | `DEV-1` |
+| 54 | Run containers as a non-root user with fixed UID/GID and bind-mount permission checks | [`security/session-54-non-root-container-user`](security/session-54-non-root-container-user/) | `DEV-1` |
 
 ### Docker in Production
 
