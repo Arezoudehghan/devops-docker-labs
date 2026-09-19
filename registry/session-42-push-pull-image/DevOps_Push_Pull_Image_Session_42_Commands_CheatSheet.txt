@@ -1,0 +1,168 @@
+------------------------------------------------------------
+# curl -i http://192.168.94.90:8085/v2/
+
+Explanation:
+Sends an HTTP request to the Nexus Docker Registry v2 endpoint and includes the response headers.
+
+Options:
+- -i = --include (include): Includes HTTP response headers in the output.
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists the Docker images stored on the local Docker host.
+------------------------------------------------------------
+# docker pull nginx:alpine
+
+Explanation:
+Downloads the nginx image with the alpine tag from the configured registry, normally Docker Hub.
+------------------------------------------------------------
+# docker image ls nginx
+
+Explanation:
+Lists local Docker images whose repository name matches nginx.
+------------------------------------------------------------
+# docker login 192.168.94.90:8085
+
+Explanation:
+Authenticates the Docker client to the Nexus Registry running at 192.168.94.90 on port 8085.
+------------------------------------------------------------
+# docker login -u nexus-user -p MyPassword 192.168.94.90:8085
+
+Explanation:
+Authenticates to the Nexus Registry by supplying the username and password directly in the command.
+
+Options:
+- -u = --username (username): Uses nexus-user as the registry username.
+- -p = --password (password): Uses MyPassword as the registry password.
+------------------------------------------------------------
+# printf '%s\n' "$NEXUS_PASSWORD" | docker login 192.168.94.90:8085 \
+  --username "$NEXUS_USERNAME" \
+  --password-stdin
+
+Explanation:
+Reads the Nexus password from the NEXUS_PASSWORD environment variable and sends it through standard input to docker login. The username is read from NEXUS_USERNAME.
+
+Options:
+- | = pipe operator: Sends the output of printf to the standard input of docker login.
+- --username = username: Uses the value of NEXUS_USERNAME as the registry username.
+- --password-stdin = password from standard input: Reads the registry password from standard input instead of the command line.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker tag nginx:alpine \
+  192.168.94.90:8085/labs/session42-nginx:1.0
+
+Explanation:
+Creates a new registry tag for the local nginx:alpine image so it can be pushed to the Nexus Registry as version 1.0.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker push 192.168.94.90:8085/labs/session42-nginx:1.0
+
+Explanation:
+Uploads the session42-nginx image with tag 1.0 from the local Docker host to the Nexus Registry.
+------------------------------------------------------------
+# docker image ls \
+  192.168.94.90:8085/labs/session42-nginx
+
+Explanation:
+Lists local Docker images that match the Nexus repository name for session42-nginx.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker image rm \
+  192.168.94.90:8085/labs/session42-nginx:1.0
+
+Explanation:
+Removes the local image reference for session42-nginx version 1.0 from the Docker host.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker pull \
+  192.168.94.90:8085/labs/session42-nginx:1.0
+
+Explanation:
+Downloads session42-nginx version 1.0 from the Nexus Registry to the local Docker host.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker run -d \
+  --name session42-nginx \
+  -p 8042:80 \
+  192.168.94.90:8085/labs/session42-nginx:1.0
+
+Explanation:
+Creates and starts a container named session42-nginx in the background from the Nexus image. It publishes container port 80 on host port 8042.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Sets the container name to session42-nginx.
+- -p = --publish (publish): Maps host port 8042 to container port 80.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker ps \
+  --filter name=session42-nginx
+
+Explanation:
+Lists running containers and shows only containers whose name matches session42-nginx.
+
+Options:
+- --filter = filter: Applies the filter value name=session42-nginx.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# curl -I http://127.0.0.1:8042
+
+Explanation:
+Sends an HTTP HEAD request to the service on local port 8042 and displays the response headers.
+
+Options:
+- -I = --head (head): Fetches only the HTTP headers instead of the response body.
+------------------------------------------------------------
+# docker info
+
+Explanation:
+Displays detailed information about the Docker client, Docker Engine, storage, networking, registries, and other daemon settings.
+------------------------------------------------------------
+# ss -lntp | grep 8085
+
+Explanation:
+Shows listening TCP sockets using numeric addresses and ports, including process information, then filters the output for port 8085.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -n = --numeric (numeric): Shows numeric addresses and port numbers instead of resolving names.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -p = --processes (processes): Shows the process using each socket when permissions allow it.
+- | = pipe operator: Sends the output of ss to grep.
+------------------------------------------------------------
+# docker tag nginx:alpine \
+  192.168.94.90:8085/labs/session42-nginx:2.0
+
+Explanation:
+Creates a new registry tag for the local nginx:alpine image so it can be pushed to Nexus as version 2.0.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker push \
+  192.168.94.90:8085/labs/session42-nginx:2.0
+
+Explanation:
+Uploads session42-nginx version 2.0 from the local Docker host to the Nexus Registry.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+# docker pull \
+  192.168.94.90:8085/labs/session42-nginx:2.0
+
+Explanation:
+Downloads session42-nginx version 2.0 from the Nexus Registry to the local Docker host.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
