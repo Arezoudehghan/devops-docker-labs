@@ -1,0 +1,32 @@
+stages:
+  - security
+  - build
+
+secret_scan:
+  stage: security
+
+  tags:
+    - dev-shell
+
+  variables:
+    GIT_DEPTH: "0"
+
+  script:
+    - gitleaks version
+    - gitleaks git --verbose --redact --report-format json --report-path gitleaks-report.json .
+
+  artifacts:
+    when: always
+    paths:
+      - gitleaks-report.json
+    expire_in: 1 day
+
+build:
+  stage: build
+
+  tags:
+    - dev-shell
+
+  script:
+    - echo "Secret scan passed"
+    - echo "Now Docker build can start"
