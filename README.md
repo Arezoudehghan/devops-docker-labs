@@ -65,6 +65,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-50-deploy-with-ssh/
 │   ├── session-51-simple-rollback-previous-tag/
 │   └── session-52-complete-gitlab-ci-yml-for-docker/
+├── security/
+│   └── session-53-container-vs-vm-security/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -149,6 +151,12 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 50 | Deploy a commit-tagged Docker image to a remote server over SSH | [`cicd/session-50-deploy-with-ssh`](cicd/session-50-deploy-with-ssh/) | `DEV-1` + `DEV-2` |
 | 51 | Roll back to a previous known-good Docker image tag | [`cicd/session-51-simple-rollback-previous-tag`](cicd/session-51-simple-rollback-previous-tag/) | `DEV-1` + `DEV-2` |
 | 52 | Complete GitLab CI/CD pipeline for Docker build, test, push, deploy, verify, and rollback | [`cicd/session-52-complete-gitlab-ci-yml-for-docker`](cicd/session-52-complete-gitlab-ci-yml-for-docker/) | `DEV-1` + `DEV-2` |
+
+### Docker Security
+
+| Session | Topic | Lab directory | Execution host |
+|---|---|---|---|
+| 53 | Why a container is not safer than a VM | [`security/session-53-container-vs-vm-security`](security/session-53-container-vs-vm-security/) | `DEV-1` |
 
 ### Docker in Production
 
