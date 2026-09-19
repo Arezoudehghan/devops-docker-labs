@@ -1,0 +1,356 @@
+------------------------------------------------------------
+# docker run -d --name web-app -p 8088:8000 my-app:v1
+
+Explanation:
+Runs the `my-app:v1` image as a detached container named `web-app` and publishes host port 8088 to container port 8000.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name web-app` = container name: Assigns the name `web-app` to the container.
+- `-p 8088:8000` = `--publish` (publish): Maps host port `8088` to container port `8000`.
+------------------------------------------------------------
+# docker start web-app
+
+Explanation:
+Starts the existing stopped container named `web-app`.
+------------------------------------------------------------
+# docker run --restart=<POLICY> IMAGE
+
+Explanation:
+Shows the general Docker syntax for starting a container with a selected restart policy. Replace `<POLICY>` with a valid policy and `IMAGE` with the image to run.
+
+Options:
+- `--restart=<POLICY>` = restart policy: Defines how Docker should restart the container after it exits.
+------------------------------------------------------------
+# docker run -d --name web-app --restart=unless-stopped nginx
+
+Explanation:
+Runs Nginx in the background as `web-app` and automatically restarts it unless it was intentionally stopped.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name web-app` = container name: Assigns the name `web-app` to the container.
+- `--restart=unless-stopped` = restart policy: Restarts the container automatically unless it was manually stopped.
+------------------------------------------------------------
+# docker run -d --name web-app --restart=no nginx
+
+Explanation:
+Runs Nginx in the background as `web-app` without automatic restart behavior.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name web-app` = container name: Assigns the name `web-app` to the container.
+- `--restart=no` = restart policy: Disables automatic container restarts.
+------------------------------------------------------------
+# docker run -d --name web-app nginx
+
+Explanation:
+Runs Nginx in the background as `web-app`. Because no restart policy is specified, Docker uses the default `no` policy.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name web-app` = container name: Assigns the name `web-app` to the container.
+------------------------------------------------------------
+# docker run -d --name app --restart=on-failure nginx
+
+Explanation:
+Runs Nginx in the background as `app` and restarts it when the container exits with a non-zero exit code.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name app` = container name: Assigns the name `app` to the container.
+- `--restart=on-failure` = restart policy: Restarts the container only after a failed exit.
+------------------------------------------------------------
+# exit 0
+
+Explanation:
+Exits the current shell or shell command with status code `0`, which normally means success.
+------------------------------------------------------------
+# exit 1
+
+Explanation:
+Exits the current shell or shell command with status code `1`, which normally means failure.
+------------------------------------------------------------
+# docker run -d --name app --restart=on-failure:3 my-app:v1
+
+Explanation:
+Runs `my-app:v1` as `app` and restarts it after failures, with a maximum of three restart retries.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name app` = container name: Assigns the name `app` to the container.
+- `--restart=on-failure:3` = restart policy with retry limit: Restarts after non-zero exits and limits restart retries to `3`.
+------------------------------------------------------------
+# docker run -d \
+  --name web-app \
+  --restart=always \
+  -p 8088:8000 \
+  my-app:v1
+
+Explanation:
+Runs `my-app:v1` as a detached container named `web-app`, publishes port 8088, and configures Docker to keep restarting it.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name web-app` = container name: Assigns the name `web-app` to the container.
+- `--restart=always` = restart policy: Restarts the container whenever it stops, subject to Docker's manual-stop behavior.
+- `-p 8088:8000` = `--publish` (publish): Maps host port `8088` to container port `8000`.
+- `\` = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker stop web-app
+
+Explanation:
+Stops the running container named `web-app`.
+------------------------------------------------------------
+# docker run -d \
+  --name web-app \
+  --restart=unless-stopped \
+  -p 8088:8000 \
+  my-app:v1
+
+Explanation:
+Runs `my-app:v1` as `web-app`, publishes port 8088, and restarts it automatically unless it was manually stopped.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name web-app` = container name: Assigns the name `web-app` to the container.
+- `--restart=unless-stopped` = restart policy: Restarts the container unless an administrator intentionally stopped it.
+- `-p 8088:8000` = `--publish` (publish): Maps host port `8088` to container port `8000`.
+- `\` = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker inspect web-app
+
+Explanation:
+Displays detailed Docker metadata and configuration for the container named `web-app`.
+------------------------------------------------------------
+# docker inspect -f '{{json .HostConfig.RestartPolicy}}' web-app
+
+Explanation:
+Displays only the restart policy object for `web-app` as JSON using a Docker Go template.
+
+Options:
+- `-f '{{json .HostConfig.RestartPolicy}}'` = `--format` (format): Formats the inspect output with the given Go template and converts the restart policy object to JSON.
+------------------------------------------------------------
+# docker inspect -f '{{.HostConfig.RestartPolicy.Name}}' web-app
+
+Explanation:
+Displays only the restart policy name configured for `web-app`.
+
+Options:
+- `-f '{{.HostConfig.RestartPolicy.Name}}'` = `--format` (format): Formats the inspect output with the given Go template and selects only the restart policy name.
+------------------------------------------------------------
+# docker update --restart=unless-stopped web-app
+
+Explanation:
+Changes the restart policy of the existing `web-app` container to `unless-stopped`.
+
+Options:
+- `--restart=unless-stopped` = restart policy: Updates the container so Docker restarts it automatically unless it was intentionally stopped.
+------------------------------------------------------------
+# docker update --restart=unless-stopped prometheus grafana alertmanager
+
+Explanation:
+Changes the restart policy of the `prometheus`, `grafana`, and `alertmanager` containers to `unless-stopped`.
+
+Options:
+- `--restart=unless-stopped` = restart policy: Applies the `unless-stopped` restart behavior to all named containers in the command.
+------------------------------------------------------------
+# docker update --restart=unless-stopped $(docker ps -q)
+
+Explanation:
+Changes the restart policy of all currently running containers returned by `docker ps -q` to `unless-stopped`.
+
+Options:
+- `--restart=unless-stopped` = restart policy: Applies the `unless-stopped` restart behavior.
+- `$(...)` = command substitution: Runs the command inside the parentheses and inserts its output as arguments to `docker update`.
+- `-q` = `--quiet` (quiet): Makes `docker ps` output only container IDs.
+------------------------------------------------------------
+# docker inspect -f '{{.RestartCount}}' web-app
+
+Explanation:
+Displays the number of times Docker has restarted the `web-app` container.
+
+Options:
+- `-f '{{.RestartCount}}'` = `--format` (format): Formats the inspect output and selects only the container restart count.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# docker logs web-app
+
+Explanation:
+Displays the logs produced by the `web-app` container.
+------------------------------------------------------------
+# docker run -d \
+  --name rp-test \
+  --restart=on-failure:3 \
+  alpine \
+  sh -c 'sleep 12; exit 1'
+
+Explanation:
+Runs an Alpine test container that sleeps for 12 seconds and then exits with code `1` so the `on-failure:3` restart policy can be tested.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name rp-test` = container name: Assigns the name `rp-test` to the container.
+- `--restart=on-failure:3` = restart policy with retry limit: Restarts after failed exits and limits restart retries to `3`.
+- `-c` = command string: Tells `sh` to execute the following quoted command string.
+- `;` = shell command separator: Runs `exit 1` after `sleep 12` finishes.
+- `\` = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all Docker containers, including running and stopped containers.
+
+Options:
+- `-a` = `--all` (all): Shows all containers instead of only running containers.
+------------------------------------------------------------
+# docker inspect -f '{{.RestartCount}}' rp-test
+
+Explanation:
+Displays how many times Docker has restarted the `rp-test` container.
+
+Options:
+- `-f '{{.RestartCount}}'` = `--format` (format): Formats the inspect output and selects only the restart count.
+------------------------------------------------------------
+# docker inspect -f '{{json .HostConfig.RestartPolicy}}' rp-test
+
+Explanation:
+Displays the full restart policy object for `rp-test` as JSON.
+
+Options:
+- `-f '{{json .HostConfig.RestartPolicy}}'` = `--format` (format): Formats the inspect output with the given Go template and converts the restart policy object to JSON.
+------------------------------------------------------------
+# sleep 12
+
+Explanation:
+Pauses the shell for 12 seconds before continuing.
+------------------------------------------------------------
+# docker rm -f rp-test
+
+Explanation:
+Removes the `rp-test` container and forces its removal if it is still running.
+
+Options:
+- `-f` = `--force` (force): Forces removal of the container.
+------------------------------------------------------------
+# docker run -d \
+  --name rp-nginx \
+  --restart=unless-stopped \
+  -p 8089:80 \
+  nginx:alpine
+
+Explanation:
+Runs `nginx:alpine` as `rp-nginx`, publishes host port 8089 to container port 80, and applies the `unless-stopped` restart policy.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name rp-nginx` = container name: Assigns the name `rp-nginx` to the container.
+- `--restart=unless-stopped` = restart policy: Restarts the container unless it was intentionally stopped.
+- `-p 8089:80` = `--publish` (publish): Maps host port `8089` to container port `80`.
+- `\` = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker inspect -f '{{.HostConfig.RestartPolicy.Name}}' rp-nginx
+
+Explanation:
+Displays only the restart policy name configured for `rp-nginx`.
+
+Options:
+- `-f '{{.HostConfig.RestartPolicy.Name}}'` = `--format` (format): Formats the inspect output and selects only the restart policy name.
+------------------------------------------------------------
+# docker kill rp-nginx
+
+Explanation:
+Immediately stops the `rp-nginx` container by sending Docker's default kill signal.
+------------------------------------------------------------
+# docker inspect -f '{{.RestartCount}}' rp-nginx
+
+Explanation:
+Displays the number of times Docker has restarted the `rp-nginx` container.
+
+Options:
+- `-f '{{.RestartCount}}'` = `--format` (format): Formats the inspect output and selects only the restart count.
+------------------------------------------------------------
+# docker stop rp-nginx
+
+Explanation:
+Stops the running `rp-nginx` container in a controlled way.
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates and starts the services defined in the Compose file and leaves them running in the background.
+
+Options:
+- `-d` = `--detach` (detach): Runs the Compose services in the background.
+------------------------------------------------------------
+# docker compose restart
+
+Explanation:
+Restarts the existing services defined by the current Docker Compose project.
+------------------------------------------------------------
+# docker run -d \
+  --name cicd-app \
+  -p 8088:8000 \
+  nexus.example.local/cicd-app:v1
+
+Explanation:
+Runs the `nexus.example.local/cicd-app:v1` image as `cicd-app` and publishes host port 8088 to container port 8000 without an explicit restart policy.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name cicd-app` = container name: Assigns the name `cicd-app` to the container.
+- `-p 8088:8000` = `--publish` (publish): Maps host port `8088` to container port `8000`.
+- `\` = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker run -d \
+  --name cicd-app \
+  --restart=unless-stopped \
+  -p 8088:8000 \
+  nexus.example.local/cicd-app:v1
+
+Explanation:
+Runs the CI/CD application with an `unless-stopped` restart policy so Docker can recover it after unexpected exits.
+
+Options:
+- `-d` = `--detach` (detach): Runs the container in the background.
+- `--name cicd-app` = container name: Assigns the name `cicd-app` to the container.
+- `--restart=unless-stopped` = restart policy: Restarts the container automatically unless it was intentionally stopped.
+- `-p 8088:8000` = `--publish` (publish): Maps host port `8088` to container port `8000`.
+- `\` = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker update --restart=unless-stopped my-container
+
+Explanation:
+Changes the restart policy of the existing `my-container` container to `unless-stopped`.
+
+Options:
+- `--restart=unless-stopped` = restart policy: Restarts the container automatically unless it was intentionally stopped.
+------------------------------------------------------------
+# docker logs --tail 100 web-app
+
+Explanation:
+Displays the last 100 log lines from the `web-app` container.
+
+Options:
+- `--tail 100` = tail line count: Limits the output to the last `100` log lines.
+------------------------------------------------------------
+# docker inspect -f '{{.State.ExitCode}}' web-app
+
+Explanation:
+Displays the last recorded exit code for the `web-app` container.
+
+Options:
+- `-f '{{.State.ExitCode}}'` = `--format` (format): Formats the inspect output and selects only the container exit code.
+------------------------------------------------------------
+# docker inspect -f '{{json .State}}' web-app
+
+Explanation:
+Displays the complete state object for `web-app` as JSON.
+
+Options:
+- `-f '{{json .State}}'` = `--format` (format): Formats the inspect output with the given Go template and converts the container state object to JSON.
+------------------------------------------------------------
