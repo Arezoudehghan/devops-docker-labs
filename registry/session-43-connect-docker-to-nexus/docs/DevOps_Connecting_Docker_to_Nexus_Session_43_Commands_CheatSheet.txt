@@ -1,0 +1,337 @@
+------------------------------------------------------------
+# docker pull nginx
+
+Explanation:
+Pulls the nginx image from the default Docker registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/myapp:1.0
+
+Explanation:
+Pulls the myapp image with tag 1.0 from the Nexus Docker registry at 192.168.94.90:8085.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -lntp | grep ':8085'
+
+Explanation:
+Runs ss with root privileges and shows listening TCP sockets, then filters the output for port 8085.
+
+Options:
+- -l = --listening: Shows only listening sockets.
+- -n = --numeric: Shows numeric addresses and port numbers instead of resolving names.
+- -t = --tcp: Shows TCP sockets.
+- -p = --processes: Shows the process using each socket when permissions allow it.
+- | = pipe operator: Sends the output of ss to grep as input.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -i http://192.168.94.90:8085/v2/
+
+Explanation:
+Sends an HTTP request to the Docker Registry API v2 endpoint and includes the response headers.
+
+Options:
+- -i = --include: Includes HTTP response headers in the output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo cat /etc/docker/daemon.json
+
+Explanation:
+Displays the Docker daemon configuration file with root privileges.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo cp /etc/docker/daemon.json \
+  /etc/docker/daemon.json.bak.$(date +%F-%H%M%S) \
+  2>/dev/null || true
+
+Explanation:
+Copies daemon.json to a timestamped backup file. If the source file does not exist or the copy fails, the final true command keeps the compound command from returning a failure status.
+
+Options:
+- $(date +%F-%H%M%S) = command substitution: Runs date and inserts a timestamp such as YYYY-MM-DD-HHMMSS into the backup filename.
+- +%F-%H%M%S = date format string: %F gives YYYY-MM-DD, %H gives hour, %M gives minute, and %S gives second.
+- 2>/dev/null = stderr redirection: Sends file descriptor 2, standard error, to /dev/null.
+- || = OR operator: Runs true only if the cp command fails.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo python3 - <<'PY'
+import json
+from pathlib import Path
+
+p = Path("/etc/docker/daemon.json")
+
+data = {}
+
+if p.exists() and p.stat().st_size:
+    data = json.loads(p.read_text())
+
+registries = set(data.get("insecure-registries", []))
+registries.add("192.168.94.90:8085")
+
+data["insecure-registries"] = sorted(registries)
+
+p.write_text(json.dumps(data, indent=2) + "\n")
+PY
+
+Explanation:
+Runs an inline Python script with root privileges. The script keeps existing daemon.json settings and adds 192.168.94.90:8085 to the insecure-registries list.
+
+Options:
+- - = standard input script source: Tells Python to read the program from standard input.
+- <<'PY' = quoted here-document operator: Sends all lines up to PY to Python and prevents shell expansion inside the here-document.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo python3 -m json.tool /etc/docker/daemon.json
+
+Explanation:
+Validates and pretty-prints /etc/docker/daemon.json by running Python's json.tool module with root privileges.
+
+Options:
+- -m = module execution: Runs the named Python library module as a script.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl restart docker
+
+Explanation:
+Restarts the Docker systemd service with root privileges.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl status docker --no-pager
+
+Explanation:
+Shows the current Docker service status without opening the output in a pager.
+
+Options:
+- --no-pager = disable pager: Prints the status directly to the terminal.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker info | grep -A 10 'Insecure Registries'
+
+Explanation:
+Shows Docker daemon information and filters it to the Insecure Registries line plus the following ten lines.
+
+Options:
+- | = pipe operator: Sends the output of docker info to grep.
+- -A = --after-context: Prints lines after the matching line.
+- 10 = after-context value: Prints ten lines after the match.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker login 192.168.94.90:8085
+
+Explanation:
+Technical correction: The path-based login examples shown as incorrect in the lesson must be replaced with this host-and-port form. It authenticates the Docker client to the Nexus Docker registry at 192.168.94.90:8085.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat ~/.docker/config.json
+
+Explanation:
+Displays the current user's Docker client configuration file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull alpine:3.20
+
+Explanation:
+Pulls the Alpine image with tag 3.20 from the default Docker registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker images alpine
+
+Explanation:
+Lists locally stored Docker images whose repository name matches alpine.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker tag alpine:3.20 \
+  192.168.94.90:8085/lab/alpine:3.20
+
+Explanation:
+Creates a new tag for the local alpine:3.20 image so it points to the Nexus registry and lab namespace.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker images
+
+Explanation:
+Lists locally stored Docker images.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push 192.168.94.90:8085/lab/alpine:3.20
+
+Explanation:
+Pushes the lab/alpine image with tag 3.20 to the Nexus Docker registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/lab/alpine:3.20
+
+Explanation:
+Pulls the lab/alpine image with tag 3.20 from the Nexus Docker registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  192.168.94.90:8085/lab/alpine:3.20 \
+  cat /etc/alpine-release
+
+Explanation:
+Starts a temporary container from the Nexus-hosted Alpine image and runs cat /etc/alpine-release inside it.
+
+Options:
+- --rm = automatically remove container: Deletes the container after its command exits.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logout 192.168.94.90:8085
+
+Explanation:
+Removes the stored Docker login credentials for the Nexus registry at 192.168.94.90:8085.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker tag payment-api:1.4.7 \
+  192.168.94.90:8085/payment/payment-api:1.4.7
+
+Explanation:
+Creates a Nexus registry tag for payment-api version 1.4.7 under the payment namespace.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push \
+  192.168.94.90:8085/payment/payment-api:1.4.7
+
+Explanation:
+Pushes payment-api version 1.4.7 to the payment namespace in the Nexus Docker registry.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull \
+  192.168.94.90:8085/payment/payment-api:1.4.7
+
+Explanation:
+Pulls payment-api version 1.4.7 from the payment namespace in the Nexus Docker registry.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name payment-api \
+  -p 8080:8080 \
+  192.168.94.90:8085/payment/payment-api:1.4.7
+
+Explanation:
+Starts the payment-api image in the background, names the container payment-api, and publishes host port 8080 to container port 8080.
+
+Options:
+- -d = --detach: Runs the container in the background.
+- --name payment-api = container name: Assigns payment-api as the container name.
+- -p = --publish: Publishes a container port on the host.
+- 8080:8080 = publish value: Maps host port 8080 to container port 8080.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push myapp:1.0
+
+Explanation:
+Pushes the local myapp image with tag 1.0 to the registry implied by the image name.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker login -u admin -p MyPassword123 192.168.94.90:8085
+
+Explanation:
+Authenticates to the Nexus Docker registry using the supplied username and password.
+
+Options:
+- -u = --username: Supplies admin as the registry username.
+- -p = --password: Supplies MyPassword123 as the registry password.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "$NEXUS_PASSWORD" \
+  | docker login 192.168.94.90:8085 \
+      -u "$NEXUS_USERNAME" \
+      --password-stdin
+
+Explanation:
+Sends the value of NEXUS_PASSWORD to docker login through standard input and authenticates with the username stored in NEXUS_USERNAME.
+
+Options:
+- | = pipe operator: Sends echo output to docker login as standard input.
+- -u = --username: Uses the value of NEXUS_USERNAME as the registry username.
+- --password-stdin = password from standard input: Reads the registry password from standard input instead of a command-line value.
+- "$NEXUS_PASSWORD" = quoted variable expansion: Expands NEXUS_PASSWORD while preserving its value as one shell argument.
+- "$NEXUS_USERNAME" = quoted variable expansion: Expands NEXUS_USERNAME while preserving its value as one shell argument.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push \
+  192.168.94.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
+
+Explanation:
+Pushes myapp to Nexus using the current GitLab short commit SHA as the image tag.
+
+Options:
+- ${CI_COMMIT_SHORT_SHA} = shell variable expansion: Inserts the value of the CI_COMMIT_SHORT_SHA environment variable into the image tag.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ping -c 3 192.168.94.90
+
+Explanation:
+Sends three ICMP echo requests to 192.168.94.90 and then stops.
+
+Options:
+- -c = count: Sends exactly 3 echo requests.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker tag myapp:1.0 \
+  192.168.94.90:8085/myapp:1.0
+
+Explanation:
+Creates a new tag for myapp:1.0 that points to the Nexus Docker registry.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push \
+  192.168.94.90:8085/myapp:1.0
+
+Explanation:
+Pushes myapp version 1.0 to the Nexus Docker registry.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
