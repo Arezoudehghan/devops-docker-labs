@@ -1,0 +1,4 @@
+- job_name: 'node-exporter'
+  static_configs:
+    - targets:
+        - '192.0.2.11:9100'
