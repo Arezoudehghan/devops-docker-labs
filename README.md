@@ -47,7 +47,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-34-environment-env-file/
 │   ├── session-35-volumes/
 │   ├── session-36-networks/
-│   └── session-37-depends-on-restart/
+│   ├── session-37-depends-on-restart/
+│   └── session-38-web-db-redis/
 ├── registry/
 │   ├── session-39-registry-basics/
 │   ├── session-40-docker-hub/
@@ -114,6 +115,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 35 | Volumes and PostgreSQL data persistence | [`compose/session-35-volumes`](compose/session-35-volumes/) | `DEV-1` |
 | 36 | Docker Compose networks | [`compose/session-36-networks`](compose/session-36-networks/) | `DEV-1` |
 | 37 | `depends_on` and restart policy | [`compose/session-37-depends-on-restart`](compose/session-37-depends-on-restart/) | `DEV-2` |
+| 38 | Real Web + PostgreSQL + Redis stack | [`compose/session-38-web-db-redis`](compose/session-38-web-db-redis/) | `DEV-1` |
 
 ### Registry and Nexus
 

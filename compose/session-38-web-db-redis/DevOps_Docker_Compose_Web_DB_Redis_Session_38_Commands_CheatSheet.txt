@@ -1,0 +1,768 @@
+------------------------------------------------------------
+# curl http://127.0.0.1:18038/
+
+Explanation:
+Sends an HTTP request to the web service on port 18038 and prints the response body.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p /opt/docker-labs/session38/{web,db}
+
+Explanation:
+Creates the session38 project directory and the web and db subdirectories in one command.
+
+Options:
+- -p = --parents (parents): Create parent directories as needed and do not report an error if they already exist.
+- {web,db} = brace expansion: Expands into two paths, one ending in web and one ending in db.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd /opt/docker-labs/session38
+
+Explanation:
+Changes the current working directory to the session38 project directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ss -lntp | grep ':18038 ' || true
+
+Explanation:
+Checks whether a TCP process is listening on port 18038. The command does not fail the shell if grep finds no match.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -n = --numeric (numeric): Show numeric addresses and ports instead of resolving names.
+- -t = --tcp (TCP): Show TCP sockets.
+- -p = --processes (processes): Show the process using each socket when permitted.
+- | = pipe: Sends the output of ss to grep.
+- ':18038 ' = grep pattern: Matches the listening port number 18038.
+- || = OR operator: Runs the command on the right only if the command on the left fails.
+- true = shell builtin: Returns a successful exit status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > .env <<'EOF'
+WEB_PORT=18038
+POSTGRES_DB=appdb
+POSTGRES_USER=appuser
+POSTGRES_PASSWORD=CHANGE_ME_STRONG_PASSWORD
+EOF
+
+Explanation:
+Creates the .env file and writes the lab environment variables into it exactly as shown.
+
+Options:
+- > = redirection: Creates or overwrites .env with the command output.
+- <<'EOF' = quoted here-document: Supplies all lines up to EOF as input to cat and prevents shell expansion inside the block.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat .env
+
+Explanation:
+Prints the contents of the .env file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > web/requirements.txt <<'EOF'
+Flask==3.1.3
+gunicorn==26.1.0
+psycopg[binary]==3.3.4
+redis==8.1.0
+EOF
+
+Explanation:
+Creates the Python requirements file with the package versions used by the web application.
+
+Options:
+- > = redirection: Creates or overwrites web/requirements.txt.
+- <<'EOF' = quoted here-document: Passes the block literally to cat until EOF.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat web/requirements.txt
+
+Explanation:
+Prints the Python requirements file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > web/app.py <<'EOF'
+import os
+
+import psycopg
+import redis
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+DB_HOST = os.getenv("DB_HOST", "db")
+DB_PORT = int(os.getenv("DB_PORT", "5432"))
+DB_NAME = os.getenv("DB_NAME", "appdb")
+DB_USER = os.getenv("DB_USER", "appuser")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "")
+
+REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
+
+redis_client = redis.Redis(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    db=0,
+    decode_responses=True,
+    socket_connect_timeout=2,
+    socket_timeout=2,
+)
+
+
+def get_db_connection():
+    return psycopg.connect(
+        host=DB_HOST,
+        port=DB_PORT,
+        dbname=DB_NAME,
+        user=DB_USER,
+        password=DB_PASSWORD,
+        connect_timeout=3,
+    )
+
+
+@app.get("/health")
+def health():
+    try:
+        redis_client.ping()
+
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1;")
+                cur.fetchone()
+
+        return jsonify(
+            status="healthy",
+            database="ok",
+            redis="ok",
+        ), 200
+
+    except Exception as exc:
+        return jsonify(
+            status="unhealthy",
+            error=str(exc),
+        ), 503
+
+
+@app.get("/")
+def index():
+    try:
+        redis_views = redis_client.incr("page_views")
+
+        with get_db_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "INSERT INTO visits (source) VALUES (%s) RETURNING id;",
+                    ("web",),
+                )
+
+                visit_id = cur.fetchone()[0]
+
+                cur.execute("SELECT COUNT(*) FROM visits;")
+                db_visits = cur.fetchone()[0]
+
+        return jsonify(
+            message="Session 38 Web + PostgreSQL + Redis is running",
+            redis_page_views=redis_views,
+            database_total_visits=db_visits,
+            last_visit_id=visit_id,
+        ), 200
+
+    except Exception as exc:
+        return jsonify(
+            status="error",
+            error=str(exc),
+        ), 503
+EOF
+
+Explanation:
+Creates the Flask application file used by the web container. The quoted here-document preserves the Python source exactly.
+
+Options:
+- > = redirection: Creates or overwrites web/app.py.
+- <<'EOF' = quoted here-document: Sends the block literally to cat until EOF without expanding variables or substitutions.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > web/Dockerfile <<'EOF'
+FROM python:3.13.15-slim-bookworm
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install \
+    --no-cache-dir \
+    --disable-pip-version-check \
+    --trusted-host pypi.org \
+    --trusted-host files.pythonhosted.org \
+    -r requirements.txt
+
+COPY app.py .
+
+RUN useradd --create-home --uid 10001 appuser \
+    && chown -R appuser:appuser /app
+
+USER appuser
+
+EXPOSE 8000
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--threads", "2", "--timeout", "30", "app:app"]
+EOF
+
+Explanation:
+Creates the Dockerfile for the web service, including dependency installation, a non-root user, and the Gunicorn startup command.
+
+Options:
+- > = redirection: Creates or overwrites web/Dockerfile.
+- <<'EOF' = quoted here-document: Writes the Dockerfile block literally until EOF.
+- --no-cache-dir = pip option: Disables the pip download cache.
+- --disable-pip-version-check = pip option: Disables pip's automatic version check.
+- --trusted-host pypi.org = pip option: Marks pypi.org as a trusted package host.
+- --trusted-host files.pythonhosted.org = pip option: Marks files.pythonhosted.org as a trusted package host.
+- -r = --requirement (requirement): Installs packages listed in requirements.txt.
+- --create-home = useradd option: Creates a home directory for appuser.
+- --uid 10001 = useradd option: Assigns numeric user ID 10001 to appuser.
+- && = AND operator: Runs chown only if useradd succeeds.
+- -R = --recursive (recursive): Makes chown apply recursively to /app.
+- --bind 0.0.0.0:8000 = Gunicorn option: Binds Gunicorn to all container interfaces on port 8000.
+- --workers 2 = Gunicorn option: Starts two worker processes.
+- --threads 2 = Gunicorn option: Uses two threads per worker.
+- --timeout 30 = Gunicorn option: Sets the worker timeout to 30 seconds.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > db/init.sql <<'EOF'
+CREATE TABLE IF NOT EXISTS visits (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    source TEXT NOT NULL DEFAULT 'web'
+);
+EOF
+
+Explanation:
+Creates the PostgreSQL initialization script that defines the visits table.
+
+Options:
+- > = redirection: Creates or overwrites db/init.sql.
+- <<'EOF' = quoted here-document: Writes the SQL block literally until EOF.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat db/init.sql
+
+Explanation:
+Prints the PostgreSQL initialization script.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > compose.yaml <<'EOF'
+name: session38
+
+services:
+  web:
+    build:
+      context: ./web
+
+    restart: unless-stopped
+
+    ports:
+      - "${WEB_PORT}:8000"
+
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+      redis:
+        condition: service_healthy
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=2)"
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+    networks:
+      - app_net
+
+
+  db:
+    image: postgres:17.11-alpine
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+    networks:
+      - app_net
+
+
+  redis:
+    image: redis:7.4.10-alpine
+
+    restart: unless-stopped
+
+    command:
+      [
+        "redis-server",
+        "--save",
+        "",
+        "--appendonly",
+        "no"
+      ]
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "redis-cli",
+          "ping"
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+    networks:
+      - app_net
+
+
+networks:
+  app_net:
+    driver: bridge
+
+
+volumes:
+  postgres_data:
+EOF
+
+Explanation:
+Creates the complete Docker Compose file for the web, PostgreSQL, and Redis services.
+
+Options:
+- > = redirection: Creates or overwrites compose.yaml.
+- <<'EOF' = quoted here-document: Writes the Compose configuration literally until EOF.
+- -c = Python command-string option: Executes the following Python code string in the web healthcheck.
+- -U = --username (username): pg_isready uses the specified PostgreSQL user from POSTGRES_USER.
+- -d = --dbname (database name): pg_isready checks the database named by POSTGRES_DB.
+- $$ = Compose dollar escape: Preserves a dollar sign so the container shell can expand POSTGRES_USER and POSTGRES_DB.
+- --save "" = redis-server option: Disables snapshot save rules by supplying an empty save configuration.
+- --appendonly no = redis-server option: Disables append-only-file persistence.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config -q
+
+Explanation:
+Validates the Docker Compose configuration without printing the rendered configuration.
+
+Options:
+- -q = --quiet (quiet): Validate only and produce no normal output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo $?
+
+Explanation:
+Prints the exit status of the previously executed command.
+
+Options:
+- $? = shell special parameter: Expands to the exit status of the last command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Renders and prints the resolved Docker Compose configuration.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config --services
+
+Explanation:
+Prints the service names defined by the Compose project.
+
+Options:
+- --services = Docker Compose config option: Print service names only.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config --images
+
+Explanation:
+Prints the image names used by the Compose project.
+
+Options:
+- --images = Docker Compose config option: Print image names only.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d --build
+
+Explanation:
+Builds the required image, creates the Compose resources, and starts the services in the background.
+
+Options:
+- -d = --detach (detach): Run the services in the background.
+- --build = Docker Compose up option: Build images before starting containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Shows the containers and status information for the current Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  --format '{{.State.Health.Status}}' \
+  "$(docker compose ps -q web)"
+
+Explanation:
+Reads the web container's health status directly from Docker metadata.
+
+Options:
+- --format '{{.State.Health.Status}}' = Docker inspect option: Formats the output to show only the container health status.
+- $(...) = command substitution: Runs docker compose ps -q web and inserts its output as the container identifier.
+- -q = --quiet (quiet): docker compose ps prints only the container ID.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  --format '{{.State.Health.Status}}' \
+  "$(docker compose ps -q db)"
+
+Explanation:
+Reads the PostgreSQL container's health status directly from Docker metadata.
+
+Options:
+- --format '{{.State.Health.Status}}' = Docker inspect option: Formats the output to show only the container health status.
+- $(...) = command substitution: Runs docker compose ps -q db and inserts its output as the container identifier.
+- -q = --quiet (quiet): docker compose ps prints only the container ID.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  --format '{{.State.Health.Status}}' \
+  "$(docker compose ps -q redis)"
+
+Explanation:
+Reads the Redis container's health status directly from Docker metadata.
+
+Options:
+- --format '{{.State.Health.Status}}' = Docker inspect option: Formats the output to show only the container health status.
+- $(...) = command substitution: Runs docker compose ps -q redis and inserts its output as the container identifier.
+- -q = --quiet (quiet): docker compose ps prints only the container ID.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs
+
+Explanation:
+Prints logs from all services in the current Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs -f
+
+Explanation:
+Continuously follows log output from all Compose services.
+
+Options:
+- -f = --follow (follow): Continue streaming new log output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs web
+
+Explanation:
+Prints logs only from the web service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs db
+
+Explanation:
+Prints logs only from the PostgreSQL service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs redis
+
+Explanation:
+Prints logs only from the Redis service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -i http://127.0.0.1:18038/health
+
+Explanation:
+Calls the web application's health endpoint and includes the HTTP response headers.
+
+Options:
+- -i = --include (include): Include response headers in the output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -s http://127.0.0.1:18038/
+
+Explanation:
+Calls the main web endpoint while suppressing curl's progress and error meter.
+
+Options:
+- -s = --silent (silent): Disable the progress meter and normal error messages.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# for i in {1..5}; do
+  curl -s http://127.0.0.1:18038/
+  echo
+done
+
+Explanation:
+Runs five HTTP requests to the web service and prints a newline after each response.
+
+Options:
+- {1..5} = brace expansion: Produces the values 1 through 5.
+- ; = shell command separator: Separates the loop control syntax from the next command.
+- do ... done = shell loop syntax: Defines the commands executed for each iteration.
+- -s = --silent (silent): curl disables the progress meter and normal error messages.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec db \
+  psql -U appuser -d appdb \
+  -c "SELECT * FROM visits ORDER BY id;"
+
+Explanation:
+Runs a PostgreSQL query inside the db container and lists all rows in the visits table ordered by ID.
+
+Options:
+- -U = --username (username): Connect as PostgreSQL user appuser.
+- -d = --dbname (database name): Connect to the appdb database.
+- -c = --command (command): Execute the supplied SQL statement and exit.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec db \
+  psql -U appuser -d appdb \
+  -c "SELECT COUNT(*) FROM visits;"
+
+Explanation:
+Runs a PostgreSQL query inside the db container and returns the total number of visit rows.
+
+Options:
+- -U = --username (username): Connect as PostgreSQL user appuser.
+- -d = --dbname (database name): Connect to the appdb database.
+- -c = --command (command): Execute the supplied SQL statement and exit.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec redis \
+  redis-cli GET page_views
+
+Explanation:
+Runs redis-cli inside the Redis container and reads the page_views key.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec redis \
+  redis-cli PING
+
+Explanation:
+Runs a Redis PING command inside the Redis container to verify that Redis is responding.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec web python -c \
+"import socket; print('db =', socket.gethostbyname('db')); print('redis =', socket.gethostbyname('redis'))"
+
+Explanation:
+Runs Python inside the web container to resolve the internal DNS names db and redis.
+
+Options:
+- -c = Python command-string option: Execute the following Python code string and then exit.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network ls | grep session38
+
+Explanation:
+Lists Docker networks and filters the output for network names containing session38.
+
+Options:
+- | = pipe: Sends docker network ls output to grep.
+- session38 = grep pattern: Matches lines containing the text session38.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network inspect session38_app_net
+
+Explanation:
+Displays detailed information about the session38 application network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose stop db
+
+Explanation:
+Stops the PostgreSQL service container without removing it.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose start db
+
+Explanation:
+Starts the previously stopped PostgreSQL service container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose stop redis
+
+Explanation:
+Stops the Redis service container without removing it.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose start redis
+
+Explanation:
+Starts the previously stopped Redis service container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose down
+
+Explanation:
+Stops and removes the Compose containers and project network while keeping the named database volume by default.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume ls | grep session38
+
+Explanation:
+Lists Docker volumes and filters the output for names containing session38.
+
+Options:
+- | = pipe: Sends docker volume ls output to grep.
+- session38 = grep pattern: Matches lines containing the text session38.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates or starts the Compose services in the background without explicitly requesting a rebuild.
+
+Options:
+- -d = --detach (detach): Run the services in the background.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose down -v
+
+Explanation:
+Stops and removes the Compose project and also removes its named volumes.
+
+Options:
+- -v = --volumes (volumes): Remove named volumes declared in the Compose file and anonymous volumes attached to containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume ls | grep session38 || true
+
+Explanation:
+Checks whether any session38 Docker volumes remain and prevents a no-match result from causing command failure.
+
+Options:
+- | = pipe: Sends docker volume ls output to grep.
+- session38 = grep pattern: Matches lines containing the text session38.
+- || = OR operator: Runs true only if grep returns a failure status.
+- true = shell builtin: Returns a successful exit status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# pg_isready -U appuser -d appdb
+
+Explanation:
+Checks whether PostgreSQL is ready to accept connections for appuser and appdb.
+
+Options:
+- -U = --username (username): Use appuser as the PostgreSQL user.
+- -d = --dbname (database name): Check the appdb database.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec web env
+
+Explanation:
+Runs env inside the web container and prints its environment variables.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec db \
+  pg_isready -U appuser -d appdb
+
+Explanation:
+Runs pg_isready inside the db container to verify PostgreSQL readiness.
+
+Options:
+- -U = --username (username): Use appuser as the PostgreSQL user.
+- -d = --dbname (database name): Check the appdb database.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec web python -c \
+"import socket; print(socket.gethostbyname('db')); print(socket.gethostbyname('redis'))"
+
+Explanation:
+Runs Python inside the web container and prints the IP addresses resolved for the db and redis service names.
+
+Options:
+- -c = Python command-string option: Execute the following Python code string and then exit.
+------------------------------------------------------------
