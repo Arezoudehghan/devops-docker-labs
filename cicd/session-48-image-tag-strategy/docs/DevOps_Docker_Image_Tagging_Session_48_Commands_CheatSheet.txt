@@ -1,0 +1,166 @@
+------------------------------------------------------------
+# docker build -t myapp:latest .
+
+Explanation:
+Builds a Docker image from the current directory and tags it as myapp:latest.
+
+Options:
+- -t = --tag (tag): Assigns the name and tag myapp:latest to the built image.
+- . = current directory: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push myapp:latest
+
+Explanation:
+Pushes the myapp:latest image to the configured container registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull nginx
+
+Explanation:
+Pulls the nginx image. Because no tag is specified, Docker uses the default latest tag.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull nginx:latest
+
+Explanation:
+Pulls the nginx image explicitly using the latest tag.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build \
+  -t "192.168.94.90:8085/cicd-session48-app:${CI_COMMIT_SHORT_SHA}" \
+  .
+
+Explanation:
+Builds the application image and tags it with the GitLab short commit SHA so the image can be traced to a specific commit.
+
+Options:
+- -t = --tag (tag): Assigns the full Nexus registry image name and ${CI_COMMIT_SHORT_SHA} tag to the built image.
+- . = current directory: Uses the current directory as the Docker build context.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists Docker images stored locally.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name cicd-session48-app \
+  -p 8088:8000 \
+  192.168.94.90:8085/cicd-session48-app:3308ad76
+
+Explanation:
+Starts the specified application image as a detached container named cicd-session48-app and publishes host port 8088 to container port 8000.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Sets the container name to cicd-session48-app.
+- -p = --publish (publish): Publishes a container port to the host.
+- 8088:8000 = publish value: Maps host port 8088 to container port 8000.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker tag \
+  "192.168.94.90:8085/cicd-session48-app:${CI_COMMIT_SHORT_SHA}" \
+  "192.168.94.90:8085/cicd-session48-app:${CI_COMMIT_REF_SLUG}"
+
+Explanation:
+Creates a second tag for the same image, using the GitLab branch or ref slug as the new tag.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git tag v1.4.0
+
+Explanation:
+Creates a local Git tag named v1.4.0 at the current commit.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git push origin v1.4.0
+
+Explanation:
+Pushes the local Git tag v1.4.0 to the remote repository named origin.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# IMAGE_SHA="${NEXUS_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+
+Explanation:
+Sets the shell variable IMAGE_SHA to the full Nexus image reference that uses the short commit SHA as its tag.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# IMAGE_BRANCH="${NEXUS_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_REF_SLUG}"
+
+Explanation:
+Sets the shell variable IMAGE_BRANCH to the full Nexus image reference that uses the GitLab ref slug as its tag.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t "${IMAGE_SHA}" .
+
+Explanation:
+Builds the Docker image from the current directory and tags it with the value stored in IMAGE_SHA.
+
+Options:
+- -t = --tag (tag): Assigns ${IMAGE_SHA} as the image name and tag.
+- . = current directory: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker tag "${IMAGE_SHA}" "${IMAGE_BRANCH}"
+
+Explanation:
+Creates the branch-based image tag stored in IMAGE_BRANCH from the image referenced by IMAGE_SHA.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls "${NEXUS_REGISTRY}/${IMAGE_NAME}"
+
+Explanation:
+Lists local Docker images that match the repository name built from NEXUS_REGISTRY and IMAGE_NAME.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls \
+  192.168.94.90:8085/cicd-session48-app
+
+Explanation:
+Lists local Docker images for the 192.168.94.90:8085/cicd-session48-app repository.
+
+Options:
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# IMAGE_TAG="${CI_COMMIT_REF_SLUG}-${CI_COMMIT_SHORT_SHA}"
+
+Explanation:
+Sets IMAGE_TAG to a tag that combines the GitLab ref slug and short commit SHA.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build \
+  -t "192.168.94.90:8085/cicd-session48-app:${IMAGE_TAG}" \
+  .
+
+Explanation:
+Builds the application image and tags it with the combined branch and commit value stored in IMAGE_TAG.
+
+Options:
+- -t = --tag (tag): Assigns the full Nexus registry image name and ${IMAGE_TAG} value to the built image.
+- . = current directory: Uses the current directory as the Docker build context.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
