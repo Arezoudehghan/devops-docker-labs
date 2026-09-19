@@ -50,9 +50,11 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   └── session-37-depends-on-restart/
 ├── registry/
 │   ├── session-39-registry-basics/
-│   └── session-40-docker-hub/
-├── registry/
-│   └── session-41-private-registry/
+│   ├── session-40-docker-hub/
+│   ├── session-41-private-registry/
+│   ├── session-42-push-pull-image/
+│   ├── session-43-connect-docker-to-nexus/
+│   └── session-44-nexus-login/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -118,14 +120,11 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
 | 39 | Docker Registry fundamentals: registry, repository, tag, digest, push, and pull | [`registry/session-39-registry-basics`](registry/session-39-registry-basics/) | `DEV-1` + `DEV-2` |
-| 44 | Login to Nexus Docker Registry and authentication troubleshooting | [`registry/session-44-nexus-login`](registry/session-44-nexus-login/) | `DEV-1` + `DEV-2` |
 | 40 | Docker Hub: build, tag, push, pull, and run | [`registry/session-40-docker-hub`](registry/session-40-docker-hub/) | `DEV-1` + `DEV-2` |
-
-### Docker Registry and Nexus
-
-| Session | Topic | Lab directory | Execution host |
-|---|---|---|---|
 | 41 | Private Registry fundamentals and push/pull lab | [`registry/session-41-private-registry`](registry/session-41-private-registry/) | `DEV-1` + `DEV-2` |
+| 42 | Push and pull images with Nexus | [`registry/session-42-push-pull-image`](registry/session-42-push-pull-image/) | `DEV-1` + `DEV-2` |
+| 43 | Connect Docker to Nexus | [`registry/session-43-connect-docker-to-nexus`](registry/session-43-connect-docker-to-nexus/) | `DEV-1` + `DEV-2` |
+| 44 | Login to Nexus Docker Registry and authentication troubleshooting | [`registry/session-44-nexus-login`](registry/session-44-nexus-login/) | `DEV-1` + `DEV-2` |
 
 ### Docker in Production
 
