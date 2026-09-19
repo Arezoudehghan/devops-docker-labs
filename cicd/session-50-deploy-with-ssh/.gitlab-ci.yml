@@ -1,0 +1,84 @@
+stages:
+  - deploy
+
+variables:
+  NEXUS_REGISTRY: "192.0.2.10:8085"
+  IMAGE_NAME: "cicd-session50-app"
+  DEPLOY_HOST: "192.0.2.11"
+  DEPLOY_USER: "deploy"
+  CONTAINER_NAME: "cicd-session50-app"
+  DEPLOY_PORT: "8088"
+  APP_PORT: "8000"
+
+deploy_production:
+  stage: deploy
+
+  tags:
+    - dev-shell
+
+  before_script:
+    - chmod 400 "$SSH_PRIVATE_KEY"
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - cp "$SSH_KNOWN_HOSTS" ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+  script:
+    - export IMAGE="${NEXUS_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+
+    - |
+      printf '%s\n' "$NEXUS_PASSWORD" |
+      ssh \
+        -i "$SSH_PRIVATE_KEY" \
+        -o BatchMode=yes \
+        -o StrictHostKeyChecking=yes \
+        "$DEPLOY_USER@$DEPLOY_HOST" \
+        "docker login '$NEXUS_REGISTRY' --username '$NEXUS_USER' --password-stdin"
+
+    - |
+      ssh \
+        -i "$SSH_PRIVATE_KEY" \
+        -o BatchMode=yes \
+        -o StrictHostKeyChecking=yes \
+        "$DEPLOY_USER@$DEPLOY_HOST" \
+        "IMAGE='$IMAGE' CONTAINER_NAME='$CONTAINER_NAME' DEPLOY_PORT='$DEPLOY_PORT' APP_PORT='$APP_PORT' bash -s" <<'REMOTE'
+
+      set -euo pipefail
+
+      docker pull "$IMAGE"
+
+      if docker ps -a --format '{{.Names}}' | grep -qx "$CONTAINER_NAME"; then
+        docker stop --timeout 20 "$CONTAINER_NAME"
+        docker rm "$CONTAINER_NAME"
+      fi
+
+      docker run \
+        -d \
+        --name "$CONTAINER_NAME" \
+        --restart unless-stopped \
+        -p "${DEPLOY_PORT}:${APP_PORT}" \
+        "$IMAGE"
+
+      docker ps --filter "name=^/${CONTAINER_NAME}$"
+
+      REMOTE
+
+    - |
+      for i in $(seq 1 10); do
+        if curl --fail --silent --show-error "http://${DEPLOY_HOST}:${DEPLOY_PORT}/"; then
+          echo "Application is healthy."
+          exit 0
+        fi
+
+        echo "Waiting for application..."
+        sleep 2
+      done
+
+      echo "Application health check failed."
+      exit 1
+
+  environment:
+    name: production
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
