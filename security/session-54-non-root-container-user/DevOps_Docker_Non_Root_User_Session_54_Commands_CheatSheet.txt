@@ -1,0 +1,432 @@
+------------------------------------------------------------
+# FROM python:3.12-slim
+
+WORKDIR /app
+
+CMD ["python", "-m", "http.server", "8000"]
+
+Explanation:
+Technical correction: The original example referenced app.py without adding that file to the image. This corrected version uses Python's built-in http.server module, which is available in the base image.
+
+Options:
+- "-m" = Python module option: Runs the http.server module.
+------------------------------------------------------------
+# mkdir -p /opt/docker-labs/session54
+
+Explanation:
+Creates the session54 lab directory and any missing parent directories.
+
+Options:
+- -p = --parents: Creates parent directories as needed and does not fail if the directory already exists.
+------------------------------------------------------------
+# cd /opt/docker-labs/session54
+
+Explanation:
+Changes the current shell directory to the session54 lab directory.
+------------------------------------------------------------
+# docker rm -f session54-nonroot 2>/dev/null || true
+
+Explanation:
+Removes the session54-nonroot container if it exists. Errors are hidden, and the command still succeeds when the container is absent.
+
+Options:
+- -f = --force: Force-removes a running container by sending SIGKILL before removal.
+- 2>/dev/null = stderr redirection: Sends file descriptor 2, standard error, to /dev/null.
+- || = shell OR operator: Runs true only if docker rm returns a non-zero exit status.
+------------------------------------------------------------
+# docker image inspect python:3.12-slim >/dev/null 2>&1 \
+  || docker pull python:3.12-slim
+
+Explanation:
+Checks whether the python:3.12-slim image exists locally and pulls it only when the inspect command fails.
+
+Options:
+- >/dev/null = stdout redirection: Sends standard output to /dev/null.
+- 2>&1 = stderr redirection: Sends standard error to the same destination as standard output.
+- \\ = shell line continuation: Continues the same command on the next line.
+- || = shell OR operator: Runs docker pull only if docker image inspect fails.
+------------------------------------------------------------
+# docker run --rm python:3.12-slim id
+
+Explanation:
+Starts a temporary container from python:3.12-slim and runs id to show the container process UID and GID.
+
+Options:
+- --rm = automatically remove the container: Deletes the container when its process exits.
+------------------------------------------------------------
+# docker image inspect python:3.12-slim \
+  --format 'User={{json .Config.User}}'
+
+Explanation:
+Inspects the image configuration and prints only the configured default user as JSON.
+
+Options:
+- --format = format output using a Go template: Prints only the value produced by the supplied template.
+- 'User={{json .Config.User}}' = format value: Labels the configured image user and renders it with the json template function.
+- \\ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# cat > index.html <<'EOF'
+<h1>Docker Security - Session 54</h1>
+<p>This container is running as a non-root user.</p>
+EOF
+
+Explanation:
+Creates index.html and writes the shown HTML content into the file.
+
+Options:
+- > = shell output redirection: Replaces index.html with the standard output produced by cat.
+- <<'EOF' = quoted here-document: Sends all following lines to cat until EOF and prevents shell expansion inside the block.
+------------------------------------------------------------
+# cat > Dockerfile <<'EOF'
+FROM python:3.12-slim
+
+RUN mkdir -p /app \
+    && chown 10001:10001 /app
+
+WORKDIR /app
+
+COPY --chown=10001:10001 index.html /app/index.html
+
+USER 10001:10001
+
+EXPOSE 8000
+
+CMD ["python", "-m", "http.server", "8000", "--bind", "0.0.0.0"]
+EOF
+
+Explanation:
+Creates the complete Dockerfile for the non-root web container. It prepares /app, assigns UID and GID 10001, copies the page with matching ownership, and starts Python's HTTP server on port 8000.
+
+Options:
+- > = shell output redirection: Replaces Dockerfile with the standard output produced by cat.
+- <<'EOF' = quoted here-document: Sends the block to cat until EOF and prevents shell expansion inside the block.
+- -p = --parents: Used by mkdir to create /app without failing if it already exists.
+- \\ = shell line continuation: Continues the RUN instruction on the next physical line.
+- && = shell AND operator: Runs chown only if mkdir succeeds.
+- --chown=10001:10001 = Dockerfile COPY ownership option: Sets the copied file owner UID and GID to 10001.
+- "-m" = Python module option: Runs the http.server module.
+- "--bind" = Python http.server bind option: Binds the server to the specified address, 0.0.0.0.
+------------------------------------------------------------
+# RUN mkdir -p /app \
+    && chown 10001:10001 /app
+
+Explanation:
+Creates /app during the image build and changes its owner to UID 10001 and GID 10001.
+
+Options:
+- -p = --parents: Used by mkdir to create the directory without failing if it already exists.
+- \\ = Dockerfile line continuation: Continues the RUN instruction on the next physical line.
+- && = shell AND operator: Runs chown only if mkdir succeeds.
+------------------------------------------------------------
+# WORKDIR /app
+
+Explanation:
+Sets /app as the working directory for following Dockerfile instructions and for the container process.
+------------------------------------------------------------
+# COPY --chown=10001:10001 index.html /app/index.html
+
+Explanation:
+Copies index.html into /app/index.html and assigns UID 10001 and GID 10001 as its owner.
+
+Options:
+- --chown=10001:10001 = COPY ownership option: Sets the copied file owner UID and GID to 10001.
+------------------------------------------------------------
+# COPY index.html /app/index.html
+
+Explanation:
+Copies index.html into /app/index.html without explicitly changing its ownership.
+------------------------------------------------------------
+# USER 10001:10001
+
+Explanation:
+Sets UID 10001 and GID 10001 as the default identity for following Dockerfile instructions and for the container process.
+------------------------------------------------------------
+# USER 10001
+
+Explanation:
+Sets UID 10001 as the default user without explicitly setting a GID.
+------------------------------------------------------------
+# docker build \
+  -t session54-app:1.0 \
+  .
+
+Explanation:
+Builds a Docker image from the Dockerfile in the current directory and tags it as session54-app:1.0.
+
+Options:
+- -t = --tag (tag): Assigns the name and tag session54-app:1.0 to the built image.
+- . = build context: Uses the current directory as the Docker build context.
+- \\ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker image inspect session54-app:1.0 \
+  --format 'User={{.Config.User}}'
+
+Explanation:
+Inspects the built image and prints its configured default user.
+
+Options:
+- --format = format output using a Go template: Prints only the requested image configuration value.
+- 'User={{.Config.User}}' = format value: Labels and prints the configured user.
+- \\ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker image inspect session54-app:1.0 \
+  --format 'User={{.Config.User}} WorkDir={{.Config.WorkingDir}} Ports={{json .Config.ExposedPorts}}'
+
+Explanation:
+Inspects the built image and prints its default user, working directory, and exposed ports.
+
+Options:
+- --format = format output using a Go template: Prints only the selected image configuration fields.
+- 'User={{.Config.User}} WorkDir={{.Config.WorkingDir}} Ports={{json .Config.ExposedPorts}}' = format value: Labels the user and working directory and renders exposed ports as JSON.
+- \\ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# ss -ltnp | grep ':18054 ' || true
+
+Explanation:
+Lists listening TCP sockets with numeric addresses and process information, then searches for host port 18054. The final true keeps the command successful when grep finds no match.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -n = --numeric (numeric): Does not resolve service names.
+- -p = --processes (processes): Shows the process using each socket when permitted.
+- | = shell pipe operator: Sends ss output to grep.
+- ':18054 ' = grep search pattern: Matches the displayed port value 18054 followed by a space.
+- || = shell OR operator: Runs true when grep returns a non-zero exit status.
+------------------------------------------------------------
+# docker run -d \
+  --name session54-nonroot \
+  -p 127.0.0.1:18054:8000 \
+  session54-app:1.0
+
+Explanation:
+Starts the application container in the background, names it session54-nonroot, and publishes host port 18054 on 127.0.0.1 to container port 8000.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = assign a container name: Sets the container name to session54-nonroot.
+- -p = --publish (publish): Maps 127.0.0.1:18054 on the host to port 8000 in the container.
+- \\ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker ps \
+  --filter name=session54-nonroot
+
+Explanation:
+Lists running containers and keeps only entries whose name matches session54-nonroot.
+
+Options:
+- --filter = filter output: Applies the filter name=session54-nonroot.
+- name=session54-nonroot = filter value: Filters containers by name.
+- \\ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# curl -sS http://127.0.0.1:18054/
+
+Explanation:
+Requests the web page from the local published container port while suppressing the progress meter but still showing errors.
+
+Options:
+- -s = --silent (silent): Hides the progress meter and normal error messages.
+- -S = --show-error (show error): Shows error messages when used together with --silent.
+------------------------------------------------------------
+# docker exec session54-nonroot id
+
+Explanation:
+Runs id inside the running container to display the effective UID, GID, and groups of the container process environment.
+------------------------------------------------------------
+# docker exec session54-nonroot id -u
+
+Explanation:
+Runs id inside the container and prints only the effective user ID.
+
+Options:
+- -u = --user (user): Prints only the effective user ID.
+------------------------------------------------------------
+# docker exec session54-nonroot id -g
+
+Explanation:
+Runs id inside the container and prints only the effective group ID.
+
+Options:
+- -g = --group (group): Prints only the effective group ID.
+------------------------------------------------------------
+# docker exec session54-nonroot \
+  sh -c 'touch /root/should-fail'
+
+Explanation:
+Runs a shell inside the container and tries to create a file under /root to test that the non-root user is blocked.
+
+Options:
+- \\ = shell line continuation: Continues the same command on the next line.
+- -c = command string: Tells sh to execute the following quoted command string.
+------------------------------------------------------------
+# docker exec session54-nonroot \
+  sh -c 'echo "created by non-root" > /app/ok.txt && ls -ln /app/ok.txt'
+
+Explanation:
+Creates /app/ok.txt as the container user and then lists the file with numeric ownership information.
+
+Options:
+- \\ = shell line continuation: Continues the same command on the next line.
+- -c = command string: Tells sh to execute the following quoted command string.
+- > = shell output redirection: Writes echo output to /app/ok.txt, replacing the file if it exists.
+- && = shell AND operator: Runs ls only if the echo redirection succeeds.
+- -l = long listing format: Shows detailed file information.
+- -n = --numeric-uid-gid (numeric UID/GID): Shows numeric UID and GID values instead of names.
+------------------------------------------------------------
+# docker run --rm \
+  --user 20000:20000 \
+  python:3.12-slim \
+  id
+
+Explanation:
+Runs a temporary container with runtime UID 20000 and GID 20000, overriding the image's default user.
+
+Options:
+- --rm = automatically remove the container: Deletes the container when its process exits.
+- --user = set user and optional group: Runs the container process as UID 20000 and GID 20000.
+- \\ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker run --rm \
+  --user 0:0 \
+  session54-app:1.0 \
+  id
+
+Explanation:
+Runs the normally non-root image as UID 0 and GID 0 to demonstrate that the runtime user setting can override the Dockerfile USER value.
+
+Options:
+- --rm = automatically remove the container: Deletes the container when its process exits.
+- --user = set user and optional group: Runs the container process as UID 0 and GID 0.
+- \\ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# mkdir -p data
+
+Explanation:
+Creates the data directory if it does not already exist.
+
+Options:
+- -p = --parents: Creates parent directories as needed and does not fail if the directory already exists.
+------------------------------------------------------------
+# rm -f data/from-container.txt
+
+Explanation:
+Removes data/from-container.txt if it exists and does not report an error when the file is already absent.
+
+Options:
+- -f = --force (force): Ignores nonexistent files and suppresses confirmation prompts.
+------------------------------------------------------------
+# chown root:root data
+
+Explanation:
+Changes the owner and group of the data directory to root and root.
+------------------------------------------------------------
+# chmod 755 data
+
+Explanation:
+Sets data permissions to rwxr-xr-x, giving the owner write access and everyone else read and execute access.
+------------------------------------------------------------
+# ls -ldn data
+
+Explanation:
+Shows detailed information for the data directory itself and displays numeric UID and GID values.
+
+Options:
+- -l = long listing format: Shows detailed file information.
+- -d = --directory (directory): Lists the directory entry itself instead of its contents.
+- -n = --numeric-uid-gid (numeric UID/GID): Shows numeric UID and GID values instead of names.
+------------------------------------------------------------
+# docker run --rm \
+  --mount type=bind,src="$PWD/data",dst=/data \
+  session54-app:1.0 \
+  sh -c 'id && touch /data/from-container.txt'
+
+Explanation:
+Runs the image with the host data directory bind-mounted at /data and tries to create a file there as the container user.
+
+Options:
+- --rm = automatically remove the container: Deletes the container when its process exits.
+- --mount = attach a filesystem mount: Creates the bind mount described by type=bind,src="$PWD/data",dst=/data.
+- type=bind = mount type: Uses a bind mount from a host path.
+- src="$PWD/data" = mount source: Uses the data directory under the current host working directory.
+- dst=/data = mount destination: Mounts the source directory at /data inside the container.
+- $PWD = shell variable expansion: Expands to the current working directory before Docker receives the mount value.
+- -c = command string: Tells sh to execute the following quoted command string.
+- && = shell AND operator: Runs touch only if id succeeds.
+- \\ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# chown 10001:10001 data
+
+Explanation:
+Changes the owner and group of the data directory to UID 10001 and GID 10001.
+------------------------------------------------------------
+# docker run --rm \
+  --mount type=bind,src="$PWD/data",dst=/data \
+  session54-app:1.0 \
+  sh -c 'id && touch /data/from-container.txt && ls -ln /data/from-container.txt'
+
+Explanation:
+Runs the image with the host data directory bind-mounted at /data, creates a file, and then verifies its numeric UID and GID.
+
+Options:
+- --rm = automatically remove the container: Deletes the container when its process exits.
+- --mount = attach a filesystem mount: Creates the bind mount described by type=bind,src="$PWD/data",dst=/data.
+- type=bind = mount type: Uses a bind mount from a host path.
+- src="$PWD/data" = mount source: Uses the data directory under the current host working directory.
+- dst=/data = mount destination: Mounts the source directory at /data inside the container.
+- $PWD = shell variable expansion: Expands to the current working directory before Docker receives the mount value.
+- -c = command string: Tells sh to execute the following quoted command string.
+- && = shell AND operator: Runs each following command only if the previous command succeeds.
+- -l = long listing format: Shows detailed file information.
+- -n = --numeric-uid-gid (numeric UID/GID): Shows numeric UID and GID values instead of names.
+- \\ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# ls -ln data/from-container.txt
+
+Explanation:
+Shows detailed information for data/from-container.txt using numeric UID and GID values.
+
+Options:
+- -l = long listing format: Shows detailed file information.
+- -n = --numeric-uid-gid (numeric UID/GID): Shows numeric UID and GID values instead of names.
+------------------------------------------------------------
+# services:
+  web:
+    image: session54-app:1.0
+    user: "10001:10001"
+
+    ports:
+      - "127.0.0.1:18054:8000"
+
+Explanation:
+Defines a Compose service named web that uses session54-app:1.0, runs as UID and GID 10001, and publishes local host port 18054 to container port 8000.
+------------------------------------------------------------
+# FROM ubuntu
+
+RUN apt-get update
+
+USER 10001:10001
+
+Explanation:
+Technical correction: The original example placed USER 10001:10001 before apt-get update, which can make apt-get fail because package management normally needs root privileges. The corrected order performs apt-get update first and switches to the non-root UID and GID afterward.
+------------------------------------------------------------
+# docker image inspect session54-app:1.0 \
+  --format 'Image User={{.Config.User}}'
+
+Explanation:
+Inspects the final image and prints its configured user with the label Image User.
+
+Options:
+- --format = format output using a Go template: Prints only the requested image configuration value.
+- 'Image User={{.Config.User}}' = format value: Labels and prints the configured user.
+- \\ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker exec session54-nonroot \
+  sh -c 'touch /root/security-test'
+
+Explanation:
+Runs a shell inside the container and tries to create /root/security-test to verify that the non-root user cannot write under /root.
+
+Options:
+- \\ = shell line continuation: Continues the same command on the next line.
+- -c = command string: Tells sh to execute the following quoted command string.
+------------------------------------------------------------
