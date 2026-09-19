@@ -55,7 +55,10 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-41-private-registry/
 │   ├── session-42-push-pull-image/
 │   ├── session-43-connect-docker-to-nexus/
-│   └── session-44-nexus-login/
+│   ├── session-44-nexus-login/
+│   └── session-45-build-server-nexus-deploy-server/
+├── cicd/
+│   └── session-46-docker-in-pipeline/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -128,6 +131,12 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 43 | Connect Docker to Nexus | [`registry/session-43-connect-docker-to-nexus`](registry/session-43-connect-docker-to-nexus/) | `DEV-1` + `DEV-2` |
 | 44 | Login to Nexus Docker Registry and authentication troubleshooting | [`registry/session-44-nexus-login`](registry/session-44-nexus-login/) | `DEV-1` + `DEV-2` |
 | 45 | Build Server → Nexus → Deploy Server | [`registry/session-45-build-server-nexus-deploy-server`](registry/session-45-build-server-nexus-deploy-server/) | `DEV-1` + `DEV-2` |
+
+### Docker in CI/CD
+
+| Session | Topic | Lab directory | Execution host |
+|---|---|---|---|
+| 46 | Docker's role in the CI/CD pipeline: build, test, push, pull, and deploy | [`cicd/session-46-docker-in-pipeline`](cicd/session-46-docker-in-pipeline/) | `DEV-1` + `DEV-2` |
 
 ### Docker in Production
 
