@@ -2,7 +2,7 @@
 
 [![Validate DevOps Docker Labs](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml/badge.svg)](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml)
 
-A structured collection of hands-on Docker labs covering Docker fundamentals, persistent storage, Docker Compose, networking, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
+A structured collection of hands-on Docker labs covering Docker fundamentals, persistent storage, Docker Compose, networking, registry and Nexus workflows, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
 
 ## Lab environment
 
@@ -48,6 +48,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-35-volumes/
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
+├── registry/
+│   └── session-39-registry-basics/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -107,6 +109,12 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 35 | Volumes and PostgreSQL data persistence | [`compose/session-35-volumes`](compose/session-35-volumes/) | `DEV-1` |
 | 36 | Docker Compose networks | [`compose/session-36-networks`](compose/session-36-networks/) | `DEV-1` |
 | 37 | `depends_on` and restart policy | [`compose/session-37-depends-on-restart`](compose/session-37-depends-on-restart/) | `DEV-2` |
+
+### Registry and Nexus
+
+| Session | Topic | Lab directory | Execution host |
+|---|---|---|---|
+| 39 | Docker Registry fundamentals: registry, repository, tag, digest, push, and pull | [`registry/session-39-registry-basics`](registry/session-39-registry-basics/) | `DEV-1` + `DEV-2` |
 
 ### Docker in Production
 
