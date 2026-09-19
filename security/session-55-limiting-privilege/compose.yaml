@@ -1,0 +1,13 @@
+services:
+  app:
+    image: ubuntu:24.04
+    container_name: session55-compose-secure
+    command:
+      - sleep
+      - infinity
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+    security_opt:
+      - no-new-privileges:true
