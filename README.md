@@ -71,7 +71,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-55-limiting-privilege/
 │   ├── session-56-secrets-environment-variables/
 │   ├── session-57-image-scanning-trivy/
-│   └── session-58-gitleaks-secret-scanning/
+│   ├── session-58-gitleaks-secret-scanning/
+│   └── session-59-docker-bench-security/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -167,6 +168,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 56 | Secrets, environment variables, Compose secrets, and BuildKit secret mounts | [`security/session-56-secrets-environment-variables`](security/session-56-secrets-environment-variables/) | `DEV-1` |
 | 57 | Image scanning with Trivy, severity filtering, JSON reports, and CI/CD security gates | [`security/session-57-image-scanning-trivy`](security/session-57-image-scanning-trivy/) | `DEV-1` |
 | 58 | Secret scanning with Gitleaks: current files, Git history, reports, and GitLab CI security gate | [`security/session-58-gitleaks-secret-scanning`](security/session-58-gitleaks-secret-scanning/) | `DEV-1` |
+| 59 | Docker Bench Security: host/runtime audit, WARN review, hardening, and before/after evidence | [`security/session-59-docker-bench-security`](security/session-59-docker-bench-security/) | `DEV-1` |
 
 ### Docker in Production
 
