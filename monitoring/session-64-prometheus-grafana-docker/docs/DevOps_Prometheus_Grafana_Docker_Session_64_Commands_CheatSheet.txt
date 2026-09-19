@@ -1,0 +1,592 @@
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists the currently running Docker containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -fsS http://127.0.0.1:9100/metrics | head
+
+Explanation:
+Requests the Node Exporter metrics endpoint and shows only the first lines of the response.
+
+Options:
+- -f = --fail (fail): Return an error status when the HTTP request fails.
+- -s = --silent (silent): Hide the progress meter and normal curl messages.
+- -S = --show-error (show error): Show an error message when -s is also used.
+- | = pipe operator: Send the output of curl to head.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -fsS http://127.0.0.1:8080/metrics | head
+
+Explanation:
+Requests the cAdvisor metrics endpoint and shows only the first lines of the response.
+
+Options:
+- -f = --fail (fail): Return an error status when the HTTP request fails.
+- -s = --silent (silent): Hide the progress meter and normal curl messages.
+- -S = --show-error (show error): Show an error message when -s is also used.
+- | = pipe operator: Send the output of curl to head.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -lntp | grep -E ':(9094|3004)\b' || true
+
+Explanation:
+Checks whether TCP ports 9094 or 3004 are already listening and suppresses a non-match failure.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -n = --numeric (numeric): Show numeric addresses and ports instead of resolving names.
+- -t = --tcp (TCP): Show TCP sockets.
+- -p = --processes (processes): Show the process using each socket.
+- | = pipe operator: Send ss output to grep.
+- -E = --extended-regexp (extended regular expression): Use extended regular expression syntax in grep.
+- || = OR operator: Run true only if grep returns a non-zero status.
+- true = shell command that always succeeds: Prevents the whole command from failing when no matching port is found.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo mkdir -p /opt/docker-labs/session64/prometheus
+
+Explanation:
+Creates the Prometheus directory for this lesson, including missing parent directories.
+
+Options:
+- -p = --parents (parents): Create parent directories as needed and do not fail if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo mkdir -p /opt/docker-labs/session64/grafana/provisioning/datasources
+
+Explanation:
+Creates the Grafana data-source provisioning directory, including missing parent directories.
+
+Options:
+- -p = --parents (parents): Create parent directories as needed and do not fail if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo chown -R "$USER":"$USER" /opt/docker-labs/session64
+
+Explanation:
+Changes the owner and group of the lesson directory to the current user recursively.
+
+Options:
+- -R = --recursive (recursive): Apply the ownership change to the directory and all contents below it.
+- "$USER":"$USER" = owner:group argument: Uses the current shell user name for both owner and group.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd /opt/docker-labs/session64
+
+Explanation:
+Changes the current working directory to the session 64 lab directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# umask 077
+
+Explanation:
+Sets a restrictive file-creation mask so newly created files are accessible only to the owner by default.
+
+Options:
+- 077 = file-creation mask: Removes all permissions for group and others from newly created files.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# printf 'GRAFANA_ADMIN_PASSWORD=%s\n' "$(openssl rand -hex 12)" > .env
+
+Explanation:
+Creates the .env file with a randomly generated Grafana administrator password.
+
+Options:
+- %s = printf string placeholder: Inserts the generated password into the output line.
+- \n = newline escape: Ends the generated line with a newline.
+- $(...) = command substitution: Runs openssl rand -hex 12 and inserts its output into printf.
+- -hex = hexadecimal output: Makes openssl rand print the random bytes as hexadecimal text.
+- 12 = rand byte count: Generates 12 random bytes before hexadecimal encoding.
+- > = output redirection: Replaces .env with the generated output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat .env
+
+Explanation:
+Displays the contents of the .env file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > /opt/docker-labs/session64/prometheus/prometheus.yml <<'EOF'
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+
+  - job_name: prometheus
+    static_configs:
+      - targets:
+          - prometheus:9090
+
+  - job_name: node-exporter
+    static_configs:
+      - targets:
+          - host.docker.internal:9100
+
+  - job_name: cadvisor
+    static_configs:
+      - targets:
+          - host.docker.internal:8080
+EOF
+
+Explanation:
+Creates the Prometheus configuration file with scrape jobs for Prometheus, Node Exporter, and cAdvisor.
+
+Options:
+- > = output redirection: Replaces the target file with the here-document content.
+- <<'EOF' = quoted here-document operator: Reads the following lines until EOF without shell variable or command expansion.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > /opt/docker-labs/session64/grafana/provisioning/datasources/prometheus.yml <<'EOF'
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+EOF
+
+Explanation:
+Creates the Grafana provisioning file that defines Prometheus as the default data source.
+
+Options:
+- > = output redirection: Replaces the target file with the here-document content.
+- <<'EOF' = quoted here-document operator: Reads the following lines until EOF without shell variable or command expansion.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > /opt/docker-labs/session64/compose.yaml <<'EOF'
+services:
+
+  prometheus:
+    image: prom/prometheus:v3.14.0
+    container_name: session64-prometheus
+    restart: unless-stopped
+
+    ports:
+      - "9094:9090"
+
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    networks:
+      - monitoring
+
+
+  grafana:
+    image: grafana/grafana:13.2.0
+    container_name: session64-grafana
+    restart: unless-stopped
+
+    ports:
+      - "3004:3000"
+
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+
+    depends_on:
+      - prometheus
+
+    networks:
+      - monitoring
+
+
+networks:
+  monitoring:
+    name: session64-monitoring
+    driver: bridge
+
+
+volumes:
+  prometheus_data:
+    name: session64-prometheus-data
+
+  grafana_data:
+    name: session64-grafana-data
+EOF
+
+Explanation:
+Creates the Docker Compose file for the Prometheus and Grafana monitoring stack.
+
+Options:
+- > = output redirection: Replaces the target file with the here-document content.
+- <<'EOF' = quoted here-document operator: Reads the following lines until EOF without shell variable or command expansion.
+- --config.file=/etc/prometheus/prometheus.yml = Prometheus option: Sets the Prometheus configuration file path.
+- --storage.tsdb.path=/prometheus = Prometheus option: Sets the time-series database storage path.
+- --storage.tsdb.retention.time=7d = Prometheus option: Keeps time-series data for 7 days.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Parses and renders the Docker Compose configuration so syntax and variable problems can be detected before startup.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config | grep GF_SECURITY_ADMIN_PASSWORD
+
+Explanation:
+Renders the Compose configuration and filters the output for the Grafana administrator password variable.
+
+Options:
+- | = pipe operator: Send the rendered Compose configuration to grep.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose pull
+
+Explanation:
+Downloads the container images defined in compose.yaml.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker images | grep -E 'prom/prometheus|grafana/grafana'
+
+Explanation:
+Lists local Docker images and filters the output for the Prometheus or Grafana images.
+
+Options:
+- | = pipe operator: Send docker images output to grep.
+- -E = --extended-regexp (extended regular expression): Allow the Prometheus-or-Grafana pattern to use the | alternation operator.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates and starts the services from the Compose configuration in the background.
+
+Options:
+- -d = --detach (detached mode): Run the services in the background.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Shows the status of the services in the current Docker Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network inspect session64-monitoring
+
+Explanation:
+Displays detailed information about the session64-monitoring Docker network.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec session64-prometheus cat /etc/hosts
+
+Explanation:
+Runs cat inside the Prometheus container to display its /etc/hosts file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -fsS http://127.0.0.1:9094/-/ready
+
+Explanation:
+Checks the Prometheus readiness endpoint and fails if the HTTP request is unsuccessful.
+
+Options:
+- -f = --fail (fail): Return an error status when the HTTP request fails.
+- -s = --silent (silent): Hide the progress meter and normal curl messages.
+- -S = --show-error (show error): Show an error message when -s is also used.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# up
+
+Explanation:
+Runs the PromQL up query to show whether each Prometheus scrape target is currently reachable.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -sG \
+  --data-urlencode 'query=up' \
+  http://127.0.0.1:9094/api/v1/query \
+  | python3 -m json.tool
+
+Explanation:
+Queries the Prometheus HTTP API for the PromQL expression up and formats the returned JSON.
+
+Options:
+- -s = --silent (silent): Hide the curl progress meter and normal messages.
+- -G = --get (GET): Put the provided data in the URL query string and use an HTTP GET request.
+- --data-urlencode = URL-encode data: Adds query=up as URL-encoded request data.
+- \ = shell line continuation: Continue the same command on the next line.
+- | = pipe operator: Send the JSON response from curl to Python.
+- -m = module execution: Run the Python json.tool module as a script.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs --tail 100 session64-prometheus
+
+Explanation:
+Shows the last 100 log lines from the Prometheus container.
+
+Options:
+- --tail 100 = tail line count: Show only the last 100 log lines.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec session64-prometheus cat /etc/hosts | grep host.docker.internal
+
+Explanation:
+Reads /etc/hosts inside the Prometheus container and filters for the host.docker.internal mapping.
+
+Options:
+- | = pipe operator: Send the /etc/hosts content to grep.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -I http://127.0.0.1:8080/metrics
+
+Explanation:
+Requests only the HTTP response headers from the cAdvisor metrics endpoint.
+
+Options:
+- -I = --head (HEAD): Fetch headers only by using an HTTP HEAD request.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -I http://127.0.0.1:9100/metrics
+
+Explanation:
+Requests only the HTTP response headers from the Node Exporter metrics endpoint.
+
+Options:
+- -I = --head (HEAD): Fetch headers only by using an HTTP HEAD request.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -fsS http://127.0.0.1:3004/api/health
+
+Explanation:
+Checks the Grafana health API and fails if the HTTP request is unsuccessful.
+
+Options:
+- -f = --fail (fail): Return an error status when the HTTP request fails.
+- -s = --silent (silent): Hide the progress meter and normal curl messages.
+- -S = --show-error (show error): Show an error message when -s is also used.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# grep GRAFANA_ADMIN_PASSWORD /opt/docker-labs/session64/.env
+
+Explanation:
+Searches the .env file for the Grafana administrator password variable.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+Explanation:
+Runs a PromQL expression that estimates used CPU percentage by subtracting average idle CPU percentage from 100.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100
+
+Explanation:
+Runs a PromQL expression that calculates the percentage of host memory currently in use.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# container_memory_working_set_bytes
+
+Explanation:
+Queries the cAdvisor working-set memory metric for containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# rate(container_cpu_usage_seconds_total[1m])
+
+Explanation:
+Runs a PromQL rate calculation over one minute for container CPU usage.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sum by (name) (rate(container_cpu_usage_seconds_total{name!=""}[1m])) * 100
+
+Explanation:
+Groups one-minute container CPU usage rates by the name label and converts the result to a percentage-style value.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# container_memory_working_set_bytes{name!=""}
+
+Explanation:
+Queries container working-set memory while keeping only series with a non-empty name label.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# container_memory_working_set_bytes{name!=""} / 1024 / 1024
+
+Explanation:
+Queries container working-set memory and converts bytes to mebibyte-sized units by dividing twice by 1024.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sum by (name) (rate(container_network_receive_bytes_total{name!=""}[1m]))
+
+Explanation:
+Calculates the one-minute receive-byte rate for containers and groups the result by container name.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sum by (name) (rate(container_network_transmit_bytes_total{name!=""}[1m]))
+
+Explanation:
+Calculates the one-minute transmit-byte rate for containers and groups the result by container name.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stats
+
+Explanation:
+Shows a live stream of resource-usage statistics for running Docker containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs session64-prometheus
+
+Explanation:
+Technical correction: the lesson referenced docker logs without a required container argument in the troubleshooting flow. This corrected form uses the Prometheus container from this lesson as a valid concrete target.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs -f session64-prometheus
+
+Explanation:
+Shows Prometheus container logs and continues following new log output.
+
+Options:
+- -f = --follow (follow): Keep streaming new log lines as they are written.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs -f session64-grafana
+
+Explanation:
+Shows Grafana container logs and continues following new log output.
+
+Options:
+- -f = --follow (follow): Keep streaming new log lines as they are written.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose restart prometheus
+
+Explanation:
+Restarts only the Prometheus service in the current Docker Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose restart grafana
+
+Explanation:
+Restarts only the Grafana service in the current Docker Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose stop
+
+Explanation:
+Stops the services in the current Docker Compose project without removing their containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose start
+
+Explanation:
+Starts existing stopped services in the current Docker Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume ls | grep session64
+
+Explanation:
+Lists Docker volumes and filters the output for volumes whose displayed line contains session64.
+
+Options:
+- | = pipe operator: Send docker volume ls output to grep.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose down
+
+Explanation:
+Stops and removes the containers and default project resources created by Docker Compose while leaving named volumes unless explicitly requested otherwise.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose down -v
+
+Explanation:
+Stops and removes the Compose stack and also removes its declared volumes.
+
+Options:
+- -v = --volumes (volumes): Remove named volumes declared in the Compose file and anonymous volumes attached to containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -fsS http://127.0.0.1:9100/metrics >/dev/null && echo "Node Exporter OK"
+
+Explanation:
+Checks the Node Exporter metrics endpoint and prints a success message only when the request succeeds.
+
+Options:
+- -f = --fail (fail): Return an error status when the HTTP request fails.
+- -s = --silent (silent): Hide the progress meter and normal curl messages.
+- -S = --show-error (show error): Show an error message when -s is also used.
+- > = output redirection: Discard the successful response body by sending it to /dev/null.
+- && = AND operator: Run echo only if curl exits successfully.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -fsS http://127.0.0.1:8080/metrics >/dev/null && echo "cAdvisor OK"
+
+Explanation:
+Checks the cAdvisor metrics endpoint and prints a success message only when the request succeeds.
+
+Options:
+- -f = --fail (fail): Return an error status when the HTTP request fails.
+- -s = --silent (silent): Hide the progress meter and normal curl messages.
+- -S = --show-error (show error): Show an error message when -s is also used.
+- > = output redirection: Discard the successful response body by sending it to /dev/null.
+- && = AND operator: Run echo only if curl exits successfully.
+------------------------------------------------------------
