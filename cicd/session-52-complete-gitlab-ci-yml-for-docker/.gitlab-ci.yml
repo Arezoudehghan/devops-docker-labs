@@ -1,0 +1,345 @@
+stages:
+  - validate
+  - build
+  - test
+  - push
+  - deploy
+  - verify
+  - rollback
+
+default:
+  tags:
+    - dev-shell
+
+variables:
+  NEXUS_REGISTRY: "192.0.2.10:8085"
+  IMAGE_NAME: "cicd-session52-app"
+
+  DEPLOY_HOST: "192.0.2.11"
+  DEPLOY_USER: "deploy"
+
+  CONTAINER_NAME: "cicd-session52-app"
+
+  APP_PORT: "8000"
+  DEPLOY_PORT: "8088"
+
+  DOCKER_BUILDKIT: "1"
+
+  HTTP_PROXY: ""
+  HTTPS_PROXY: ""
+  NO_PROXY: "localhost,127.0.0.1,192.0.2.0/24"
+
+validate_docker:
+  stage: validate
+
+  script:
+    - docker version
+    - docker info
+    - test -f Dockerfile
+
+build_image:
+  stage: build
+
+  script:
+    - |
+      set -eu
+
+      IMAGE_REF="${NEXUS_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+
+      echo "Building image:"
+      echo "${IMAGE_REF}"
+
+      docker build \
+        --pull \
+        --build-arg HTTP_PROXY="${HTTP_PROXY}" \
+        --build-arg HTTPS_PROXY="${HTTPS_PROXY}" \
+        --build-arg NO_PROXY="${NO_PROXY}" \
+        --tag "${IMAGE_REF}" \
+        .
+
+      docker image inspect "${IMAGE_REF}" >/dev/null
+
+      docker save "${IMAGE_REF}" | gzip > image.tar.gz
+
+  artifacts:
+    paths:
+      - image.tar.gz
+
+    expire_in: 1 day
+
+test_image:
+  stage: test
+
+  needs:
+    - job: build_image
+      artifacts: true
+
+  script:
+    - |
+      set -eu
+
+      IMAGE_REF="${NEXUS_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+      TEST_CONTAINER="ci-test-${CI_PIPELINE_ID}-${CI_JOB_ID}"
+
+      cleanup() {
+        docker rm -f "${TEST_CONTAINER}" >/dev/null 2>&1 || true
+      }
+
+      trap cleanup EXIT
+
+      gunzip -c image.tar.gz | docker load
+
+      docker run -d \
+        --name "${TEST_CONTAINER}" \
+        -p "127.0.0.1::${APP_PORT}" \
+        "${IMAGE_REF}"
+
+      HOST_PORT="$(docker port "${TEST_CONTAINER}" "${APP_PORT}/tcp" | awk -F: 'NR==1 {print $NF}')"
+
+      test -n "${HOST_PORT}"
+
+      echo "Testing container on port ${HOST_PORT}"
+
+      for i in $(seq 1 20); do
+
+        if curl -fsS "http://127.0.0.1:${HOST_PORT}/" >/dev/null; then
+          echo "Smoke test passed."
+          exit 0
+        fi
+
+        sleep 2
+
+      done
+
+      echo "Smoke test failed."
+
+      docker logs "${TEST_CONTAINER}" || true
+
+      exit 1
+
+push_image:
+  stage: push
+
+  needs:
+    - job: build_image
+      artifacts: true
+
+    - job: test_image
+      artifacts: false
+
+  script:
+    - |
+      set -eu
+
+      IMAGE_SHA="${NEXUS_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+
+      gunzip -c image.tar.gz | docker load
+
+      printf '%s' "${NEXUS_PASSWORD}" \
+        | docker login "${NEXUS_REGISTRY}" \
+            --username "${NEXUS_USERNAME}" \
+            --password-stdin
+
+      docker push "${IMAGE_SHA}"
+
+      if [ "${CI_COMMIT_BRANCH:-}" = "main" ]; then
+
+        IMAGE_LATEST="${NEXUS_REGISTRY}/${IMAGE_NAME}:latest"
+
+        docker tag "${IMAGE_SHA}" "${IMAGE_LATEST}"
+
+        docker push "${IMAGE_LATEST}"
+
+      fi
+
+      if [ -n "${CI_COMMIT_TAG:-}" ]; then
+
+        IMAGE_RELEASE="${NEXUS_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_TAG}"
+
+        docker tag "${IMAGE_SHA}" "${IMAGE_RELEASE}"
+
+        docker push "${IMAGE_RELEASE}"
+
+      fi
+
+      docker logout "${NEXUS_REGISTRY}"
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG'
+
+deploy_production:
+  stage: deploy
+
+  needs:
+    - push_image
+
+  resource_group: production
+
+  before_script:
+    - install -m 700 -d ~/.ssh
+    - cp "${SSH_PRIVATE_KEY}" ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - cp "${SSH_KNOWN_HOSTS}" ~/.ssh/known_hosts
+    - chmod 600 ~/.ssh/known_hosts
+
+  script:
+    - |
+      set -eu
+
+      if [ -n "${CI_COMMIT_TAG:-}" ]; then
+        DEPLOY_TAG="${CI_COMMIT_TAG}"
+      else
+        DEPLOY_TAG="${CI_COMMIT_SHORT_SHA}"
+      fi
+
+      IMAGE_REF="${NEXUS_REGISTRY}/${IMAGE_NAME}:${DEPLOY_TAG}"
+
+      echo "Deploying:"
+      echo "${IMAGE_REF}"
+
+      printf '%s' "${NEXUS_PASSWORD}" \
+        | ssh -i ~/.ssh/id_ed25519 \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "docker login '${NEXUS_REGISTRY}' \
+             --username '${NEXUS_USERNAME}' \
+             --password-stdin"
+
+      ssh -i ~/.ssh/id_ed25519 \
+        "${DEPLOY_USER}@${DEPLOY_HOST}" \
+        "
+          set -eu
+
+          docker pull '${IMAGE_REF}'
+
+          docker rm -f '${CONTAINER_NAME}' \
+            >/dev/null 2>&1 || true
+
+          docker run -d \
+            --name '${CONTAINER_NAME}' \
+            --restart unless-stopped \
+            -p '${DEPLOY_PORT}:${APP_PORT}' \
+            '${IMAGE_REF}'
+        "
+
+      ssh -i ~/.ssh/id_ed25519 \
+        "${DEPLOY_USER}@${DEPLOY_HOST}" \
+        "docker logout '${NEXUS_REGISTRY}' \
+         >/dev/null 2>&1 || true"
+
+  environment:
+    name: production
+    url: http://192.0.2.11:8088
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG'
+
+verify_production:
+  stage: verify
+
+  needs:
+    - deploy_production
+
+  script:
+    - |
+      set -eu
+
+      URL="http://${DEPLOY_HOST}:${DEPLOY_PORT}/"
+
+      echo "Checking:"
+      echo "${URL}"
+
+      for i in $(seq 1 20); do
+
+        if curl -fsS "${URL}" >/dev/null; then
+          echo "Production verification passed."
+          exit 0
+        fi
+
+        sleep 3
+
+      done
+
+      echo "Production verification failed."
+
+      exit 1
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG'
+
+rollback_production:
+  stage: rollback
+
+  resource_group: production
+
+  before_script:
+    - install -m 700 -d ~/.ssh
+    - cp "${SSH_PRIVATE_KEY}" ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - cp "${SSH_KNOWN_HOSTS}" ~/.ssh/known_hosts
+    - chmod 600 ~/.ssh/known_hosts
+
+  script:
+    - |
+      set -eu
+
+      if [ -z "${ROLLBACK_TAG:-}" ]; then
+
+        echo "ERROR: ROLLBACK_TAG is required."
+        echo "Example: ROLLBACK_TAG=7ac39f12"
+
+        exit 1
+
+      fi
+
+      IMAGE_REF="${NEXUS_REGISTRY}/${IMAGE_NAME}:${ROLLBACK_TAG}"
+
+      echo "Rolling back to:"
+      echo "${IMAGE_REF}"
+
+      printf '%s' "${NEXUS_PASSWORD}" \
+        | ssh -i ~/.ssh/id_ed25519 \
+            "${DEPLOY_USER}@${DEPLOY_HOST}" \
+            "docker login '${NEXUS_REGISTRY}' \
+             --username '${NEXUS_USERNAME}' \
+             --password-stdin"
+
+      ssh -i ~/.ssh/id_ed25519 \
+        "${DEPLOY_USER}@${DEPLOY_HOST}" \
+        "
+          set -eu
+
+          docker pull '${IMAGE_REF}'
+
+          docker rm -f '${CONTAINER_NAME}' \
+            >/dev/null 2>&1 || true
+
+          docker run -d \
+            --name '${CONTAINER_NAME}' \
+            --restart unless-stopped \
+            -p '${DEPLOY_PORT}:${APP_PORT}' \
+            '${IMAGE_REF}'
+        "
+
+      ssh -i ~/.ssh/id_ed25519 \
+        "${DEPLOY_USER}@${DEPLOY_HOST}" \
+        "docker logout '${NEXUS_REGISTRY}' \
+         >/dev/null 2>&1 || true"
+
+  environment:
+    name: production
+    url: http://192.0.2.11:8088
+
+  when: manual
+  allow_failure: true
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
+      allow_failure: true
+
+    - if: '$CI_COMMIT_TAG'
+      when: manual
+      allow_failure: true
