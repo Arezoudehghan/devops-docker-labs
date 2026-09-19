@@ -1,0 +1,441 @@
+------------------------------------------------------------
+# hostname
+
+Explanation:
+Prints the hostname of the current Linux system.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker version
+
+Explanation:
+Shows Docker client and server version information.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker info
+
+Explanation:
+Displays detailed information about the Docker installation, daemon, storage, networking, and runtime configuration.
+------------------------------------------------------------
+------------------------------------------------------------
+# git --version
+
+Explanation:
+Prints the installed Git version.
+
+Options:
+- --version = version information: Prints the program version and exits.
+------------------------------------------------------------
+------------------------------------------------------------
+# jq --version
+
+Explanation:
+Prints the installed jq version.
+
+Options:
+- --version = version information: Prints the jq version and exits.
+------------------------------------------------------------
+------------------------------------------------------------
+# apt update
+
+Explanation:
+Refreshes the local APT package index from configured repositories.
+------------------------------------------------------------
+------------------------------------------------------------
+# apt install -y git jq
+
+Explanation:
+Installs the Git and jq packages with automatic confirmation.
+
+Options:
+- -y = --yes (yes): Automatically answers yes to installation confirmation prompts.
+------------------------------------------------------------
+------------------------------------------------------------
+# mkdir -p /opt/docker-labs/session59
+
+Explanation:
+Creates the session59 directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and does not fail if the directory already exists.
+------------------------------------------------------------
+------------------------------------------------------------
+# cd /opt/docker-labs/session59
+
+Explanation:
+Changes the current working directory to the Docker lab directory for session 59.
+------------------------------------------------------------
+------------------------------------------------------------
+# pwd
+
+Explanation:
+Prints the absolute path of the current working directory.
+------------------------------------------------------------
+------------------------------------------------------------
+# git clone https://github.com/docker/docker-bench-security.git
+
+Explanation:
+Clones the Docker Bench for Security repository into the current directory.
+------------------------------------------------------------
+------------------------------------------------------------
+# cd docker-bench-security
+
+Explanation:
+Changes the current working directory to the cloned Docker Bench for Security repository.
+------------------------------------------------------------
+------------------------------------------------------------
+# ls -lah
+
+Explanation:
+Lists directory contents in long format, including hidden files, with human-readable sizes.
+
+Options:
+- -l = long listing format: Shows detailed file information.
+- -a = --all (all): Includes hidden entries whose names begin with a dot.
+- -h = --human-readable (human-readable): Shows file sizes using readable units such as K, M, and G.
+------------------------------------------------------------
+------------------------------------------------------------
+# sh docker-bench-security.sh -h
+
+Explanation:
+Runs Docker Bench for Security and displays its help text.
+
+Options:
+- -h = help: Prints the Docker Bench help message.
+------------------------------------------------------------
+------------------------------------------------------------
+# sh docker-bench-security.sh -b -p
+
+Explanation:
+Runs all available Docker Bench checks without colored output and prints remediation guidance.
+
+Options:
+- -b = do not print colors: Disables ANSI color output.
+- -p = print remediation measures: Adds remediation guidance to the report.
+------------------------------------------------------------
+------------------------------------------------------------
+# ls -lah log/
+
+Explanation:
+Lists the contents of the log directory in detailed, human-readable form, including hidden files.
+
+Options:
+- -l = long listing format: Shows detailed file information.
+- -a = --all (all): Includes hidden entries whose names begin with a dot.
+- -h = --human-readable (human-readable): Shows file sizes using readable units such as K, M, and G.
+------------------------------------------------------------
+------------------------------------------------------------
+# less log/docker-bench-security.log
+
+Explanation:
+Opens the Docker Bench text log in the less pager for interactive reading.
+------------------------------------------------------------
+------------------------------------------------------------
+# jq '.' log/docker-bench-security.log.json | less
+
+Explanation:
+Formats the Docker Bench JSON log with jq and sends the formatted output to less for easier reading.
+
+Options:
+- '.' = jq identity filter: Outputs the complete JSON value while formatting it.
+- | = pipeline operator: Sends the standard output of jq to less.
+------------------------------------------------------------
+------------------------------------------------------------
+# grep '\[WARN\]' log/docker-bench-security.log
+
+Explanation:
+Prints lines from the Docker Bench log that contain the literal text [WARN].
+------------------------------------------------------------
+------------------------------------------------------------
+# grep -c '\[WARN\]' log/docker-bench-security.log
+
+Explanation:
+Counts the log lines that contain the literal text [WARN].
+
+Options:
+- -c = --count (count): Prints the number of matching lines instead of the lines themselves.
+------------------------------------------------------------
+------------------------------------------------------------
+# sh docker-bench-security.sh -b -c docker_daemon_configuration
+
+Explanation:
+Runs only the Docker daemon configuration group of Docker Bench checks without colored output.
+
+Options:
+- -b = do not print colors: Disables ANSI color output.
+- -c = specific check or check group: Runs only the named check or group.
+- docker_daemon_configuration = check group value: Selects the Docker daemon configuration checks.
+------------------------------------------------------------
+------------------------------------------------------------
+# sh docker-bench-security.sh -b -c check_2_2
+
+Explanation:
+Runs only Docker Bench check 2.2 without colored output.
+
+Options:
+- -b = do not print colors: Disables ANSI color output.
+- -c = specific check or check group: Runs only the named check.
+- check_2_2 = check identifier value: Selects Docker Bench check 2.2.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker info | grep -A5 -i 'Insecure Registries'
+
+Explanation:
+Reads Docker daemon information and filters it for the Insecure Registries section plus five following lines.
+
+Options:
+- | = pipeline operator: Sends the output of docker info to grep.
+- -A = --after-context (after context): Prints lines after a matching line.
+- 5 = value for -A: Prints five lines after each match.
+- -i = --ignore-case (ignore case): Matches the search text without case sensitivity.
+------------------------------------------------------------
+------------------------------------------------------------
+# cat /etc/docker/daemon.json
+
+Explanation:
+Prints the Docker daemon configuration file to standard output.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker rm -f bench-demo 2>/dev/null || true
+
+Explanation:
+Force-removes the bench-demo container if it exists and suppresses removal errors. If removal fails, true makes the overall shell command succeed.
+
+Options:
+- -f = --force (force): Force-removes a running container by sending SIGKILL before removal.
+- 2>/dev/null = standard-error redirection: Sends file descriptor 2, stderr, to /dev/null.
+- || = conditional OR operator: Runs the command on the right only if the command on the left fails.
+- true = shell builtin: Returns a successful exit status.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker pull nginx:alpine
+
+Explanation:
+Downloads the nginx image with the alpine tag from the configured container registry.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker run -d \
+  --name bench-demo \
+  -p 18059:80 \
+  nginx:alpine
+
+Explanation:
+Creates and starts an nginx container named bench-demo in detached mode and publishes host port 18059 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name bench-demo to the container.
+- -p = --publish (publish): Publishes a container port on the host.
+- 18059:80 = publish value: Maps host port 18059 to container port 80.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker ps --filter name=bench-demo
+
+Explanation:
+Lists running containers whose name matches bench-demo.
+
+Options:
+- --filter = filter output: Limits results using the filter expression.
+- name=bench-demo = filter value: Matches containers by name.
+------------------------------------------------------------
+------------------------------------------------------------
+# curl http://127.0.0.1:18059
+
+Explanation:
+Sends an HTTP request to the nginx service published on localhost port 18059 and prints the response body.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker inspect bench-demo --format '{{.HostConfig.Memory}}'
+
+Explanation:
+Reads the configured memory limit of the bench-demo container using a Go template.
+
+Options:
+- --format = format output: Formats inspect output with the supplied Go template.
+- '{{.HostConfig.Memory}}' = format value: Selects the container memory limit in bytes.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker inspect bench-demo --format '{{.HostConfig.NanoCpus}}'
+
+Explanation:
+Reads the NanoCpus CPU limit value configured for the bench-demo container.
+
+Options:
+- --format = format output: Formats inspect output with the supplied Go template.
+- '{{.HostConfig.NanoCpus}}' = format value: Selects the NanoCpus field from HostConfig.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker inspect bench-demo --format '{{.HostConfig.ReadonlyRootfs}}'
+
+Explanation:
+Checks whether the bench-demo container root filesystem is configured as read-only.
+
+Options:
+- --format = format output: Formats inspect output with the supplied Go template.
+- '{{.HostConfig.ReadonlyRootfs}}' = format value: Selects the read-only root filesystem setting.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker port bench-demo
+
+Explanation:
+Lists the published port mappings for the bench-demo container.
+------------------------------------------------------------
+------------------------------------------------------------
+# cd /opt/docker-labs/session59/docker-bench-security
+
+Explanation:
+Changes the current working directory to the Docker Bench repository used in this session.
+------------------------------------------------------------
+------------------------------------------------------------
+# sh docker-bench-security.sh \
+  -b \
+  -c container_runtime \
+  -i bench-demo \
+  -p
+
+Explanation:
+Runs Docker Bench container-runtime checks for items matching bench-demo, disables colors, and prints remediation guidance.
+
+Options:
+- -b = do not print colors: Disables ANSI color output.
+- -c = specific check or check group: Runs only the selected check group.
+- container_runtime = check group value: Selects the container runtime checks.
+- -i = include patterns: Checks only container or image names matching the supplied pattern.
+- bench-demo = include value: Limits matching to the bench-demo name.
+- -p = print remediation measures: Adds remediation guidance to the report.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker rm -f bench-demo
+
+Explanation:
+Force-removes the bench-demo container.
+
+Options:
+- -f = --force (force): Force-removes a running container by sending SIGKILL before removal.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker run -d \
+  --name bench-demo \
+  --memory=128m \
+  --cpus=0.50 \
+  --pids-limit=100 \
+  --read-only \
+  --tmpfs /var/cache/nginx:rw,noexec,nosuid,size=16m \
+  --tmpfs /var/run:rw,noexec,nosuid,size=4m \
+  --security-opt no-new-privileges:true \
+  --restart=on-failure:5 \
+  -p 127.0.0.1:18059:80 \
+  nginx:alpine
+
+Explanation:
+Creates and starts a hardened nginx container with memory, CPU, PID, filesystem, privilege, restart, and port-binding controls.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the name bench-demo.
+- --memory=128m = memory limit: Limits container memory to 128 MiB.
+- --cpus=0.50 = CPU limit: Limits the container to the equivalent of 0.50 CPU.
+- --pids-limit=100 = PID limit: Limits the number of processes available to the container to 100.
+- --read-only = read-only root filesystem: Mounts the container root filesystem as read-only.
+- --tmpfs /var/cache/nginx:rw,noexec,nosuid,size=16m = tmpfs mount: Creates a writable 16 MiB temporary filesystem at /var/cache/nginx with noexec and nosuid restrictions.
+- --tmpfs /var/run:rw,noexec,nosuid,size=4m = tmpfs mount: Creates a writable 4 MiB temporary filesystem at /var/run with noexec and nosuid restrictions.
+- --security-opt no-new-privileges:true = security option: Prevents container processes from gaining additional privileges.
+- --restart=on-failure:5 = restart policy: Restarts the container after failure, up to five retry attempts.
+- -p = --publish (publish): Publishes a container port on the host.
+- 127.0.0.1:18059:80 = publish value: Binds host loopback port 18059 to container port 80.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+------------------------------------------------------------
+# ss -lntp | grep 18059
+
+Explanation:
+Lists listening TCP sockets with numeric addresses and process information, then filters the output for port 18059.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -n = --numeric (numeric): Does not resolve service or host names.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -p = --processes (processes): Shows the process using each socket when permissions allow.
+- | = pipeline operator: Sends the output of ss to grep.
+------------------------------------------------------------
+------------------------------------------------------------
+# curl -I http://127.0.0.1:18059
+
+Explanation:
+Sends an HTTP request that retrieves response headers from the local nginx service.
+
+Options:
+- -I = --head (HEAD): Fetches headers only by using an HTTP HEAD request.
+------------------------------------------------------------
+------------------------------------------------------------
+# docker logs bench-demo
+
+Explanation:
+Prints the logs produced by the bench-demo container.
+------------------------------------------------------------
+------------------------------------------------------------
+# sh docker-bench-security.sh \
+  -b \
+  -c container_images \
+  -p
+
+Explanation:
+Runs only Docker Bench container-image checks without colored output and includes remediation guidance.
+
+Options:
+- -b = do not print colors: Disables ANSI color output.
+- -c = specific check or check group: Runs only the selected check group.
+- container_images = check group value: Selects the container image checks.
+- -p = print remediation measures: Adds remediation guidance to the report.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+------------------------------------------------------------
+# sh docker-bench-security.sh \
+  -b \
+  -p \
+  > /opt/docker-labs/session59/baseline.txt
+
+Explanation:
+Runs the full Docker Bench scan with remediation guidance and saves standard output as the baseline report.
+
+Options:
+- -b = do not print colors: Disables ANSI color output.
+- -p = print remediation measures: Adds remediation guidance to the report.
+- > = output redirection: Writes standard output to the specified file, replacing that file if it already exists.
+- /opt/docker-labs/session59/baseline.txt = redirection target: Stores the baseline scan output in this file.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+------------------------------------------------------------
+# less /opt/docker-labs/session59/baseline.txt
+
+Explanation:
+Opens the saved baseline report in the less pager.
+------------------------------------------------------------
+------------------------------------------------------------
+# sh docker-bench-security.sh \
+  -b \
+  -p \
+  > /opt/docker-labs/session59/after-hardening.txt
+
+Explanation:
+Runs the full Docker Bench scan after hardening and saves standard output to a separate report file.
+
+Options:
+- -b = do not print colors: Disables ANSI color output.
+- -p = print remediation measures: Adds remediation guidance to the report.
+- > = output redirection: Writes standard output to the specified file, replacing that file if it already exists.
+- /opt/docker-labs/session59/after-hardening.txt = redirection target: Stores the post-hardening scan output in this file.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+------------------------------------------------------------
+# diff \
+  /opt/docker-labs/session59/baseline.txt \
+  /opt/docker-labs/session59/after-hardening.txt
+
+Explanation:
+Compares the baseline and post-hardening Docker Bench reports and prints their differences.
+
+Options:
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
