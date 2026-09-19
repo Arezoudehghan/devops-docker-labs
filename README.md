@@ -75,6 +75,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   └── session-59-docker-bench-security/
 ├── monitoring/
 │   ├── session-60-docker-logging/
+│   ├── session-61-docker-logs-log-driver/
 │   └── session-62-cadvisor/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
@@ -178,6 +179,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
 | 60 | Docker logs, stdout/stderr, logging drivers, log rotation, and daemon logs | [`monitoring/session-60-docker-logging`](monitoring/session-60-docker-logging/) | `DEV-1` |
+| 61 | Docker logs, log drivers, log rotation, and Compose logging | [`monitoring/session-61-docker-logs-log-driver`](monitoring/session-61-docker-logs-log-driver/) | `DEV-1` |
 | 62 | Monitor Docker containers with cAdvisor and inspect Prometheus metrics | [`monitoring/session-62-cadvisor`](monitoring/session-62-cadvisor/) | `DEV-2` |
 
 ### Docker in Production
