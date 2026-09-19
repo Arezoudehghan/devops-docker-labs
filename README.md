@@ -207,6 +207,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
 | 74 | Swarm Service, Replica, Overlay Network, routing mesh, scaling, and self-healing | [`swarm/session-74-service-replica-overlay-network`](swarm/session-74-service-replica-overlay-network/) | `DEV-1` + `DEV-2` |
+| 73 | Docker Swarm introduction: manager, worker, services, tasks, desired state, scaling, self-healing, and routing mesh | [`swarm/session-73-docker-swarm-intro`](swarm/session-73-docker-swarm-intro/) | `DEV-1` + `DEV-2` |
 | 75 | Swarm rolling update and rollback | [`swarm/session-75-swarm-rolling-update`](swarm/session-75-swarm-rolling-update/) | `DEV-1` + `DEV-2` |
 | 76 | Docker Compose vs Docker Swarm | [`swarm/session-76-compose-vs-swarm`](swarm/session-76-compose-vs-swarm/) | `DEV-1` + `DEV-2` |
 
