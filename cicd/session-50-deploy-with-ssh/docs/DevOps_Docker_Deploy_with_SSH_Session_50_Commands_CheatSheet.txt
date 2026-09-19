@@ -1,0 +1,638 @@
+------------------------------------------------------------
+# docker pull IMAGE
+
+Explanation:
+Pulls the specified Docker image from a registry to the local Docker host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop CONTAINER
+
+Explanation:
+Stops the specified running Docker container gracefully.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm CONTAINER
+
+Explanation:
+Removes the specified stopped Docker container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/cicd-session50-app:a82c91f4
+
+Explanation:
+Pulls the image tagged a82c91f4 from the Nexus Docker registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop cicd-session50-app
+
+Explanation:
+Stops the running container named cicd-session50-app.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm cicd-session50-app
+
+Explanation:
+Removes the stopped container named cicd-session50-app.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name cicd-session50-app \
+  --restart unless-stopped \
+  -p 8088:8000 \
+  192.168.94.90:8085/cicd-session50-app:a82c91f4
+
+Explanation:
+Starts the specified image as a background container named cicd-session50-app and publishes host port 8088 to container port 8000.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name cicd-session50-app = name: Assigns the container name cicd-session50-app.
+- --restart unless-stopped = restart policy: Restarts the container automatically unless it was explicitly stopped.
+- -p 8088:8000 = --publish 8088:8000 (publish): Maps host port 8088 to container port 8000.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/cicd-session50-app:latest
+
+Explanation:
+Pulls the image tagged latest from the Nexus Docker registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/cicd-session50-app:${CI_COMMIT_SHORT_SHA}
+
+Explanation:
+Pulls the application image whose tag is taken from the GitLab short commit SHA variable.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# id deploy
+
+Explanation:
+Displays the user ID, group ID, and group memberships for the deploy user.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo -u deploy docker ps
+
+Explanation:
+Runs docker ps as the deploy user to verify that this user can access the Docker daemon.
+
+Options:
+- -u deploy = --user deploy (user): Runs the command as the deploy user.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo usermod -aG docker deploy
+
+Explanation:
+Adds the deploy user to the docker supplementary group without removing its existing group memberships.
+
+Options:
+- -a = --append (append): Adds the user to supplementary groups without removing existing ones.
+- -G docker = --groups docker (groups): Specifies docker as a supplementary group.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ssh-keygen \
+  -t ed25519 \
+  -C "gitlab-ci-deploy" \
+  -f ./gitlab-ci-deploy \
+  -N ""
+
+Explanation:
+Generates an Ed25519 SSH key pair for GitLab CI deployment with an empty passphrase.
+
+Options:
+- -t ed25519 = key type: Selects the Ed25519 key algorithm.
+- -C "gitlab-ci-deploy" = comment: Stores gitlab-ci-deploy as the key comment.
+- -f ./gitlab-ci-deploy = filename: Writes the private key to ./gitlab-ci-deploy and the public key to ./gitlab-ci-deploy.pub.
+- -N "" = new passphrase: Sets an empty passphrase.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ssh-copy-id \
+  -i ./gitlab-ci-deploy.pub \
+  deploy@192.168.94.91
+
+Explanation:
+Copies the selected public SSH key to the deploy account on DEV-2 so key-based login can be used.
+
+Options:
+- -i ./gitlab-ci-deploy.pub = identity file: Selects the public key file to install.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ssh \
+  -i ./gitlab-ci-deploy \
+  deploy@192.168.94.91 \
+  'hostname && whoami'
+
+Explanation:
+Connects to DEV-2 with the specified private key, then prints the remote hostname and current user.
+
+Options:
+- -i ./gitlab-ci-deploy = identity file: Uses this private key for SSH authentication.
+- && = AND operator: Runs whoami only if hostname succeeds.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ssh-keyscan \
+  -t ed25519 \
+  192.168.94.91 \
+  > /tmp/dev2_known_hosts
+
+Explanation:
+Reads the Ed25519 SSH host key from DEV-2 and writes it to /tmp/dev2_known_hosts.
+
+Options:
+- -t ed25519 = key type: Requests only the Ed25519 host key type.
+- > = output redirection: Replaces the target file with the command output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ssh-keygen \
+  -lf /tmp/dev2_known_hosts
+
+Explanation:
+Displays the fingerprint of the SSH host key stored in /tmp/dev2_known_hosts.
+
+Options:
+- -l = fingerprint: Shows the fingerprint of a public key.
+- -f /tmp/dev2_known_hosts = filename: Reads the key data from this file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ssh-keygen \
+  -lf /etc/ssh/ssh_host_ed25519_key.pub
+
+Explanation:
+Displays the fingerprint of DEV-2's local Ed25519 SSH host public key with elevated privileges.
+
+Options:
+- -l = fingerprint: Shows the fingerprint of a public key.
+- -f /etc/ssh/ssh_host_ed25519_key.pub = filename: Reads the specified host public key file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat /tmp/dev2_known_hosts
+
+Explanation:
+Prints the contents of the generated known_hosts file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat "$SSH_PRIVATE_KEY"
+
+Explanation:
+Prints the file referenced by SSH_PRIVATE_KEY. In the lesson this command was shown only as an example of what must not be done in a CI job because it can expose the private key.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo -u gitlab-runner ssh \
+  deploy@192.168.94.91 \
+  hostname
+
+Explanation:
+Runs SSH as the gitlab-runner user and asks DEV-2 to print its hostname.
+
+Options:
+- -u gitlab-runner = --user gitlab-runner (user): Runs the ssh command as the gitlab-runner user.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# chmod 400 "$SSH_PRIVATE_KEY"
+
+Explanation:
+Sets the private-key file permissions so only the owner has read access.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p ~/.ssh
+
+Explanation:
+Creates the .ssh directory if it does not already exist.
+
+Options:
+- -p = --parents (parents): Creates missing parent directories and does not fail if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# chmod 700 ~/.ssh
+
+Explanation:
+Sets the .ssh directory so only its owner can read, write, and enter it.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cp "$SSH_KNOWN_HOSTS" ~/.ssh/known_hosts
+
+Explanation:
+Copies the GitLab file-variable content referenced by SSH_KNOWN_HOSTS into the user's SSH known_hosts file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# chmod 644 ~/.ssh/known_hosts
+
+Explanation:
+Sets known_hosts so the owner can read and write it while other users can only read it.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# export IMAGE="${NEXUS_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+
+Explanation:
+Creates and exports the IMAGE environment variable using the Nexus registry, image name, and current short commit SHA.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# printf '%s\n' "$NEXUS_PASSWORD" |
+ssh \
+  -i "$SSH_PRIVATE_KEY" \
+  -o BatchMode=yes \
+  -o StrictHostKeyChecking=yes \
+  "$DEPLOY_USER@$DEPLOY_HOST" \
+  "docker login '$NEXUS_REGISTRY' \
+  --username '$NEXUS_USER' \
+  --password-stdin"
+
+Explanation:
+Sends the Nexus password through standard input to an SSH session and runs docker login on the remote deploy server.
+
+Options:
+- %s\n = printf format: Prints the password as a string followed by a newline.
+- | = pipe operator: Sends printf standard output to ssh standard input, which becomes the remote command's standard input.
+- -i "$SSH_PRIVATE_KEY" = identity file: Uses the private key file referenced by SSH_PRIVATE_KEY.
+- -o BatchMode=yes = SSH option: Disables interactive password and passphrase prompts.
+- -o StrictHostKeyChecking=yes = SSH option: Requires the remote host key to match a trusted known_hosts entry.
+- --username '$NEXUS_USER' = username: Supplies the Nexus username to docker login.
+- --password-stdin = password from standard input: Reads the registry password from standard input instead of the command line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ssh \
+  -i "$SSH_PRIVATE_KEY" \
+  -o BatchMode=yes \
+  -o StrictHostKeyChecking=yes \
+  "$DEPLOY_USER@$DEPLOY_HOST" \
+  "IMAGE='$IMAGE' \
+  CONTAINER_NAME='$CONTAINER_NAME' \
+  DEPLOY_PORT='$DEPLOY_PORT' \
+  APP_PORT='$APP_PORT' \
+  bash -s" <<'REMOTE'
+
+set -euo pipefail
+
+echo "Pulling image: $IMAGE"
+
+docker pull "$IMAGE"
+
+if docker ps -a \
+  --format '{{.Names}}' \
+  | grep -qx "$CONTAINER_NAME"; then
+
+  echo "Stopping old container..."
+
+  docker stop \
+    --timeout 20 \
+    "$CONTAINER_NAME"
+
+  echo "Removing old container..."
+
+  docker rm \
+    "$CONTAINER_NAME"
+fi
+
+echo "Starting new container..."
+
+docker run \
+  -d \
+  --name "$CONTAINER_NAME" \
+  --restart unless-stopped \
+  -p "${DEPLOY_PORT}:${APP_PORT}" \
+  "$IMAGE"
+
+echo "Container status:"
+
+docker ps \
+  --filter "name=^/${CONTAINER_NAME}$"
+
+REMOTE
+
+Explanation:
+Technical correction: the lesson used docker stop --time 20; this entry uses the documented docker stop --timeout 20 option. The command connects to DEV-2, passes deployment variables to a remote Bash script, pulls the new image, replaces the old container if present, starts the new container, and shows its status.
+
+Options:
+- -i "$SSH_PRIVATE_KEY" = identity file: Uses the selected SSH private key.
+- -o BatchMode=yes = SSH option: Disables interactive authentication prompts.
+- -o StrictHostKeyChecking=yes = SSH option: Requires strict SSH host-key verification.
+- -s in bash -s = read commands from standard input: Makes Bash execute the here-document received on standard input.
+- <<'REMOTE' = here-document operator: Sends the enclosed script to the remote Bash process without local shell expansion inside the here-document body.
+- -e in set = errexit: Exits the shell when an unhandled command fails.
+- -u in set = nounset: Treats use of an unset variable as an error.
+- -o pipefail in set = pipefail: Makes a pipeline fail when any command in that pipeline fails.
+- -a in docker ps = --all (all): Includes stopped containers.
+- --format '{{.Names}}' = format: Prints only container names using the specified Docker Go template.
+- | = pipe operator: Sends docker ps output to grep.
+- -q in grep = --quiet (quiet): Suppresses normal grep output and uses only the exit status.
+- -x in grep = --line-regexp (line regexp): Requires the whole line to match the container name.
+- --timeout 20 = timeout: Allows 20 seconds for the container to stop before Docker forces termination.
+- -d = --detach (detach): Runs the new container in the background.
+- --name "$CONTAINER_NAME" = name: Assigns the requested container name.
+- --restart unless-stopped = restart policy: Restarts the container unless it was explicitly stopped.
+- -p "${DEPLOY_PORT}:${APP_PORT}" = --publish (publish): Maps the deploy host port to the application port.
+- --filter "name=^/${CONTAINER_NAME}$" = filter: Restricts docker ps output to the exact container name pattern.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "Logging in to Nexus from deploy server..."
+
+Explanation:
+Prints a CI job status message before the remote Nexus login step.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "Deploying $IMAGE to $DEPLOY_HOST..."
+
+Explanation:
+Prints a CI job status message showing which image is being deployed and to which host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# printf '%s\n' "$NEXUS_PASSWORD" |
+ssh \
+  -i "$SSH_PRIVATE_KEY" \
+  "$DEPLOY_USER@$DEPLOY_HOST" \
+  "docker login '$NEXUS_REGISTRY' \
+  --username '$NEXUS_USER' \
+  --password-stdin"
+
+Explanation:
+Sends the Nexus password through standard input to SSH and runs docker login on the deploy server.
+
+Options:
+- %s\n = printf format: Prints the password as a string followed by a newline.
+- | = pipe operator: Sends printf output to ssh standard input.
+- -i "$SSH_PRIVATE_KEY" = identity file: Uses the private key file referenced by SSH_PRIVATE_KEY.
+- --username '$NEXUS_USER' = username: Supplies the Nexus username.
+- --password-stdin = password from standard input: Reads the registry password from standard input.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker login
+
+Explanation:
+Starts an interactive Docker registry login using Docker's default login behavior.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull "$IMAGE"
+
+Explanation:
+Pulls the Docker image referenced by the IMAGE shell variable.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f "$CONTAINER_NAME"
+
+Explanation:
+Forcibly removes the container referenced by CONTAINER_NAME, stopping it if necessary.
+
+Options:
+- -f = --force (force): Forces removal of a running container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop \
+  --timeout 20 \
+  "$CONTAINER_NAME"
+
+Explanation:
+Technical correction: the lesson used --time 20; the documented Docker option is --timeout 20. This stops the selected container and gives it up to 20 seconds to exit before forced termination.
+
+Options:
+- --timeout 20 = timeout: Waits up to 20 seconds for the container to stop.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm \
+  "$CONTAINER_NAME"
+
+Explanation:
+Removes the stopped container referenced by CONTAINER_NAME.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  -d \
+  --name "$CONTAINER_NAME" \
+  --restart unless-stopped \
+  -p "${DEPLOY_PORT}:${APP_PORT}" \
+  "$IMAGE"
+
+Explanation:
+Starts the image referenced by IMAGE as a detached container with the requested name, restart policy, and port mapping.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name "$CONTAINER_NAME" = name: Assigns the container name stored in CONTAINER_NAME.
+- --restart unless-stopped = restart policy: Restarts the container unless it was explicitly stopped.
+- -p "${DEPLOY_PORT}:${APP_PORT}" = --publish (publish): Maps the deploy-server port to the application port.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# set -euo pipefail
+
+Explanation:
+Enables stricter Bash error handling so failed commands, unset variables, and failed pipeline elements are not silently ignored.
+
+Options:
+- -e = errexit: Exits after an unhandled command failure.
+- -u = nounset: Treats an unset variable as an error.
+- -o pipefail = pipefail: Makes a pipeline return failure if any command in the pipeline fails.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# for i in $(seq 1 10); do
+  if curl \
+    --fail \
+    --silent \
+    --show-error \
+    "http://${DEPLOY_HOST}:${DEPLOY_PORT}/"; then
+
+    echo "Application is healthy."
+    exit 0
+  fi
+
+  echo "Waiting for application..."
+  sleep 2
+done
+
+echo "Application health check failed."
+exit 1
+
+Explanation:
+Runs up to ten HTTP health checks against the deployed application, waiting two seconds between failed attempts. It exits successfully on the first healthy response and fails after all attempts are exhausted.
+
+Options:
+- $(seq 1 10) = command substitution: Runs seq and substitutes the numbers 1 through 10 into the for loop.
+- --fail = fail on HTTP errors: Makes curl return a failure status for HTTP response codes 400 and above.
+- --silent = silent: Hides the progress meter and normal status output.
+- --show-error = show error: Displays curl error messages even when silent mode is enabled.
+- exit 0 = successful shell exit status: Ends the script with success.
+- sleep 2 = delay value: Waits two seconds before the next attempt.
+- exit 1 = failed shell exit status: Ends the script with failure.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  cicd-session50-app \
+  --format '{{.Config.Image}}'
+
+Explanation:
+Inspects cicd-session50-app and prints only the image reference stored in the container configuration.
+
+Options:
+- --format '{{.Config.Image}}' = format: Uses a Docker Go template to output only the Config.Image field.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl \
+  -i \
+  http://192.168.94.91:8088/
+
+Explanation:
+Sends an HTTP request to the application on DEV-2 and includes response headers in the output.
+
+Options:
+- -i = --include (include): Includes HTTP response headers in the output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl \
+  -i \
+  http://localhost:8088/
+
+Explanation:
+Sends an HTTP request to local port 8088 and includes response headers in the output.
+
+Options:
+- -i = --include (include): Includes HTTP response headers in the output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs \
+  --tail 100 \
+  cicd-session50-app
+
+Explanation:
+Shows the last 100 log lines from cicd-session50-app.
+
+Options:
+- --tail 100 = tail count: Shows only the most recent 100 log lines.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs \
+  -f \
+  cicd-session50-app
+
+Explanation:
+Continuously follows new log output from cicd-session50-app.
+
+Options:
+- -f = --follow (follow): Keeps streaming new log entries.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat /home/deploy/.ssh/authorized_keys
+
+Explanation:
+Prints the authorized SSH public keys configured for the deploy user.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# chmod 700 /home/deploy/.ssh
+
+Explanation:
+Sets the deploy user's .ssh directory so only its owner can read, write, and enter it.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# chmod 600 /home/deploy/.ssh/authorized_keys
+
+Explanation:
+Sets authorized_keys so only its owner can read and write it.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# chown -R deploy:deploy /home/deploy/.ssh
+
+Explanation:
+Changes ownership of the deploy user's .ssh directory and everything under it to deploy:deploy.
+
+Options:
+- -R = --recursive (recursive): Applies the ownership change recursively to all contained files and directories.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# getent group docker
+
+Explanation:
+Queries the system group database and prints the docker group entry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker login \
+  192.168.94.90:8085
+
+Explanation:
+Starts an interactive login to the Nexus Docker registry at 192.168.94.90:8085.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull \
+  192.168.94.90:8085/cicd-session50-app:TAG
+
+Explanation:
+Pulls the application image with the placeholder tag TAG from the Nexus registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull \
+  192.168.94.90:8085/cicd-session50-app:71bc30da
+
+Explanation:
+Pulls the previous application image tagged 71bc30da from Nexus for rollback.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  -d \
+  --name cicd-session50-app \
+  --restart unless-stopped \
+  -p 8088:8000 \
+  192.168.94.90:8085/cicd-session50-app:71bc30da
+
+Explanation:
+Starts the rollback image tagged 71bc30da as the application container.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name cicd-session50-app = name: Assigns the container name cicd-session50-app.
+- --restart unless-stopped = restart policy: Restarts the container unless it was explicitly stopped.
+- -p 8088:8000 = --publish 8088:8000 (publish): Maps host port 8088 to container port 8000.
+------------------------------------------------------------
