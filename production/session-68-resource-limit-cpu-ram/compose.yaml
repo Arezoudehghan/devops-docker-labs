@@ -1,0 +1,10 @@
+services:
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    cpus: 0.50
+    mem_limit: 256m
+    mem_reservation: 128m
+    memswap_limit: 256m
