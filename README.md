@@ -157,7 +157,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
-| 53 | Why a container is not safer than a VM | [`security/session-53-container-vs-vm-security`](security/session-53-container-vs-vm-security/) | `DEV-1` |
+| 53 | Why a container is not safer than a VM | [`security/session-53-container-vs-vm-security`](security/session-53-container-vs-vm-security/) | `DEV-1` |\n| 55 | Limiting container privileges with Linux capabilities and no-new-privileges | [`security/session-55-limiting-privilege`](security/session-55-limiting-privilege/) | `DEV-1` |
 | 54 | Run containers as a non-root user with fixed UID/GID and bind-mount permission checks | [`security/session-54-non-root-container-user`](security/session-54-non-root-container-user/) | `DEV-1` |
 
 ### Docker in Production
