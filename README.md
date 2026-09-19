@@ -139,6 +139,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 |---|---|---|---|
 | 46 | Docker's role in the CI/CD pipeline: build, test, push, pull, and deploy | [`cicd/session-46-docker-in-pipeline`](cicd/session-46-docker-in-pipeline/) | `DEV-1` + `DEV-2` |
 | 47 | Build a Docker image in GitLab Runner with a Shell executor and commit-SHA tagging | [`cicd/session-47-build-image-gitlab-runner`](cicd/session-47-build-image-gitlab-runner/) | `DEV-1` |
+| 48 | Docker image tag strategy with commit SHA and branch/ref tags | [`cicd/session-48-image-tag-strategy`](cicd/session-48-image-tag-strategy/) | `DEV-1` |
 
 ### Docker in Production
 
