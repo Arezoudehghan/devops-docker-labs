@@ -18,11 +18,16 @@ By the end of this lab you should be able to explain and demonstrate:
 ```text
 session-76-compose-vs-swarm/
 ├── README.md
+├── CHEATSHEET.md
 ├── compose/
 │   └── compose.yaml
 └── swarm/
     └── stack.yaml
 ```
+
+## Command cheat sheet
+
+For a command-focused review of this session, see [CHEATSHEET.md](CHEATSHEET.md).
 
 ## Example lab environment
 
