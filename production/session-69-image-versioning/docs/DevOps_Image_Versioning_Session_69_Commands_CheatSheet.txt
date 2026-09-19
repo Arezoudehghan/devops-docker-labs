@@ -1,0 +1,209 @@
+------------------------------------------------------------
+# docker build -t myapp:1.0.0 .
+
+Explanation:
+Builds a Docker image from the Dockerfile in the current directory and tags it as myapp:1.0.0.
+
+Options:
+- -t = --tag (tag): Assigns the image name and tag myapp:1.0.0.
+------------------------------------------------------------
+# docker images myapp
+
+Explanation:
+Lists local Docker images whose repository name matches myapp.
+------------------------------------------------------------
+# docker build -t myapp:1.1.0 .
+
+Explanation:
+Builds a Docker image from the current directory and tags it as myapp:1.1.0.
+
+Options:
+- -t = --tag (tag): Assigns the image name and tag myapp:1.1.0.
+------------------------------------------------------------
+# docker build -t myapp:${CI_COMMIT_SHORT_SHA} .
+
+Explanation:
+Builds a Docker image from the current directory and uses the GitLab short commit SHA as the image tag.
+
+Options:
+- -t = --tag (tag): Assigns the image name and the value of CI_COMMIT_SHORT_SHA as its tag.
+------------------------------------------------------------
+# docker build -t 192.168.94.90:8085/myapp:${CI_COMMIT_SHORT_SHA} .
+
+Explanation:
+Builds a Docker image and tags it for the Nexus registry at 192.168.94.90:8085 using the GitLab short commit SHA.
+
+Options:
+- -t = --tag (tag): Assigns the full registry image name and the value of CI_COMMIT_SHORT_SHA as its tag.
+------------------------------------------------------------
+# docker push 192.168.94.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
+
+Explanation:
+Pushes the image tagged with the current GitLab short commit SHA to the Nexus registry.
+------------------------------------------------------------
+# docker build -t myapp:1.4.2 .
+
+Explanation:
+Builds a Docker image from the current directory and tags it as version 1.4.2.
+
+Options:
+- -t = --tag (tag): Assigns the image name and tag myapp:1.4.2.
+------------------------------------------------------------
+# docker tag myapp:1.4.2 myapp:f7a81c2d
+
+Explanation:
+Creates the additional tag myapp:f7a81c2d for the existing image myapp:1.4.2.
+------------------------------------------------------------
+# docker rm -f myapp
+
+Explanation:
+Force-removes the container named myapp.
+
+Options:
+- -f = --force (force): Forces removal of the running container.
+------------------------------------------------------------
+# docker run -d \
+  --name myapp \
+  -p 8080:8000 \
+  myapp:2.3.0
+
+Explanation:
+Starts version 2.3.0 of myapp in the background with the container name myapp and publishes its container port 8000 on host port 8080.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the container name myapp.
+- -p = --publish (publish): Publishes a container port on the host; 8080:8000 maps host port 8080 to container port 8000.
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/myapp:2.3.0
+
+Explanation:
+Pulls version 2.3.0 of myapp from the Nexus registry.
+------------------------------------------------------------
+# docker run -d \
+  --name myapp \
+  -p 8080:8000 \
+  192.168.94.90:8085/myapp:2.3.0
+
+Explanation:
+Starts version 2.3.0 of myapp from the Nexus registry in the background and publishes container port 8000 on host port 8080.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the container name myapp.
+- -p = --publish (publish): Publishes a container port on the host; 8080:8000 maps host port 8080 to container port 8000.
+------------------------------------------------------------
+# git tag v1.4.0
+
+Explanation:
+Creates the Git tag v1.4.0 at the current commit.
+------------------------------------------------------------
+# git push origin v1.4.0
+
+Explanation:
+Pushes the Git tag v1.4.0 to the remote named origin.
+------------------------------------------------------------
+# docker build -t "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}" .
+
+Explanation:
+Builds a Docker image from the current directory and tags it using the IMAGE_NAME and CI_COMMIT_SHORT_SHA GitLab variables.
+
+Options:
+- -t = --tag (tag): Assigns the image name from IMAGE_NAME and the tag from CI_COMMIT_SHORT_SHA.
+------------------------------------------------------------
+# docker push "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+
+Explanation:
+Pushes the image identified by IMAGE_NAME and CI_COMMIT_SHORT_SHA to the configured registry.
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
+
+Explanation:
+Pulls the myapp image whose tag matches the current GitLab short commit SHA from the Nexus registry.
+------------------------------------------------------------
+# docker rm -f myapp || true
+
+Explanation:
+Force-removes the container named myapp. If the removal command fails, true returns success so the shell command does not fail overall.
+
+Options:
+- -f = --force (force): Forces removal of the running container.
+- || = shell OR operator: Runs the command on the right only when the command on the left fails.
+------------------------------------------------------------
+# docker run -d \
+  --name myapp \
+  -p 8088:8000 \
+  192.168.94.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
+
+Explanation:
+Starts the commit-specific myapp image from the Nexus registry in the background and publishes container port 8000 on host port 8088.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the container name myapp.
+- -p = --publish (publish): Publishes a container port on the host; 8088:8000 maps host port 8088 to container port 8000.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists running Docker containers.
+------------------------------------------------------------
+# docker inspect myapp
+
+Explanation:
+Displays detailed low-level information about the container named myapp.
+------------------------------------------------------------
+# docker inspect --format='{{.Config.Image}}' myapp
+
+Explanation:
+Displays only the configured image reference used by the container named myapp.
+
+Options:
+- --format = format output: Formats the inspect output with the Go template {{.Config.Image}}.
+------------------------------------------------------------
+# docker build -t myapp:latest .
+
+Explanation:
+Builds a Docker image from the current directory and tags it as myapp:latest.
+
+Options:
+- -t = --tag (tag): Assigns the image name and tag myapp:latest.
+------------------------------------------------------------
+# docker push myapp:latest
+
+Explanation:
+Pushes the image tagged myapp:latest to its configured registry.
+------------------------------------------------------------
+# docker pull myapp:latest
+
+Explanation:
+Pulls the image tagged myapp:latest from its configured registry.
+------------------------------------------------------------
+# docker run myapp:latest
+
+Explanation:
+Creates and starts a container from the image myapp:latest in the foreground.
+------------------------------------------------------------
+# docker run myapp:1.3.0
+
+Explanation:
+Creates and starts a container from version 1.3.0 of myapp in the foreground.
+------------------------------------------------------------
+# docker build -t version-demo:1.0.0 .
+
+Explanation:
+Builds the version-demo image from the current directory and tags it as version 1.0.0.
+
+Options:
+- -t = --tag (tag): Assigns the image name and tag version-demo:1.0.0.
+------------------------------------------------------------
+# docker tag version-demo:1.0.0 version-demo:a1b2c3d
+
+Explanation:
+Creates the additional tag version-demo:a1b2c3d for the existing image version-demo:1.0.0.
+------------------------------------------------------------
+# docker images version-demo
+
+Explanation:
+Lists local Docker images whose repository name matches version-demo.
+------------------------------------------------------------

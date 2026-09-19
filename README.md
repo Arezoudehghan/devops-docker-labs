@@ -83,6 +83,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 ├── production/
 │   ├── session-66-healthcheck/
 │   ├── session-68-resource-limit-cpu-ram/
+│   ├── session-69-image-versioning/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
 │   ├── session-75-swarm-rolling-update/
@@ -197,6 +198,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 66 | Docker Healthcheck: running vs healthy, Dockerfile and Compose probes | [`production/session-66-healthcheck`](production/session-66-healthcheck/) | `DEV-2` |
 | 67 | Docker restart policies: no, on-failure, always, and unless-stopped | [`production/session-67-restart-policy`](production/session-67-restart-policy/) | `DEV-2` |
 | 68 | Resource limits for CPU and RAM | [`production/session-68-resource-limit-cpu-ram`](production/session-68-resource-limit-cpu-ram/) | `DEV-2` |
+| 69 | Docker image versioning with SemVer, Git commit tags, Nexus, exact-version deployment, and rollback | [`production/session-69-image-versioning`](production/session-69-image-versioning/) | `DEV-1` + `DEV-2` |
 | 71 | Simple zero-downtime Blue/Green deployment with Nginx | [`production/session-71-zero-downtime-deploy`](production/session-71-zero-downtime-deploy/) | `DEV-2` |
 
 ### Docker Swarm

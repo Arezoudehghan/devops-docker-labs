@@ -1,0 +1,7 @@
+services:
+  app:
+    image: ${IMAGE_REF}
+    container_name: versioning-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
