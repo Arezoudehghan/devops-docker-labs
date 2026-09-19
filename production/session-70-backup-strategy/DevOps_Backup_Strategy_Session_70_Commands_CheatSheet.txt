@@ -1,0 +1,372 @@
+------------------------------------------------------------
+# docker rm -f myapp
+
+Explanation:
+Removes the container named myapp. The container is deleted even if it is currently running.
+
+Options:
+- -f = --force (force): Force-removes a running container by sending SIGKILL before removal.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates and starts the services defined in the Compose configuration. It runs the services in the background.
+
+Options:
+- -d = --detach (detach): Runs containers in the background and leaves them running after the command returns.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name postgres \
+  -e POSTGRES_PASSWORD=<strong-password> \
+  -v postgres_data:/var/lib/postgresql/data \
+  postgres
+
+Explanation:
+Technical correction: The original lesson command did not provide the PostgreSQL initialization password required by the standard PostgreSQL image, so POSTGRES_PASSWORD was added. The command starts a PostgreSQL container and stores its database files in the named volume postgres_data.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name postgres = container name: Assigns the name postgres to the container.
+- -e = --env (environment): Sets an environment variable inside the container; here it sets POSTGRES_PASSWORD.
+- -v = --volume (volume): Mounts postgres_data at /var/lib/postgresql/data inside the container.
+- <strong-password> = placeholder value: Replace this placeholder with the real PostgreSQL password before running the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker export postgres
+
+Explanation:
+Exports the filesystem of the container named postgres as a tar archive stream. Data stored in mounted volumes is not included in the export.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull nexus.example.local:8085/myapp:1.5.3
+
+Explanation:
+Pulls version 1.5.3 of the myapp image from the Nexus registry at nexus.example.local:8085.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull nexus.example.local:8085/myapp:a73c82d
+
+Explanation:
+Pulls the myapp image tagged with the release or commit identifier a73c82d from the Nexus registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume ls
+
+Explanation:
+Lists Docker volumes available on the current Docker host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume inspect app_data
+
+Explanation:
+Shows detailed metadata and mount information for the Docker volume named app_data.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo mkdir -p /backup/docker
+
+Explanation:
+Creates the directory /backup/docker with elevated privileges. Parent directories are created automatically if they do not already exist.
+
+Options:
+- -p = --parents (parents): Creates missing parent directories and does not report an error if the target directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -v app_data:/data:ro \
+  -v /backup/docker:/backup \
+  alpine \
+  sh -c 'tar czf /backup/app_data_$(date +%F_%H%M).tar.gz -C /data .'
+
+Explanation:
+Runs a temporary Alpine container that creates a compressed backup of the app_data volume in /backup/docker. The source volume is mounted read-only and the temporary container is removed when the command finishes.
+
+Options:
+- --rm = remove automatically: Automatically removes the temporary container when it exits.
+- -v = --volume (volume): Mounts a Docker volume or host path inside the container.
+- app_data:/data:ro = volume mapping: Mounts app_data at /data in read-only mode; ro means read-only.
+- /backup/docker:/backup = bind mount mapping: Mounts the host directory /backup/docker at /backup inside the container.
+- sh -c = command string: Runs the quoted shell command through sh; -c tells the shell to execute the following string.
+- tar -c = --create (create): Creates a new archive.
+- tar -z = --gzip (gzip): Compresses the archive with gzip.
+- tar -f = --file (file): Uses the next value as the archive file name.
+- tar -C = --directory (directory): Changes to /data before archiving ..
+- $(...) = command substitution: Runs the command inside the parentheses and inserts its output into the file name.
+- date +%F_%H%M = date format: %F produces YYYY-MM-DD, %H the hour, and %M the minute.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -lh /backup/docker
+
+Explanation:
+Lists files in /backup/docker using a detailed listing and human-readable sizes.
+
+Options:
+- -l = long listing format: Shows detailed information such as permissions, owner, size, and modification time.
+- -h = --human-readable (human-readable): Displays sizes using units such as K, M, or G when used with -l.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# tar tzf /backup/docker/app_data_2026-08-19_0200.tar.gz
+
+Explanation:
+Lists the contents of the specified gzip-compressed tar archive without extracting it.
+
+Options:
+- -t = --list (list): Lists files stored in the archive.
+- -z = --gzip (gzip): Processes the archive through gzip.
+- -f = --file (file): Uses /backup/docker/app_data_2026-08-19_0200.tar.gz as the archive file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume create app_data_restore
+
+Explanation:
+Creates a new Docker named volume called app_data_restore.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -v app_data_restore:/data \
+  -v /backup/docker:/backup:ro \
+  alpine \
+  sh -c 'tar xzf /backup/app_data_2026-08-19_0200.tar.gz -C /data'
+
+Explanation:
+Runs a temporary Alpine container that restores the selected backup archive into the app_data_restore volume. The backup directory is mounted read-only.
+
+Options:
+- --rm = remove automatically: Automatically removes the temporary container when it exits.
+- -v = --volume (volume): Mounts a Docker volume or host path inside the container.
+- app_data_restore:/data = volume mapping: Mounts the destination volume app_data_restore at /data.
+- /backup/docker:/backup:ro = bind mount mapping: Mounts /backup/docker at /backup in read-only mode.
+- sh -c = command string: Executes the quoted command through sh; -c means execute the following command string.
+- tar -x = --extract (extract): Extracts files from the archive.
+- tar -z = --gzip (gzip): Decompresses the gzip-compressed archive.
+- tar -f = --file (file): Uses the following path as the archive file.
+- tar -C = --directory (directory): Changes to /data before extracting files.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -v app_data_restore:/data \
+  alpine \
+  ls -lah /data
+
+Explanation:
+Runs a temporary Alpine container and lists the restored files in /data. This verifies that the app_data_restore volume contains files after restoration.
+
+Options:
+- --rm = remove automatically: Automatically removes the temporary container when it exits.
+- -v = --volume (volume): Mounts app_data_restore at /data inside the container.
+- ls -l = long listing format: Shows detailed file information.
+- ls -a = --all (all): Includes hidden files and entries.
+- ls -h = --human-readable (human-readable): Shows file sizes in readable units when used with -l.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: <strong-password>
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    name: postgres_data
+
+Explanation:
+Technical correction: The original Compose example did not define POSTGRES_PASSWORD, and its later raw docker run -v postgres_data:... backup command could target a different volume because Compose normally prefixes volume names. POSTGRES_PASSWORD and name: postgres_data were added so the PostgreSQL service can initialize correctly and the later backup commands refer to the same named volume.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo mkdir -p /backup/postgres
+
+Explanation:
+Creates the directory /backup/postgres with elevated privileges. Parent directories are created automatically if needed.
+
+Options:
+- -p = --parents (parents): Creates missing parent directories and does not report an error if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec -T db \
+  pg_dump -U appuser -Fc appdb \
+  > /backup/postgres/appdb_$(date +%F_%H%M).dump
+
+Explanation:
+Runs pg_dump inside the Compose service db and writes a custom-format logical backup of appdb to the host backup directory. The host shell performs the output redirection.
+
+Options:
+- -T = --no-TTY (no TTY): Disables pseudo-TTY allocation for docker compose exec.
+- pg_dump -U = --username (username): Connects as PostgreSQL user appuser.
+- pg_dump -F = --format (format): Selects the output format.
+- c in -Fc = custom format: Uses PostgreSQL custom archive format.
+- > = output redirection: Writes standard output to the specified dump file and replaces that file if it already exists.
+- $(...) = command substitution: Inserts the output of the inner date command into the backup file name.
+- date +%F_%H%M = date format: %F produces YYYY-MM-DD, %H the hour, and %M the minute.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose exec -T db \
+  pg_restore \
+  -U appuser \
+  -d appdb \
+  --clean \
+  --if-exists \
+  < /backup/postgres/appdb_2026-08-19_0200.dump
+
+Explanation:
+Runs pg_restore inside the Compose service db and restores the specified custom-format dump into appdb. Existing database objects are cleaned before recreation when they exist.
+
+Options:
+- -T = --no-TTY (no TTY): Disables pseudo-TTY allocation for docker compose exec.
+- -U = --username (username): Connects as PostgreSQL user appuser.
+- -d = --dbname (database name): Restores into the database appdb.
+- --clean = clean: Drops database objects before recreating them from the archive.
+- --if-exists = if exists: Adds existence checks when dropping objects, reducing errors for objects that are already absent.
+- < = input redirection: Sends the contents of the dump file to the standard input of pg_restore.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose stop db
+
+Explanation:
+Stops the Compose service named db without removing its container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -v postgres_data:/data:ro \
+  -v /backup/docker:/backup \
+  alpine \
+  sh -c 'tar czf /backup/postgres_data_$(date +%F_%H%M).tar.gz -C /data .'
+
+Explanation:
+Runs a temporary Alpine container that creates a gzip-compressed archive of the stopped PostgreSQL volume. The database volume is mounted read-only while the backup archive is written to the host backup directory.
+
+Options:
+- --rm = remove automatically: Automatically removes the temporary container when it exits.
+- -v = --volume (volume): Mounts a Docker volume or host path inside the container.
+- postgres_data:/data:ro = volume mapping: Mounts postgres_data at /data in read-only mode; ro means read-only.
+- /backup/docker:/backup = bind mount mapping: Mounts the host directory /backup/docker at /backup inside the container.
+- sh -c = command string: Executes the quoted shell command; -c means execute the following command string.
+- tar -c = --create (create): Creates a new archive.
+- tar -z = --gzip (gzip): Compresses the archive with gzip.
+- tar -f = --file (file): Uses the next value as the archive file name.
+- tar -C = --directory (directory): Changes to /data before archiving ..
+- $(...) = command substitution: Inserts the output of the inner command into the archive file name.
+- date +%F_%H%M = date format: %F produces YYYY-MM-DD, %H the hour, and %M the minute.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose start db
+
+Explanation:
+Starts the existing stopped Compose service named db.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# tar czf \
+  /backup/docker/uploads_$(date +%F_%H%M).tar.gz \
+  /opt/myapp/uploads
+
+Explanation:
+Creates a gzip-compressed archive of the bind-mounted directory /opt/myapp/uploads. The timestamp from date is inserted into the backup file name.
+
+Options:
+- -c = --create (create): Creates a new tar archive.
+- -z = --gzip (gzip): Compresses the archive using gzip.
+- -f = --file (file): Uses the next value as the archive file name.
+- $(...) = command substitution: Runs the inner date command and inserts its output into the file name.
+- date +%F_%H%M = date format: %F produces YYYY-MM-DD, %H the hour, and %M the minute.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker volume create app_data_restore_test
+
+Explanation:
+Creates a Docker named volume called app_data_restore_test for restore testing.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm \
+  -v app_data_restore_test:/data \
+  -v /backup/docker:/backup:ro \
+  alpine \
+  sh -c 'tar xzf /backup/app_data_2026-08-19_0200.tar.gz -C /data'
+
+Explanation:
+Runs a temporary Alpine container that restores the selected backup archive into the test volume app_data_restore_test. The backup source directory is mounted read-only.
+
+Options:
+- --rm = remove automatically: Automatically removes the temporary container when it exits.
+- -v = --volume (volume): Mounts a Docker volume or host path inside the container.
+- app_data_restore_test:/data = volume mapping: Mounts the restore-test volume at /data.
+- /backup/docker:/backup:ro = bind mount mapping: Mounts /backup/docker at /backup in read-only mode.
+- sh -c = command string: Executes the quoted shell command; -c means execute the following command string.
+- tar -x = --extract (extract): Extracts files from the archive.
+- tar -z = --gzip (gzip): Decompresses the gzip-compressed archive.
+- tar -f = --file (file): Uses the following path as the archive file.
+- tar -C = --directory (directory): Changes to /data before extraction.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull <nexus>/<application>:<version>
+
+Explanation:
+Pulls a specific application image version from the Nexus registry. <nexus>, <application>, and <version> are placeholders and must be replaced with real values before running the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git clone <repository>
+
+Explanation:
+Clones the specified Git repository into a new local directory. <repository> is a placeholder and must be replaced with a real repository URL or path before running the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull <nexus>/<app>:<version>
+
+Explanation:
+Pulls the required application image and version from the Nexus registry. <nexus>, <app>, and <version> are placeholders and must be replaced with real values before running the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Shows the status of containers that belong to the current Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect <container>
+
+Explanation:
+Displays detailed low-level information about the specified Docker container. <container> is a placeholder and must be replaced with a real container name or ID before running the command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose logs --tail=100
+
+Explanation:
+Shows logs from the services in the current Compose project and limits the output to the last 100 lines per service.
+
+Options:
+- --tail=100 = tail: Shows only the last 100 log lines for each service.
+------------------------------------------------------------
