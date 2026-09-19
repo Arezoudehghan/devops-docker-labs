@@ -1,0 +1,18 @@
+services:
+  app:
+    image: python:3.12-slim
+    command:
+      - sh
+      - -c
+      - |
+        i=1
+        while true; do
+          echo "compose-log id=$$i"
+          i=$$((i+1))
+          sleep 2
+        done
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
