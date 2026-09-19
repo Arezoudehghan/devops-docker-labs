@@ -1,0 +1,577 @@
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --memory="512m" \
+  nginx:alpine
+
+Explanation:
+Runs an nginx:alpine container named web in the background with a 512 MB hard memory limit.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name web.
+- --memory="512m" = --memory: Sets the hard memory limit to 512 MB; m means megabytes.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stats web
+
+Explanation:
+Shows live CPU, memory, network, block I/O, and process statistics for the web container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stats --no-stream web
+
+Explanation:
+Shows one snapshot of resource statistics for the web container instead of continuously streaming updates.
+
+Options:
+- --no-stream = no stream: Prints one statistics snapshot and exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --memory="512m" \
+  --memory-reservation="384m" \
+  nginx:alpine
+
+Explanation:
+Runs the web container with a 512 MB hard memory limit and a 384 MB soft memory reservation.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name web.
+- --memory="512m" = --memory: Sets the hard memory limit to 512 MB.
+- --memory-reservation="384m" = --memory-reservation: Sets the soft memory reservation to 384 MB.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --memory="512m" \
+  --memory-swap="1g" \
+  nginx:alpine
+
+Explanation:
+Runs the web container with a 512 MB RAM limit and a 1 GB combined RAM-plus-swap limit.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name web.
+- --memory="512m" = --memory: Sets the RAM limit to 512 MB.
+- --memory-swap="1g" = --memory-swap: Sets the combined memory and swap limit to 1 GB; g means gigabytes.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --memory="512m" \
+  --memory-swap="512m" \
+  nginx:alpine
+
+Explanation:
+Runs the web container with a 512 MB RAM limit and no additional swap allowance because memory and memory-swap are equal.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name web.
+- --memory="512m" = --memory: Sets the RAM limit to 512 MB.
+- --memory-swap="512m" = --memory-swap: Sets the combined memory and swap limit to 512 MB.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --cpus="1.0" \
+  nginx:alpine
+
+Explanation:
+Runs the web container in the background with CPU usage limited to the equivalent of one CPU.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name web.
+- --cpus="1.0" = --cpus: Limits CPU usage to the equivalent of 1.0 CPU.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --cpus="0.5" \
+  nginx:alpine
+
+Explanation:
+Runs the web container with CPU usage limited to the equivalent of half of one CPU.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name web.
+- --cpus="0.5" = --cpus: Limits CPU usage to the equivalent of 0.5 CPU.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --cpus="1.5" \
+  nginx:alpine
+
+Explanation:
+Runs the web container with CPU usage limited to the equivalent of 1.5 CPUs.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name web.
+- --cpus="1.5" = --cpus: Limits CPU usage to the equivalent of 1.5 CPUs.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --cpus="0.5" nginx
+
+Explanation:
+Runs an nginx container with CPU usage limited to the equivalent of half of one CPU.
+
+Options:
+- --cpus="0.5" = --cpus: Limits CPU usage to the equivalent of 0.5 CPU.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  --cpu-period=100000 \
+  --cpu-quota=50000 \
+  nginx
+
+Explanation:
+Runs nginx with 50,000 microseconds of CPU time available in each 100,000-microsecond scheduling period, which is about 0.5 CPU.
+
+Options:
+- --cpu-period=100000 = --cpu-period: Sets the CPU scheduling period to 100,000 microseconds.
+- --cpu-quota=50000 = --cpu-quota: Allows 50,000 microseconds of CPU time during each period.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --cpuset-cpus="0,1" \
+  nginx:alpine
+
+Explanation:
+Runs the web container and allows its processes to execute only on logical CPUs 0 and 1.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name web.
+- --cpuset-cpus="0,1" = --cpuset-cpus: Restricts execution to logical CPUs 0 and 1.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --cpuset-cpus="0-1" \
+  nginx:alpine
+
+Explanation:
+Runs the web container and allows its processes to execute only on the CPU range 0 through 1.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name web.
+- --cpuset-cpus="0-1" = --cpuset-cpus: Restricts execution to logical CPUs 0 through 1.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name web \
+  --cpus="1" \
+  --cpuset-cpus="2,3" \
+  nginx:alpine
+
+Explanation:
+Runs the web container on logical CPUs 2 and 3 while limiting total CPU usage to the equivalent of one CPU.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name web = --name: Assigns the container name web.
+- --cpus="1" = --cpus: Limits total CPU usage to the equivalent of one CPU.
+- --cpuset-cpus="2,3" = --cpuset-cpus: Restricts execution to logical CPUs 2 and 3.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name app1 \
+  --cpu-shares=1024 \
+  alpine sh -c 'while true; do :; done'
+
+Explanation:
+Runs an Alpine container named app1 with a relative CPU weight of 1024 and a busy shell loop that continuously consumes CPU.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name app1 = --name: Assigns the container name app1.
+- --cpu-shares=1024 = --cpu-shares: Sets the relative CPU scheduling weight to 1024.
+- -c = command string for sh: Tells sh to execute the following quoted command string.
+- ; = shell command separator: Separates parts of the shell loop.
+- : = shell no-op builtin: Performs no work but keeps the loop busy.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name app2 \
+  --cpu-shares=512 \
+  alpine sh -c 'while true; do :; done'
+
+Explanation:
+Runs an Alpine container named app2 with a relative CPU weight of 512 and a busy shell loop that continuously consumes CPU.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name app2 = --name: Assigns the container name app2.
+- --cpu-shares=512 = --cpu-shares: Sets the relative CPU scheduling weight to 512.
+- -c = command string for sh: Tells sh to execute the following quoted command string.
+- ; = shell command separator: Separates parts of the shell loop.
+- : = shell no-op builtin: Performs no work but keeps the loop busy.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name production-web \
+  --restart=unless-stopped \
+  --cpus="1.0" \
+  --memory="512m" \
+  --memory-reservation="384m" \
+  --memory-swap="512m" \
+  -p 8080:80 \
+  nginx:alpine
+
+Explanation:
+Runs a production-style nginx container with restart behavior, CPU and memory limits, no additional swap, and host port 8080 mapped to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name production-web = --name: Assigns the container name production-web.
+- --restart=unless-stopped = --restart: Restarts the container automatically unless it was explicitly stopped.
+- --cpus="1.0" = --cpus: Limits CPU usage to the equivalent of 1.0 CPU.
+- --memory="512m" = --memory: Sets the hard memory limit to 512 MB.
+- --memory-reservation="384m" = --memory-reservation: Sets the soft memory reservation to 384 MB.
+- --memory-swap="512m" = --memory-swap: Sets total RAM plus swap to 512 MB, so no additional swap is available.
+- -p = --publish (publish): Publishes container port 80 on host port 8080; 8080:80 means host-port:container-port.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stats --no-stream production-web
+
+Explanation:
+Shows one snapshot of resource statistics for the production-web container.
+
+Options:
+- --no-stream = no stream: Prints one statistics snapshot and exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect production-web
+
+Explanation:
+Displays detailed Docker metadata and runtime configuration for the production-web container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  --format '{{.HostConfig.Memory}}' \
+  production-web
+
+Explanation:
+Prints only the configured hard memory limit from the production-web container metadata.
+
+Options:
+- --format '{{.HostConfig.Memory}}' = --format: Uses a Go template and selects the HostConfig.Memory value.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  --format '{{.HostConfig.NanoCpus}}' \
+  production-web
+
+Explanation:
+Prints only the NanoCPUs value configured for the production-web container.
+
+Options:
+- --format '{{.HostConfig.NanoCpus}}' = --format: Uses a Go template and selects the HostConfig.NanoCpus value.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name cpu-test \
+  --cpus="0.5" \
+  alpine \
+  sh -c 'while true; do :; done'
+
+Explanation:
+Runs a CPU stress test container limited to 0.5 CPU by starting a continuous busy shell loop.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name cpu-test = --name: Assigns the container name cpu-test.
+- --cpus="0.5" = --cpus: Limits CPU usage to the equivalent of 0.5 CPU.
+- -c = command string for sh: Tells sh to execute the following quoted command string.
+- ; = shell command separator: Separates parts of the shell loop.
+- : = shell no-op builtin: Performs no work but keeps the loop busy.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stats cpu-test
+
+Explanation:
+Shows live resource usage statistics for the cpu-test container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f cpu-test
+
+Explanation:
+Removes the cpu-test container and forcefully stops it first if it is still running.
+
+Options:
+- -f = --force (force): Forces removal of a running container by stopping it first.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name cpu-high \
+  --cpuset-cpus="0" \
+  --cpu-shares=1024 \
+  alpine \
+  sh -c 'while true; do :; done'
+
+Explanation:
+Runs a CPU-intensive Alpine container pinned to logical CPU 0 with a relative CPU weight of 1024.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name cpu-high = --name: Assigns the container name cpu-high.
+- --cpuset-cpus="0" = --cpuset-cpus: Restricts the container to logical CPU 0.
+- --cpu-shares=1024 = --cpu-shares: Sets the relative CPU scheduling weight to 1024.
+- -c = command string for sh: Tells sh to execute the following quoted command string.
+- ; = shell command separator: Separates parts of the shell loop.
+- : = shell no-op builtin: Performs no work but keeps the loop busy.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name cpu-low \
+  --cpuset-cpus="0" \
+  --cpu-shares=512 \
+  alpine \
+  sh -c 'while true; do :; done'
+
+Explanation:
+Runs a CPU-intensive Alpine container pinned to logical CPU 0 with a lower relative CPU weight of 512.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name cpu-low = --name: Assigns the container name cpu-low.
+- --cpuset-cpus="0" = --cpuset-cpus: Restricts the container to logical CPU 0.
+- --cpu-shares=512 = --cpu-shares: Sets the relative CPU scheduling weight to 512.
+- -c = command string for sh: Tells sh to execute the following quoted command string.
+- ; = shell command separator: Separates parts of the shell loop.
+- : = shell no-op builtin: Performs no work but keeps the loop busy.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stats cpu-high cpu-low
+
+Explanation:
+Shows live resource statistics for both cpu-high and cpu-low so their CPU usage can be compared.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f cpu-high cpu-low
+
+Explanation:
+Removes both CPU test containers and forcefully stops them first if they are still running.
+
+Options:
+- -f = --force (force): Forces removal of running containers by stopping them first.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  --name ram-test \
+  --memory="100m" \
+  --memory-swap="100m" \
+  python:3.12-slim \
+  python -c 'a=bytearray(200*1024*1024); import time; time.sleep(60)'
+
+Explanation:
+Runs a Python container with a 100 MB memory limit while Python attempts to allocate about 200 MB, which is intended to trigger an out-of-memory condition.
+
+Options:
+- --name ram-test = --name: Assigns the container name ram-test.
+- --memory="100m" = --memory: Sets the hard memory limit to 100 MB.
+- --memory-swap="100m" = --memory-swap: Sets total RAM plus swap to 100 MB, so no additional swap is available.
+- -c = command string for Python: Tells Python to execute the following quoted Python code.
+- 200*1024*1024 = allocation size: Requests about 200 MiB with bytearray.
+- time.sleep(60) = sleep argument: Keeps the process alive for 60 seconds if the allocation succeeds.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  --format 'OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}}' \
+  ram-test
+
+Explanation:
+Prints whether ram-test was OOM-killed and shows its exit code.
+
+Options:
+- --format 'OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}}' = --format: Uses a Go template to print only the OOMKilled state and exit code.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm ram-test
+
+Explanation:
+Removes the stopped ram-test container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Parses and validates the current Compose configuration and prints the resolved configuration.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates and starts the services defined in the Compose file in the background.
+
+Options:
+- -d = --detach (detach): Runs the Compose services in the background.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Lists the containers and current status of services in the active Compose project.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stats
+
+Explanation:
+Shows live resource usage statistics for all running containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker update \
+  --cpus="1.0" \
+  --memory="512m" \
+  production-web
+
+Explanation:
+Updates the production-web container to use a 1.0 CPU limit and a 512 MB hard memory limit.
+
+Options:
+- --cpus="1.0" = --cpus: Sets the CPU limit to the equivalent of 1.0 CPU.
+- --memory="512m" = --memory: Sets the hard memory limit to 512 MB.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d nginx
+
+Explanation:
+Runs an nginx container in the background without explicit CPU or memory resource limits.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --cpus="2" nginx
+
+Explanation:
+Runs an nginx container with CPU usage limited to the equivalent of two CPUs.
+
+Options:
+- --cpus="2" = --cpus: Limits CPU usage to the equivalent of 2 CPUs.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --cpuset-cpus="0,1" nginx
+
+Explanation:
+Runs an nginx container whose processes may execute only on logical CPUs 0 and 1.
+
+Options:
+- --cpuset-cpus="0,1" = --cpuset-cpus: Restricts execution to logical CPUs 0 and 1.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run \
+  --memory=512m \
+  --memory-swap=512m \
+  nginx
+
+Explanation:
+Runs an nginx container with a 512 MB RAM limit and no additional swap allowance.
+
+Options:
+- --memory=512m = --memory: Sets the hard memory limit to 512 MB.
+- --memory-swap=512m = --memory-swap: Sets total RAM plus swap to 512 MB.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name myapp \
+  --restart=unless-stopped \
+  --cpus="1.0" \
+  --memory="512m" \
+  --memory-reservation="384m" \
+  --memory-swap="512m" \
+  -p 8080:8000 \
+  myapp:1.0
+
+Explanation:
+Runs myapp:1.0 in the background with restart behavior, CPU and memory limits, no additional swap, and host port 8080 mapped to container port 8000.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name myapp = --name: Assigns the container name myapp.
+- --restart=unless-stopped = --restart: Restarts the container automatically unless it was explicitly stopped.
+- --cpus="1.0" = --cpus: Limits CPU usage to the equivalent of 1.0 CPU.
+- --memory="512m" = --memory: Sets the hard memory limit to 512 MB.
+- --memory-reservation="384m" = --memory-reservation: Sets the soft memory reservation to 384 MB.
+- --memory-swap="512m" = --memory-swap: Sets total RAM plus swap to 512 MB, so no additional swap is available.
+- -p = --publish (publish): Publishes container port 8000 on host port 8080; 8080:8000 means host-port:container-port.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all containers, including running and stopped containers.
+
+Options:
+- -a = --all (all): Shows all containers instead of only running containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  --format 'Status={{.State.Status}} OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}}' \
+  production-web
+
+Explanation:
+Technical correction: the lesson used <container> as a placeholder; production-web is substituted so this entry is directly executable. The command prints the container status, OOMKilled state, and exit code.
+
+Options:
+- --format 'Status={{.State.Status}} OOMKilled={{.State.OOMKilled}} ExitCode={{.State.ExitCode}}' = --format: Uses a Go template to print only the selected state fields.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs production-web
+
+Explanation:
+Technical correction: the lesson used <container> as a placeholder; production-web is substituted so this entry is directly executable. The command prints the logs from the production-web container.
+------------------------------------------------------------
