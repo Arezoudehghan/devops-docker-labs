@@ -81,6 +81,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-64-prometheus-grafana-docker/
 │   └── session-65-alertmanager-container-down-cpu-ram/
 ├── production/
+│   ├── session-66-healthcheck/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
 │   ├── session-75-swarm-rolling-update/
@@ -192,6 +193,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
+| 66 | Docker Healthcheck: running vs healthy, Dockerfile and Compose probes | [`production/session-66-healthcheck`](production/session-66-healthcheck/) | `DEV-2` |
 | 71 | Simple zero-downtime Blue/Green deployment with Nginx | [`production/session-71-zero-downtime-deploy`](production/session-71-zero-downtime-deploy/) | `DEV-2` |
 
 ### Docker Swarm
