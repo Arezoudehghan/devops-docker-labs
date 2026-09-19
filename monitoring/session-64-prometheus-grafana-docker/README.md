@@ -26,7 +26,8 @@ session-64-prometheus-grafana-docker/
 │   └── provisioning/
 │       └── datasources/
 │           └── prometheus.yml
-├── DevOps_Prometheus_Grafana_Docker_Session_64_Commands_CheatSheet.txt
+├── docs/
+│   └── DevOps_Prometheus_Grafana_Docker_Session_64_Commands_CheatSheet.txt
 └── README.md
 ```
 
@@ -219,6 +220,6 @@ docker compose down -v
 
 See:
 
-`DevOps_Prometheus_Grafana_Docker_Session_64_Commands_CheatSheet.txt`
+`docs/DevOps_Prometheus_Grafana_Docker_Session_64_Commands_CheatSheet.txt`
 
 It contains the executable commands and PromQL expressions used in this lesson with beginner-friendly English explanations.
