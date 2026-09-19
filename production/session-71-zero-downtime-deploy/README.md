@@ -41,8 +41,13 @@ session-71-zero-downtime-deploy/
 │       └── index.html
 ├── scripts/
 │   └── switch.sh
+├── CHEATSHEET.md
 └── README.md
 ```
+
+## Command cheat sheet
+
+For the complete Session 71 command reference, see [`CHEATSHEET.md`](CHEATSHEET.md).
 
 ## Requirements
 
