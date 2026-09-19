@@ -1,0 +1,173 @@
+------------------------------------------------------------
+# docker login 192.168.94.90:8085
+
+Explanation:
+Technical correction: This is also the corrected executable form of lesson examples that used http://, a repository path, the UI port 8081, or generic angle-bracket placeholders. It logs Docker in to the Nexus Docker Registry at 192.168.94.90:8085.
+------------------------------------------------------------
+# sudo ss -lntp | grep ':8085'
+
+Explanation:
+Shows listening TCP sockets and filters the result to entries containing port 8085.
+
+Options:
+- -l = --listening: Show only listening sockets.
+- -n = --numeric: Show numeric addresses and port numbers instead of resolving names.
+- -t = --tcp: Show TCP sockets.
+- -p = --processes: Show the process using each socket.
+- | = shell pipe operator: Send the output of ss to grep.
+------------------------------------------------------------
+# nc -vz 192.168.94.90 8085
+
+Explanation:
+Tests whether a TCP connection can be made to 192.168.94.90 on port 8085.
+
+Options:
+- -v = verbose mode: Show more connection details.
+- -z = zero-I/O mode: Check the port without sending application data.
+------------------------------------------------------------
+# curl -i http://192.168.94.90:8085/v2/
+
+Explanation:
+Sends an HTTP request to the Docker Registry v2 API endpoint and displays the response headers with the response body.
+
+Options:
+- -i = --include: Include HTTP response headers in the output.
+------------------------------------------------------------
+# sudo cat /etc/docker/daemon.json
+
+Explanation:
+Displays the Docker daemon configuration file with root privileges.
+------------------------------------------------------------
+# sudo mkdir -p /etc/docker
+
+Explanation:
+Creates the /etc/docker directory if it does not already exist.
+
+Options:
+- -p = --parents: Create missing parent directories and do not report an error if the directory already exists.
+------------------------------------------------------------
+# sudo nano /etc/docker/daemon.json
+
+Explanation:
+Opens /etc/docker/daemon.json in the Nano text editor with root privileges.
+------------------------------------------------------------
+# python3 -m json.tool /etc/docker/daemon.json
+
+Explanation:
+Uses Python's built-in json.tool module to parse and validate the JSON syntax in /etc/docker/daemon.json.
+
+Options:
+- -m = run library module as a script: Run the specified Python module, here json.tool.
+------------------------------------------------------------
+# sudo systemctl restart docker
+
+Explanation:
+Restarts the Docker service through systemd with root privileges.
+------------------------------------------------------------
+# sudo systemctl status docker --no-pager
+
+Explanation:
+Shows the current status of the Docker service without opening the output in a pager.
+
+Options:
+- --no-pager = disable pager output: Print the status directly in the terminal.
+------------------------------------------------------------
+# docker info
+
+Explanation:
+Displays detailed information about the Docker client, daemon, storage, registries, and runtime configuration.
+------------------------------------------------------------
+# docker info | grep -A5 "Insecure Registries"
+
+Explanation:
+Displays Docker information and then shows the line containing "Insecure Registries" plus the next five lines.
+
+Options:
+- | = shell pipe operator: Send the output of docker info to grep.
+- -A5 = --after-context=5: Print five lines after each matching line.
+------------------------------------------------------------
+# docker login 192.168.94.90:8085 -u "$NEXUS_USER"
+
+Explanation:
+Technical correction: The lesson used the placeholder <NEXUS_USER>, which is not directly executable in Bash because angle brackets are shell redirection syntax. This corrected form uses the NEXUS_USER shell variable as the Nexus username.
+
+Options:
+- -u = --username: Specify the registry username.
+- "$NEXUS_USER" = shell variable value: Use the value stored in the NEXUS_USER environment variable as the username.
+------------------------------------------------------------
+# docker login 192.168.94.90:8085 -u docker-user
+
+Explanation:
+Logs Docker in to the Nexus Registry using docker-user as the username and prompts for the password.
+
+Options:
+- -u = --username: Specify the registry username.
+------------------------------------------------------------
+# cat ~/.docker/config.json
+
+Explanation:
+Displays the current user's Docker client configuration file.
+------------------------------------------------------------
+# ls -l ~/.docker/config.json
+
+Explanation:
+Shows detailed file information for the current user's Docker configuration file.
+
+Options:
+- -l = long listing format: Show permissions, owner, group, size, timestamp, and file name.
+------------------------------------------------------------
+# sudo docker login 192.168.94.90:8085
+
+Explanation:
+Runs Docker login as root, so the registry credentials are stored for the root user's Docker configuration.
+------------------------------------------------------------
+# docker login 192.168.94.90:8085 -u docker-user -p MyPassword123
+
+Explanation:
+Logs in to the Nexus Registry using docker-user and supplies the password directly on the command line. This was shown in the lesson as a less safe login method.
+
+Options:
+- -u = --username: Specify the registry username.
+- -p = --password: Specify the registry password directly as an option value.
+------------------------------------------------------------
+# printf '%s' "$NEXUS_PASSWORD" | docker login 192.168.94.90:8085 -u "$NEXUS_USER" --password-stdin
+
+Explanation:
+Technical correction: The lesson also showed docker login --password-stdin alone as an incomplete syntax example; this complete command supplies the username, registry, and password input. It prints the Nexus password and pipes it to Docker login through standard input.
+
+Options:
+- %s = printf string format: Print the supplied value as a string.
+- "$NEXUS_PASSWORD" = shell variable value: Use the value stored in NEXUS_PASSWORD.
+- | = shell pipe operator: Send the output of printf to docker login.
+- -u = --username: Specify the registry username.
+- "$NEXUS_USER" = shell variable value: Use the value stored in NEXUS_USER as the username.
+- --password-stdin = read password from standard input: Read the registry password from stdin instead of the command line.
+------------------------------------------------------------
+# docker logout 192.168.94.90:8085
+
+Explanation:
+Logs Docker out of the Nexus Registry at 192.168.94.90:8085 and removes the stored login credentials for that registry.
+------------------------------------------------------------
+# ping -c 4 192.168.94.90
+
+Explanation:
+Sends four ICMP echo requests to 192.168.94.90 to test basic network reachability.
+
+Options:
+- -c 4 = count 4: Stop after sending four echo requests.
+------------------------------------------------------------
+# docker version
+
+Explanation:
+Displays Docker client and server version information.
+------------------------------------------------------------
+# docker login registry.example.com:5000
+
+Explanation:
+Logs Docker in to a private registry named registry.example.com on port 5000.
+------------------------------------------------------------
+# docker login nexus.example.com:8085
+
+Explanation:
+Technical correction: The lesson also showed invalid login examples that included https:// or /repository/docker-hosted. Docker login should use only the registry host name and optional port, so this is the corrected command.
+------------------------------------------------------------
