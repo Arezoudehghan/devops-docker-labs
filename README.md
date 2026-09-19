@@ -194,6 +194,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
 | 66 | Docker Healthcheck: running vs healthy, Dockerfile and Compose probes | [`production/session-66-healthcheck`](production/session-66-healthcheck/) | `DEV-2` |
+| 67 | Docker restart policies: no, on-failure, always, and unless-stopped | [`production/session-67-restart-policy`](production/session-67-restart-policy/) | `DEV-2` |
 | 71 | Simple zero-downtime Blue/Green deployment with Nginx | [`production/session-71-zero-downtime-deploy`](production/session-71-zero-downtime-deploy/) | `DEV-2` |
 
 ### Docker Swarm
