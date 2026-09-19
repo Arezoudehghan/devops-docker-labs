@@ -1,0 +1,23 @@
+stages:
+  - build
+
+variables:
+  IMAGE_NAME: "session47-app"
+  IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
+  BUILD_CONTEXT: "session47"
+
+build_image:
+  stage: build
+  tags:
+    - dev-shell
+
+  before_script:
+    - docker info
+
+  script:
+    - 'echo "Project dir: ${CI_PROJECT_DIR}"'
+    - 'echo "Image: ${IMAGE_NAME}:${IMAGE_TAG}"'
+    - docker build --tag "${IMAGE_NAME}:${IMAGE_TAG}" "${BUILD_CONTEXT}"
+    - docker image inspect "${IMAGE_NAME}:${IMAGE_TAG}" --format 'ID={{.Id}}'
+    - docker run --rm "${IMAGE_NAME}:${IMAGE_TAG}" nginx -t
+    - docker image ls "${IMAGE_NAME}"

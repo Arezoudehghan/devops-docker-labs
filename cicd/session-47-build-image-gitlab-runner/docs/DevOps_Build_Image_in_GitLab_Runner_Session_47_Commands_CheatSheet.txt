@@ -1,0 +1,539 @@
+------------------------------------------------------------
+# docker build -t myapp:1.0 .
+
+Explanation:
+Builds a Docker image from the Dockerfile in the current directory and tags it as myapp:1.0.
+
+Options:
+- -t = --tag (tag): Assigns the image name and tag.
+- . = current directory: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# id gitlab-runner
+
+Explanation:
+Shows the user ID, primary group, and supplementary groups for the gitlab-runner user.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo -u gitlab-runner -H docker info
+
+Explanation:
+Runs docker info as the gitlab-runner user and uses that user's home directory. This checks whether the runner user can access the Docker Engine.
+
+Options:
+- -u = --user (user): Runs the command as the specified user, here gitlab-runner.
+- -H = --set-home (set home): Sets HOME to the target user's home directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo usermod -aG docker gitlab-runner
+
+Explanation:
+Adds the gitlab-runner user to the docker supplementary group without removing its existing supplementary groups.
+
+Options:
+- -a = --append (append): Appends the user to the specified supplementary group list.
+- -G = --groups (groups): Specifies the supplementary groups, here docker.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl restart gitlab-runner
+
+Explanation:
+Restarts the gitlab-runner service so service-level changes can take effect.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git rev-parse --show-toplevel
+
+Explanation:
+Prints the absolute path of the top-level directory of the current Git repository.
+
+Options:
+- --show-toplevel = show top level: Prints the repository root directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd "$(git rev-parse --show-toplevel)"
+
+Explanation:
+Changes the current directory to the root of the current Git repository.
+
+Options:
+- $(...) = command substitution: Runs git rev-parse --show-toplevel and substitutes its output as the directory passed to cd.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# pwd
+
+Explanation:
+Prints the absolute path of the current working directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p session47
+
+Explanation:
+Creates the session47 directory and does not fail if the directory already exists.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and ignores an already existing directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -la session47
+
+Explanation:
+Lists all entries in session47, including hidden files, using the long listing format.
+
+Options:
+- -l = long listing format: Shows detailed file information.
+- -a = --all (all): Includes hidden entries whose names start with a dot.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > session47/index.html <<'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Docker CI/CD - Session 47</title>
+</head>
+<body>
+    <h1>Docker Image Built by GitLab Runner</h1>
+    <p>Session 47 - Docker in CI/CD</p>
+</body>
+</html>
+EOF
+
+Explanation:
+Creates or overwrites session47/index.html with the exact HTML text in the quoted here-document.
+
+Options:
+- > = output redirection: Sends cat output to session47/index.html and overwrites the file.
+- <<'EOF' = quoted here-document: Supplies the following lines to cat literally until EOF, without shell variable or command expansion.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat session47/index.html
+
+Explanation:
+Prints the contents of session47/index.html to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > session47/Dockerfile <<'EOF'
+FROM nginx:alpine
+
+COPY index.html /usr/share/nginx/html/index.html
+EOF
+
+Explanation:
+Creates or overwrites session47/Dockerfile with the exact Dockerfile content in the quoted here-document.
+
+Options:
+- > = output redirection: Sends cat output to session47/Dockerfile and overwrites the file.
+- <<'EOF' = quoted here-document: Supplies the following lines to cat literally until EOF, without shell variable or command expansion.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat session47/Dockerfile
+
+Explanation:
+Prints the contents of session47/Dockerfile to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM nginx:alpine
+
+Explanation:
+Uses nginx:alpine as the base image for the Docker image being built.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY index.html /usr/share/nginx/html/index.html
+
+Explanation:
+Copies index.html from the Docker build context into the Nginx document root inside the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t session47-app:manual session47
+
+Explanation:
+Builds the session47 Docker image from the session47 build context and tags it as session47-app:manual.
+
+Options:
+- -t = --tag (tag): Assigns the image name and tag.
+- session47 = build context: Uses the session47 directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls session47-app
+
+Explanation:
+Lists locally stored Docker images whose repository name matches session47-app.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -ltnp | grep ':18047 ' || true
+
+Explanation:
+Lists listening TCP sockets with numeric addresses and process information, filters the output for port 18047, and prevents a no-match grep result from failing the whole shell command.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -n = --numeric (numeric): Shows numeric addresses and ports without name resolution.
+- -p = --processes (processes): Shows the process using each socket when permitted.
+- | = pipeline operator: Sends the output of ss to grep.
+- || = OR operator: Runs true only if the command on the left returns a non-zero status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name session47-manual \
+  -p 18047:80 \
+  session47-app:manual
+
+Explanation:
+Starts a container from session47-app:manual in the background, names it session47-manual, and publishes host port 18047 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Assigns the container name session47-manual.
+- -p = --publish (publish): Maps host port 18047 to container port 80.
+- \ = line continuation: Continues the same shell command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps --filter name=session47-manual
+
+Explanation:
+Lists running containers and filters the result to containers whose name matches session47-manual.
+
+Options:
+- --filter = filter: Applies the name=session47-manual filter to the container list.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -fsS http://127.0.0.1:18047/
+
+Explanation:
+Requests the web page from the local service on port 18047 and prints the response body while still showing errors.
+
+Options:
+- -f = --fail (fail): Returns an error status for HTTP response codes 400 and higher and suppresses the normal error body.
+- -s = --silent (silent): Hides the progress meter and normal transfer messages.
+- -S = --show-error (show error): Shows an error message when used together with silent mode.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f session47-manual
+
+Explanation:
+Forcefully removes the session47-manual container, stopping it first if it is still running.
+
+Options:
+- -f = --force (force): Forces removal of a running container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > session47/.dockerignore <<'EOF'
+*.log
+tmp/
+EOF
+
+Explanation:
+Creates or overwrites session47/.dockerignore with patterns that exclude log files and the tmp directory from the Docker build context.
+
+Options:
+- > = output redirection: Sends cat output to session47/.dockerignore and overwrites the file.
+- <<'EOF' = quoted here-document: Supplies the following lines to cat literally until EOF, without shell variable or command expansion.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat session47/.dockerignore
+
+Explanation:
+Prints the contents of session47/.dockerignore to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > .gitlab-ci.yml <<'EOF'
+stages:
+  - build
+
+variables:
+  IMAGE_NAME: "session47-app"
+  IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
+  BUILD_CONTEXT: "session47"
+
+build_image:
+  stage: build
+  tags:
+    - dev-shell
+
+  before_script:
+    - docker info
+
+  script:
+    - 'echo "Project dir: ${CI_PROJECT_DIR}"'
+    - 'echo "Image: ${IMAGE_NAME}:${IMAGE_TAG}"'
+    - docker build --tag "${IMAGE_NAME}:${IMAGE_TAG}" "${BUILD_CONTEXT}"
+    - docker image inspect "${IMAGE_NAME}:${IMAGE_TAG}" --format 'ID={{.Id}}'
+    - docker run --rm "${IMAGE_NAME}:${IMAGE_TAG}" nginx -t
+    - docker image ls "${IMAGE_NAME}"
+EOF
+
+Explanation:
+Creates or overwrites .gitlab-ci.yml with the GitLab CI pipeline used in this lesson. The here-document writes the YAML exactly as shown.
+
+Options:
+- > = output redirection: Sends cat output to .gitlab-ci.yml and overwrites the file.
+- <<'EOF' = quoted here-document: Supplies the following YAML literally until EOF, without shell variable or command expansion.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker info
+
+Explanation:
+Shows detailed information about the Docker client and Docker Engine.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "Project dir: ${CI_PROJECT_DIR}"
+
+Explanation:
+Prints the GitLab CI project working directory stored in CI_PROJECT_DIR.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "Image: ${IMAGE_NAME}:${IMAGE_TAG}"
+
+Explanation:
+Prints the Docker image name and image tag that the pipeline will use.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build --tag "${IMAGE_NAME}:${IMAGE_TAG}" "${BUILD_CONTEXT}"
+
+Explanation:
+Builds a Docker image from BUILD_CONTEXT and assigns the tag composed from IMAGE_NAME and IMAGE_TAG.
+
+Options:
+- --tag = tag: Assigns the image name and tag.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image inspect "${IMAGE_NAME}:${IMAGE_TAG}" --format 'ID={{.Id}}'
+
+Explanation:
+Inspects the built image and prints only its image ID using a Go template.
+
+Options:
+- --format = format: Formats the output with the template ID={{.Id}}.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm "${IMAGE_NAME}:${IMAGE_TAG}" nginx -t
+
+Explanation:
+Starts a temporary container from the built image and runs the Nginx configuration test. The container is automatically removed after it exits.
+
+Options:
+- --rm = remove automatically: Removes the container when the command finishes.
+- -t = Nginx test configuration option: Tests the Nginx configuration syntax and referenced files.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls "${IMAGE_NAME}"
+
+Explanation:
+Lists locally stored Docker images whose repository name matches the value of IMAGE_NAME.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build --tag session47-app:d8d17e93 session47
+
+Explanation:
+Builds an image from the session47 build context and tags it with the example commit-based tag d8d17e93.
+
+Options:
+- --tag = tag: Assigns the image name and tag.
+- session47 = build context: Uses the session47 directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git status
+
+Explanation:
+Shows the current Git working tree and staging area status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git diff -- .gitlab-ci.yml session47/
+
+Explanation:
+Shows unstaged changes for .gitlab-ci.yml and the session47 directory.
+
+Options:
+- -- = end of options: Separates command options from the path arguments that follow.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# find session47 -maxdepth 1 -type f -print
+
+Explanation:
+Finds regular files directly inside session47 and prints each matching path.
+
+Options:
+- -maxdepth 1 = maximum depth 1: Limits the search to session47 itself and its direct entries.
+- -type f = regular file type: Matches only regular files.
+- -print = print: Prints each matched path.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git add .gitlab-ci.yml session47/
+
+Explanation:
+Stages .gitlab-ci.yml and the contents of session47 for the next Git commit.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git commit -m "Add Docker image build pipeline for session 47"
+
+Explanation:
+Creates a Git commit using the provided commit message.
+
+Options:
+- -m = --message (message): Uses the following text as the commit message.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git push
+
+Explanation:
+Pushes the current branch to its configured upstream remote branch.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git push -u origin "$(git branch --show-current)"
+
+Explanation:
+Pushes the current branch to origin and sets the pushed remote branch as the upstream branch.
+
+Options:
+- -u = --set-upstream (set upstream): Sets the remote branch as the upstream for the current local branch.
+- $(...) = command substitution: Runs git branch --show-current and substitutes the current branch name into the push command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git rev-parse --short=8 HEAD
+
+Explanation:
+Prints the first eight hexadecimal characters of the commit ID referenced by HEAD.
+
+Options:
+- --short=8 = short object name length 8: Abbreviates the object ID to eight characters.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build --no-cache -t session47-app:test session47
+
+Explanation:
+Builds session47-app:test from the session47 context without reusing cached build layers.
+
+Options:
+- --no-cache = disable build cache: Prevents reuse of cached layers during the build.
+- -t = --tag (tag): Assigns the image name and tag.
+- session47 = build context: Uses the session47 directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build --pull -t session47-app:test session47
+
+Explanation:
+Builds session47-app:test from the session47 context and checks for a newer version of referenced base images.
+
+Options:
+- --pull = always attempt to pull a newer image: Checks for updated base images before building.
+- -t = --tag (tag): Assigns the image name and tag.
+- session47 = build context: Uses the session47 directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM nginx
+
+Explanation:
+Uses the nginx image with its default tag as the base image in the Dockerfile example.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build \
+  --tag "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}" \
+  session47
+
+Explanation:
+Builds the session47 image and tags it with IMAGE_NAME plus the current GitLab short commit SHA.
+
+Options:
+- --tag = tag: Assigns the image name and tag.
+- \ = line continuation: Continues the same shell command on the next line.
+- session47 = build context: Uses the session47 directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker login
+
+Explanation:
+Starts an interactive Docker registry login using the default registry when no registry server is specified.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build .
+
+Explanation:
+Builds a Docker image using the current directory as the Docker build context.
+
+Options:
+- . = current directory: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# which docker
+
+Explanation:
+Prints the path of the docker executable that would be used from the current PATH.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo -u gitlab-runner -H which docker
+
+Explanation:
+Runs which docker as the gitlab-runner user to check whether Docker is available in that user's PATH.
+
+Options:
+- -u = --user (user): Runs the command as the specified user, here gitlab-runner.
+- -H = --set-home (set home): Sets HOME to the target user's home directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -la session47/index.html
+
+Explanation:
+Shows detailed information for session47/index.html, including hidden-entry handling if applicable.
+
+Options:
+- -l = long listing format: Shows detailed file information.
+- -a = --all (all): Includes hidden entries when listing directories.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull nginx:alpine
+
+Explanation:
+Downloads the nginx:alpine image from the configured Docker registry.
+------------------------------------------------------------

@@ -2,7 +2,7 @@
 
 [![Validate DevOps Docker Labs](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml/badge.svg)](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml)
 
-A structured collection of hands-on Docker labs covering Docker fundamentals, persistent storage, Docker Compose, networking, registry and Nexus workflows, Docker in CI/CD, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
+A structured collection of hands-on Docker labs covering Docker fundamentals, persistent storage, Docker Compose, networking, registry and Nexus workflows, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
 
 ## Lab environment
 
@@ -58,7 +58,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-44-nexus-login/
 │   └── session-45-build-server-nexus-deploy-server/
 ├── cicd/
-│   └── session-46-docker-in-pipeline/
+│   ├── session-46-docker-in-pipeline/
+│   └── session-47-build-image-gitlab-runner/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -137,6 +138,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
 | 46 | Docker's role in the CI/CD pipeline: build, test, push, pull, and deploy | [`cicd/session-46-docker-in-pipeline`](cicd/session-46-docker-in-pipeline/) | `DEV-1` + `DEV-2` |
+| 47 | Build a Docker image in GitLab Runner with a Shell executor and commit-SHA tagging | [`cicd/session-47-build-image-gitlab-runner`](cicd/session-47-build-image-gitlab-runner/) | `DEV-1` |
 
 ### Docker in Production
 
