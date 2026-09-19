@@ -73,6 +73,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-57-image-scanning-trivy/
 │   ├── session-58-gitleaks-secret-scanning/
 │   └── session-59-docker-bench-security/
+├── monitoring/
+│   └── session-60-docker-logging/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -169,6 +171,12 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 57 | Image scanning with Trivy, severity filtering, JSON reports, and CI/CD security gates | [`security/session-57-image-scanning-trivy`](security/session-57-image-scanning-trivy/) | `DEV-1` |
 | 58 | Secret scanning with Gitleaks: current files, Git history, reports, and GitLab CI security gate | [`security/session-58-gitleaks-secret-scanning`](security/session-58-gitleaks-secret-scanning/) | `DEV-1` |
 | 59 | Docker Bench Security: host/runtime audit, WARN review, hardening, and before/after evidence | [`security/session-59-docker-bench-security`](security/session-59-docker-bench-security/) | `DEV-1` |
+
+### Docker Logging and Monitoring
+
+| Session | Topic | Lab directory | Execution host |
+|---|---|---|---|
+| 60 | Docker logs, stdout/stderr, logging drivers, log rotation, and daemon logs | [`monitoring/session-60-docker-logging`](monitoring/session-60-docker-logging/) | `DEV-1` |
 
 ### Docker in Production
 
