@@ -1,0 +1,490 @@
+------------------------------------------------------------
+# docker pull nginx
+
+Explanation:
+Pulls the nginx image from the default Docker registry. Because no tag is specified, Docker uses the repository default tag.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull docker.io/library/nginx:latest
+
+Explanation:
+Pulls nginx explicitly from Docker Hub, using the library namespace and the latest tag.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker login
+
+Explanation:
+Starts an interactive login to the default Docker registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull IMAGE
+
+Explanation:
+Pulls the image identified by IMAGE from a registry to the local Docker host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker tag SOURCE TARGET
+
+Explanation:
+Creates a new TARGET reference for the existing SOURCE image without rebuilding the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push IMAGE
+
+Explanation:
+Pushes the specified local image reference to its registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull nginx:alpine
+
+Explanation:
+Pulls the nginx image with the alpine tag from the default registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker version
+
+Explanation:
+Shows Docker client and server version information.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p /opt/docker-labs/session40
+
+Explanation:
+Creates /opt/docker-labs/session40 and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Create parent directories as needed and do not fail if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cd /opt/docker-labs/session40
+
+Explanation:
+Changes the current shell directory to /opt/docker-labs/session40.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > index.html <<'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Docker Hub Session 40</title>
+</head>
+<body>
+    <h1>Docker Hub Lab - Session 40</h1>
+    <p>Image successfully pulled from Docker Hub.</p>
+</body>
+</html>
+EOF
+
+Explanation:
+Creates or overwrites index.html and writes the complete HTML document into it with a quoted here-document.
+
+Options:
+- > = output redirection: Send cat output to index.html and overwrite the file.
+- <<'EOF' = quoted here-document: Read following lines until EOF without shell expansion inside the document.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat index.html
+
+Explanation:
+Prints the contents of index.html to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat > Dockerfile <<'EOF'
+FROM nginx:alpine
+
+COPY index.html /usr/share/nginx/html/index.html
+
+EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1
+EOF
+
+Explanation:
+Creates or overwrites Dockerfile and writes the complete Dockerfile content into it with a quoted here-document.
+
+Options:
+- > = output redirection: Send cat output to Dockerfile and overwrite the file.
+- <<'EOF' = quoted here-document: Read following lines until EOF without shell expansion inside the document.
+- \ = shell line continuation: Continue the HEALTHCHECK instruction on the next physical line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat Dockerfile
+
+Explanation:
+Prints the contents of Dockerfile to standard output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM nginx:alpine
+
+Explanation:
+Sets nginx:alpine as the base image for the Docker build.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# COPY index.html /usr/share/nginx/html/index.html
+
+Explanation:
+Copies index.html from the build context to /usr/share/nginx/html/index.html inside the image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# EXPOSE 80
+
+Explanation:
+Documents that the containerized application listens on port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1
+
+Explanation:
+Defines a Docker image health check that requests the local web server and reports failure when the request fails.
+
+Options:
+- --interval=30s = health-check interval: Run the health check every 30 seconds.
+- --timeout=3s = health-check timeout: Fail an individual check if it takes longer than 3 seconds.
+- --start-period=5s = health-check start period: Give the container 5 seconds of startup time before normal failure counting.
+- --retries=3 = health-check retries: Mark the container unhealthy after 3 consecutive failures.
+- \ = shell line continuation: Continue the Dockerfile instruction on the next physical line.
+- CMD = health-check command form: Run the following command as the container health test.
+- -q = --quiet (quiet): Suppress normal wget output.
+- -O = --output-document (output document): Write downloaded data to the specified destination; '-' means standard output.
+- > = output redirection: Redirect wget standard output to /dev/null.
+- || = logical OR: Run exit 1 only if wget fails.
+- exit 1 = shell exit status: Return status code 1 to report a failed health check.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build -t session40-app:1.0 .
+
+Explanation:
+Builds an image from the Dockerfile in the current directory and tags it as session40-app:1.0.
+
+Options:
+- -t = --tag (tag): Assign the name and tag session40-app:1.0 to the built image.
+- . = build context: Use the current directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls session40-app
+
+Explanation:
+Lists local Docker images that match the session40-app repository name.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ss -ltnp | grep ':18040' || true
+
+Explanation:
+Checks whether a TCP listener is using port 18040 and keeps the overall shell command successful when no match is found.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -t = --tcp (TCP): Show TCP sockets.
+- -n = --numeric (numeric): Show numeric addresses and ports instead of resolving names.
+- -p = --processes (processes): Show the process using each socket when permitted.
+- | = pipe: Send ss output to grep.
+- || = logical OR: Run true if grep returns a non-zero status.
+- true = shell builtin: Return a successful exit status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f session40-local 2>/dev/null || true
+
+Explanation:
+Removes the session40-local container if it exists and keeps the overall shell command successful if removal fails.
+
+Options:
+- -f = --force (force): Force removal of a running container.
+- 2>/dev/null = standard-error redirection: Send file descriptor 2, standard error, to /dev/null.
+- || = logical OR: Run true if docker rm fails.
+- true = shell builtin: Return a successful exit status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name session40-local \
+  -p 18040:80 \
+  session40-app:1.0
+
+Explanation:
+Starts session40-app:1.0 as a detached container named session40-local and maps host port 18040 to container port 80.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name session40-local = container name: Assign session40-local as the container name.
+- -p = --publish (publish): Publish host port 18040 to container port 80.
+- \ = shell line continuation: Continue the command on the next physical line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps --filter name=session40-local
+
+Explanation:
+Lists running containers whose name matches session40-local.
+
+Options:
+- --filter name=session40-local = filter: Limit the result to containers matching this name filter.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl -fsS http://127.0.0.1:18040/
+
+Explanation:
+Requests the local web service on port 18040 and prints the response body when the request succeeds.
+
+Options:
+- -f = --fail (fail): Return a failure status for HTTP response codes 400 or greater.
+- -s = --silent (silent): Suppress the progress meter and normal error output.
+- -S = --show-error (show error): Show an error message when --silent is used and an error occurs.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  --format '{{.State.Health.Status}}' \
+  session40-local
+
+Explanation:
+Inspects session40-local and prints only its Docker health status.
+
+Options:
+- --format '{{.State.Health.Status}}' = format: Render the inspect result with the Go template and return the health status.
+- \ = shell line continuation: Continue the command on the next physical line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# export DOCKERHUB_USER='YOUR_DOCKERHUB_USERNAME'
+
+Explanation:
+Creates or updates DOCKERHUB_USER in the current shell and exports it to child processes.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# export HUB_REPO='docker-session40-app'
+
+Explanation:
+Creates or updates HUB_REPO in the current shell and exports it to child processes.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "$DOCKERHUB_USER"
+
+Explanation:
+Prints the current value of DOCKERHUB_USER.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "$HUB_REPO"
+
+Explanation:
+Prints the current value of HUB_REPO.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker tag \
+  session40-app:1.0 \
+  "${DOCKERHUB_USER}/${HUB_REPO}:1.0"
+
+Explanation:
+Creates a Docker Hub-ready reference for session40-app:1.0 using the current username and repository variables.
+
+Options:
+- \ = shell line continuation: Continue the command on the next physical line.
+- "${DOCKERHUB_USER}/${HUB_REPO}:1.0" = double-quoted argument: Expand both variables while keeping the result as one shell argument.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists local Docker images.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls \
+  --format 'table {{.Repository}}\t{{.Tag}}\t{{.ID}}'
+
+Explanation:
+Lists local Docker images in a custom table showing repository, tag, and image ID.
+
+Options:
+- --format 'table {{.Repository}}\t{{.Tag}}\t{{.ID}}' = format: Render the image list with the requested columns.
+- \ = shell line continuation: Continue the command on the next physical line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# read -rsp 'Docker Hub PAT: ' DOCKERHUB_TOKEN
+
+Explanation:
+Reads a Docker Hub personal access token into DOCKERHUB_TOKEN without echoing the typed characters.
+
+Options:
+- -r = raw mode: Do not treat backslashes as escape characters.
+- -s = silent mode: Do not echo typed characters.
+- -p = prompt: Display 'Docker Hub PAT: ' before reading input.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo
+
+Explanation:
+Prints a blank line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# printf '%s' "$DOCKERHUB_TOKEN" \
+  | docker login \
+      -u "$DOCKERHUB_USER" \
+      --password-stdin
+
+Explanation:
+Sends the Docker Hub token through standard input to docker login and authenticates with the username stored in DOCKERHUB_USER.
+
+Options:
+- '%s' = printf format string: Print the token exactly as a string without adding a newline.
+- \ = shell line continuation: Continue the command on the next physical line.
+- | = pipe: Send printf standard output to docker login standard input.
+- -u = --username (username): Use DOCKERHUB_USER as the registry username.
+- --password-stdin = password from standard input: Read the registry password or token from standard input.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# unset DOCKERHUB_TOKEN
+
+Explanation:
+Removes DOCKERHUB_TOKEN from the current shell.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push "${DOCKERHUB_USER}/${HUB_REPO}:1.0"
+
+Explanation:
+Pushes tag 1.0 of the configured Docker Hub repository from the local Docker host to the registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull "${DOCKERHUB_USER}/${HUB_REPO}:1.0"
+
+Explanation:
+Pulls tag 1.0 of the configured Docker Hub repository to the local Docker host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls "${DOCKERHUB_USER}/${HUB_REPO}"
+
+Explanation:
+Lists local Docker images matching the repository stored in DOCKERHUB_USER and HUB_REPO.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f session40-app 2>/dev/null || true
+
+Explanation:
+Removes the session40-app container if it exists and keeps the overall shell command successful if removal fails.
+
+Options:
+- -f = --force (force): Force removal of a running container.
+- 2>/dev/null = standard-error redirection: Send file descriptor 2, standard error, to /dev/null.
+- || = logical OR: Run true if docker rm fails.
+- true = shell builtin: Return a successful exit status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name session40-app \
+  -p 18040:80 \
+  "${DOCKERHUB_USER}/${HUB_REPO}:1.0"
+
+Explanation:
+Runs the pulled image as a detached container named session40-app and maps host port 18040 to container port 80.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name session40-app = container name: Assign session40-app as the container name.
+- -p = --publish (publish): Publish host port 18040 to container port 80.
+- \ = shell line continuation: Continue the command on the next physical line.
+- "${DOCKERHUB_USER}/${HUB_REPO}:1.0" = double-quoted argument: Expand both variables while keeping the result as one shell argument.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps --filter name=session40-app
+
+Explanation:
+Lists running containers whose name matches session40-app.
+
+Options:
+- --filter name=session40-app = filter: Limit the result to containers matching this name filter.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect \
+  --format '{{.State.Health.Status}}' \
+  session40-app
+
+Explanation:
+Inspects session40-app and prints only its Docker health status.
+
+Options:
+- --format '{{.State.Health.Status}}' = format: Render the inspect result with the Go template and return the health status.
+- \ = shell line continuation: Continue the command on the next physical line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# FROM python:3.12-slim
+
+Explanation:
+Sets python:3.12-slim as the base image for a Docker build.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# systemctl show docker \
+  --property=Environment
+
+Explanation:
+Shows systemd properties for the Docker service and limits the displayed result to the Environment property.
+
+Options:
+- --property=Environment = property filter: Show only the Environment property.
+- \ = shell line continuation: Continue the command on the next physical line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker tag app:1.0 user/app:1.0
+
+Explanation:
+Creates the user/app:1.0 reference for the existing app:1.0 image.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push session40-app:1.0
+
+Explanation:
+Attempts to push session40-app:1.0 using the registry information in that image reference. Without the intended Docker Hub namespace, it does not target the personal repository used in this lab.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker login -u user -p MySecretPassword
+
+Explanation:
+Logs in to the default Docker registry with the supplied username and password.
+
+Options:
+- -u = --username (username): Use user as the registry username.
+- -p = --password (password): Use MySecretPassword as the registry password.
+------------------------------------------------------------
