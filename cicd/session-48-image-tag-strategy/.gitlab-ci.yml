@@ -1,0 +1,18 @@
+stages:
+  - build
+
+variables:
+  NEXUS_REGISTRY: "192.0.2.10:8085"
+  IMAGE_NAME: "cicd-session48-app"
+
+build_image:
+  stage: build
+  tags:
+    - dev-shell
+
+  script:
+    - IMAGE_SHA="${NEXUS_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+    - IMAGE_BRANCH="${NEXUS_REGISTRY}/${IMAGE_NAME}:${CI_COMMIT_REF_SLUG}"
+    - docker build -t "${IMAGE_SHA}" .
+    - docker tag "${IMAGE_SHA}" "${IMAGE_BRANCH}"
+    - docker image ls "${NEXUS_REGISTRY}/${IMAGE_NAME}"
