@@ -1,0 +1,27 @@
+services:
+  app:
+    image: alpine:3.20
+    container_name: session56-secret-app
+
+    environment:
+      APP_MODE: production
+      DB_HOST: db01
+      DB_PORT: "5432"
+
+    secrets:
+      - db_password
+
+    command:
+      - sh
+      - -c
+      - |
+        echo "Application started"
+        echo "APP_MODE=$$APP_MODE"
+        echo "DB_HOST=$$DB_HOST"
+        echo "Checking secrets:"
+        ls -l /run/secrets
+        sleep 3600
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
