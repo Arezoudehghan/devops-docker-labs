@@ -62,7 +62,9 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-47-build-image-gitlab-runner/
 │   ├── session-48-image-tag-strategy/
 │   ├── session-49-push-to-nexus-from-pipeline/
-│   └── session-50-deploy-with-ssh/
+│   ├── session-50-deploy-with-ssh/
+│   ├── session-51-simple-rollback-previous-tag/
+│   └── session-52-complete-gitlab-ci-yml-for-docker/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -145,6 +147,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 48 | Docker image tag strategy with commit SHA and branch/ref tags | [`cicd/session-48-image-tag-strategy`](cicd/session-48-image-tag-strategy/) | `DEV-1` |
 | 49 | Push Docker images to Nexus from a GitLab pipeline | [`cicd/session-49-push-to-nexus-from-pipeline`](cicd/session-49-push-to-nexus-from-pipeline/) | `DEV-1` |
 | 50 | Deploy a commit-tagged Docker image to a remote server over SSH | [`cicd/session-50-deploy-with-ssh`](cicd/session-50-deploy-with-ssh/) | `DEV-1` + `DEV-2` |
+| 51 | Roll back to a previous known-good Docker image tag | [`cicd/session-51-simple-rollback-previous-tag`](cicd/session-51-simple-rollback-previous-tag/) | `DEV-1` + `DEV-2` |
+| 52 | Complete GitLab CI/CD pipeline for Docker build, test, push, deploy, verify, and rollback | [`cicd/session-52-complete-gitlab-ci-yml-for-docker`](cicd/session-52-complete-gitlab-ci-yml-for-docker/) | `DEV-1` + `DEV-2` |
 
 ### Docker in Production
 
