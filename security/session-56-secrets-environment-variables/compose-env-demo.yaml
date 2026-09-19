@@ -1,0 +1,15 @@
+services:
+  app:
+    image: alpine:3.20
+    container_name: session56-env-app
+
+    environment:
+      APP_MODE: ${APP_MODE}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+    command:
+      - sh
+      - -c
+      - |
+        echo "Application started"
+        sleep 3600
