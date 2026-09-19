@@ -1,0 +1,196 @@
+------------------------------------------------------------
+# uname -r
+
+Explanation:
+Shows the kernel release of the current Linux system.
+
+Options:
+- -r = --kernel-release (kernel release): Prints the kernel release version.
+------------------------------------------------------------
+# docker run --rm python:3.12-slim uname -r
+
+Explanation:
+Starts a temporary container from the python:3.12-slim image and prints the kernel release seen inside the container. The container is removed automatically after the command finishes.
+
+Options:
+- --rm = automatically remove the container: Deletes the container when its process exits.
+- python:3.12-slim = image reference: Uses the python image with the 3.12-slim tag.
+- -r = --kernel-release (kernel release): Tells uname to print the kernel release.
+------------------------------------------------------------
+# docker run --rm ubuntu cat /etc/os-release
+
+Explanation:
+Starts a temporary Ubuntu container and displays the operating-system identification file from inside the container. The container is removed automatically when the command finishes.
+
+Options:
+- --rm = automatically remove the container: Deletes the container when its process exits.
+- ubuntu = image reference: Uses the Ubuntu image.
+- /etc/os-release = file argument: Specifies the OS identification file that cat reads.
+------------------------------------------------------------
+# docker run -d \
+  --name sec53-demo \
+  python:3.12-slim \
+  sleep infinity
+
+Explanation:
+Starts a container named sec53-demo in the background and keeps it running with sleep infinity.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name sec53-demo = container name: Assigns the name sec53-demo to the container.
+- python:3.12-slim = image reference: Uses the python image with the 3.12-slim tag.
+- infinity = sleep argument: Keeps the sleep process running indefinitely.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker exec sec53-demo \
+  sh -c 'cat /proc/1/status | head'
+
+Explanation:
+Runs a shell command inside sec53-demo to read PID 1 status information and show only the first lines.
+
+Options:
+- -c = command string: Tells sh to execute the following quoted string as a command.
+- | = pipe operator: Sends the output of cat to head.
+- /proc/1/status = file argument: Reads the status file for PID 1 inside the container.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker inspect \
+  --format '{{.State.Pid}}' \
+  sec53-demo
+
+Explanation:
+Displays the host PID of the main process running inside the sec53-demo container.
+
+Options:
+- --format '{{.State.Pid}}' = output format: Uses a Go template to print only the container State.Pid value.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# PID=$(docker inspect \
+  --format '{{.State.Pid}}' \
+  sec53-demo)
+
+Explanation:
+Runs docker inspect and stores the returned container PID in the shell variable PID.
+
+Options:
+- --format '{{.State.Pid}}' = output format: Uses a Go template to print only the container State.Pid value.
+- $(...) = command substitution: Executes the command inside the parentheses and substitutes its output.
+- PID= = shell variable assignment: Stores the substituted output in the PID variable.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# ps -fp "$PID"
+
+Explanation:
+Shows full process information for the process ID stored in the PID shell variable.
+
+Options:
+- -f = --full (full): Uses the full-format process listing.
+- -p = --pid (process ID): Selects the process whose PID is provided.
+- "$PID" = variable value: Expands the PID variable while preserving it as one shell argument.
+------------------------------------------------------------
+# docker exec sec53-demo id
+
+Explanation:
+Runs id inside the sec53-demo container to show the current user ID and group IDs.
+------------------------------------------------------------
+# docker info \
+  --format '{{json .SecurityOptions}}'
+
+Explanation:
+Displays Docker security options in JSON-formatted output.
+
+Options:
+- --format '{{json .SecurityOptions}}' = output format: Uses Docker's Go-template formatting and the json helper to print SecurityOptions.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# ls -l /var/run/docker.sock
+
+Explanation:
+Shows long-format file information for the Docker daemon Unix socket.
+
+Options:
+- -l = long listing format: Displays detailed file information such as permissions, owner, group, size, and name.
+- /var/run/docker.sock = path argument: Specifies the Docker Unix socket file.
+------------------------------------------------------------
+# id gitlab-runner
+
+Explanation:
+Shows the user ID, primary group ID, and supplementary groups for the gitlab-runner user.
+------------------------------------------------------------
+# getent group docker
+
+Explanation:
+Queries the configured system databases and displays the docker group entry.
+------------------------------------------------------------
+# docker run --rm \
+  --mount type=bind,src=/,dst=/host,readonly \
+  python:3.12-slim \
+  sh -c 'ls -ld /host /host/etc /host/var'
+
+Explanation:
+Starts a temporary container with the host root filesystem bind-mounted read-only at /host, then lists selected mounted paths.
+
+Options:
+- --rm = automatically remove the container: Deletes the container when its process exits.
+- --mount type=bind,src=/,dst=/host,readonly = mount specification: Creates a read-only bind mount from host / to container /host.
+- type=bind = mount type value: Selects a bind mount.
+- src=/ = source value: Uses the host root directory as the mount source.
+- dst=/host = destination value: Mounts the source at /host inside the container.
+- readonly = read-only mount setting: Prevents writes through this mount.
+- -c = command string: Tells sh to execute the following quoted string as a command.
+- -l = long listing format: Tells ls to use the long listing format.
+- -d = --directory (directory): Tells ls to list the directory entries themselves instead of their contents.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker run -d \
+  --name sec53-limit \
+  --memory=128m \
+  --cpus=0.5 \
+  python:3.12-slim \
+  sleep infinity
+
+Explanation:
+Starts sec53-limit in the background with memory and CPU limits and keeps it running with sleep infinity.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name sec53-limit = container name: Assigns the name sec53-limit to the container.
+- --memory=128m = memory limit: Limits container memory to 128 megabytes.
+- --cpus=0.5 = CPU limit: Limits the container to the equivalent of half of one CPU.
+- python:3.12-slim = image reference: Uses the python image with the 3.12-slim tag.
+- infinity = sleep argument: Keeps the sleep process running indefinitely.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker inspect \
+  --format 'Memory={{.HostConfig.Memory}} NanoCPUs={{.HostConfig.NanoCpus}}' \
+  sec53-limit
+
+Explanation:
+Displays the configured memory value and NanoCPUs value for the sec53-limit container.
+
+Options:
+- --format 'Memory={{.HostConfig.Memory}} NanoCPUs={{.HostConfig.NanoCpus}}' = output format: Uses a Go template to print the HostConfig.Memory and HostConfig.NanoCpus fields.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker rm -f \
+  sec53-demo \
+  sec53-limit
+
+Explanation:
+Forcefully removes the sec53-demo and sec53-limit containers.
+
+Options:
+- -f = --force (force): Forces removal of running containers.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker ps -a \
+  --filter name=sec53
+
+Explanation:
+Lists all containers whose names match the sec53 filter.
+
+Options:
+- -a = --all (all): Shows all containers, including stopped containers.
+- --filter name=sec53 = filter: Limits the output to containers whose names match sec53.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
