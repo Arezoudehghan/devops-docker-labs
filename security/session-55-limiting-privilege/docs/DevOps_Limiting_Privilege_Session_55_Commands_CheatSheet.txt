@@ -1,0 +1,340 @@
+------------------------------------------------------------
+# docker run --rm ubuntu:24.04 id
+
+Explanation:
+Runs an Ubuntu 24.04 container, executes `id` inside it, and removes the container automatically when it exits.
+
+Options:
+- --rm = automatically remove the container when it exits.
+------------------------------------------------------------
+# docker run --rm --privileged ubuntu:24.04 id
+
+Explanation:
+Runs an Ubuntu 24.04 container in privileged mode and executes `id` inside it.
+
+Options:
+- --rm = automatically remove the container when it exits.
+- --privileged = give the container extended privileges and broad device access.
+------------------------------------------------------------
+# mkdir -p /opt/docker-labs/session55
+
+Explanation:
+Creates the `/opt/docker-labs/session55` directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): create parent directories as needed and do not report an error if the directory already exists.
+------------------------------------------------------------
+# cd /opt/docker-labs/session55
+
+Explanation:
+Changes the current shell directory to `/opt/docker-labs/session55`.
+------------------------------------------------------------
+# docker pull ubuntu:24.04
+
+Explanation:
+Downloads the `ubuntu:24.04` image from the configured Docker registry.
+------------------------------------------------------------
+# docker images ubuntu:24.04
+
+Explanation:
+Lists local Docker images that match the `ubuntu:24.04` repository and tag.
+------------------------------------------------------------
+# docker run --rm \
+  ubuntu:24.04 \
+  ip link add dummy0 type dummy
+
+Explanation:
+Runs an Ubuntu 24.04 container and asks the `ip` command inside it to create a dummy network interface named `dummy0`.
+
+Options:
+- --rm = automatically remove the container when it exits.
+------------------------------------------------------------
+# docker run --rm \
+  --privileged \
+  ubuntu:24.04 \
+  ip link add dummy0 type dummy
+
+Explanation:
+Runs the same network-interface creation test in a privileged Ubuntu 24.04 container.
+
+Options:
+- --rm = automatically remove the container when it exits.
+- --privileged = give the container extended privileges and broad device access.
+------------------------------------------------------------
+# docker run --rm \
+  --privileged \
+  ubuntu:24.04 \
+  sh -c 'ip link add dummy0 type dummy && ip link show dummy0'
+
+Explanation:
+Runs a privileged container, creates the `dummy0` interface, and then displays it.
+
+Options:
+- --rm = automatically remove the container when it exits.
+- --privileged = give the container extended privileges and broad device access.
+- -c = command string for `sh`: execute the following quoted string as shell commands.
+- && = shell AND operator: run the second command only if the first command succeeds.
+------------------------------------------------------------
+# docker run --rm \
+  --cap-add=NET_ADMIN \
+  ubuntu:24.04 \
+  sh -c 'ip link add dummy0 type dummy && ip link show dummy0'
+
+Explanation:
+Runs a container with only the `NET_ADMIN` capability added, then creates and displays the `dummy0` interface.
+
+Options:
+- --rm = automatically remove the container when it exits.
+- --cap-add=NET_ADMIN = add the `NET_ADMIN` Linux capability to the container.
+- -c = command string for `sh`: execute the following quoted string as shell commands.
+- && = shell AND operator: run the second command only if the first command succeeds.
+------------------------------------------------------------
+# docker run --rm \
+  --cap-drop=CHOWN \
+  ubuntu:24.04 \
+  sh -c 'touch /tmp/test && chown 1000:1000 /tmp/test'
+
+Explanation:
+Runs a container with the `CHOWN` capability removed, creates `/tmp/test`, and then attempts to change its owner.
+
+Options:
+- --rm = automatically remove the container when it exits.
+- --cap-drop=CHOWN = remove the `CHOWN` Linux capability from the container.
+- -c = command string for `sh`: execute the following quoted string as shell commands.
+- && = shell AND operator: run the second command only if the first command succeeds.
+- 1000:1000 = target numeric UID and GID used by `chown`.
+------------------------------------------------------------
+# docker run --rm \
+  --cap-drop=ALL \
+  ubuntu:24.04 \
+  sh -c 'touch /tmp/test && chown 1000:1000 /tmp/test'
+
+Explanation:
+Runs a container with all Linux capabilities removed, creates `/tmp/test`, and then attempts to change its owner.
+
+Options:
+- --rm = automatically remove the container when it exits.
+- --cap-drop=ALL = remove all Linux capabilities from the container.
+- -c = command string for `sh`: execute the following quoted string as shell commands.
+- && = shell AND operator: run the second command only if the first command succeeds.
+- 1000:1000 = target numeric UID and GID used by `chown`.
+------------------------------------------------------------
+# docker run --rm \
+  --cap-drop=ALL \
+  --cap-add=CHOWN \
+  ubuntu:24.04 \
+  sh -c 'touch /tmp/test && chown 1000:1000 /tmp/test && ls -ln /tmp/test'
+
+Explanation:
+Runs a container with all capabilities removed except `CHOWN`, then creates the file, changes its owner, and lists it using numeric IDs.
+
+Options:
+- --rm = automatically remove the container when it exits.
+- --cap-drop=ALL = remove all Linux capabilities from the container.
+- --cap-add=CHOWN = add the `CHOWN` Linux capability back to the container.
+- -c = command string for `sh`: execute the following quoted string as shell commands.
+- && = shell AND operator: run the next command only if the previous command succeeds.
+- 1000:1000 = target numeric UID and GID used by `chown`.
+- -l = long listing format for `ls`.
+- -n = --numeric-uid-gid: show numeric user and group IDs instead of names.
+------------------------------------------------------------
+# docker run --rm \
+  ubuntu:24.04 \
+  sh -c 'grep NoNewPrivs /proc/1/status'
+
+Explanation:
+Runs a temporary Ubuntu container and reads the `NoNewPrivs` field from PID 1 status information.
+
+Options:
+- --rm = automatically remove the container when it exits.
+- -c = command string for `sh`: execute the following quoted string as a shell command.
+------------------------------------------------------------
+# docker run --rm \
+  --security-opt no-new-privileges=true \
+  ubuntu:24.04 \
+  sh -c 'grep NoNewPrivs /proc/1/status'
+
+Explanation:
+Runs a temporary Ubuntu container with `no-new-privileges` enabled and checks the kernel status field for PID 1.
+
+Options:
+- --rm = automatically remove the container when it exits.
+- --security-opt no-new-privileges=true = set the container security option that prevents processes from gaining new privileges.
+- -c = command string for `sh`: execute the following quoted string as a shell command.
+------------------------------------------------------------
+# docker run -d \
+  --name session55-secure \
+  --cap-drop=ALL \
+  --cap-add=CHOWN \
+  --security-opt no-new-privileges=true \
+  ubuntu:24.04 \
+  sleep infinity
+
+Explanation:
+Starts a long-running detached container named `session55-secure` with all capabilities removed except `CHOWN` and with privilege escalation blocked.
+
+Options:
+- -d = --detach (detach): run the container in the background.
+- --name session55-secure = assign the container name `session55-secure`.
+- --cap-drop=ALL = remove all Linux capabilities from the container.
+- --cap-add=CHOWN = add only the `CHOWN` Linux capability.
+- --security-opt no-new-privileges=true = prevent processes from gaining new privileges.
+------------------------------------------------------------
+# docker inspect session55-secure \
+  --format 'Privileged={{.HostConfig.Privileged}}'
+
+Explanation:
+Inspects `session55-secure` and prints only its privileged-mode setting.
+
+Options:
+- --format 'Privileged={{.HostConfig.Privileged}}' = format the inspect output with a Go template and display the `HostConfig.Privileged` value.
+------------------------------------------------------------
+# docker inspect session55-secure \
+  --format 'CapAdd={{json .HostConfig.CapAdd}}'
+
+Explanation:
+Inspects `session55-secure` and prints the capabilities added to the container.
+
+Options:
+- --format 'CapAdd={{json .HostConfig.CapAdd}}' = format the inspect output and serialize `HostConfig.CapAdd` as JSON.
+------------------------------------------------------------
+# docker inspect session55-secure \
+  --format 'CapDrop={{json .HostConfig.CapDrop}}'
+
+Explanation:
+Inspects `session55-secure` and prints the capabilities removed from the container.
+
+Options:
+- --format 'CapDrop={{json .HostConfig.CapDrop}}' = format the inspect output and serialize `HostConfig.CapDrop` as JSON.
+------------------------------------------------------------
+# docker inspect session55-secure \
+  --format 'SecurityOpt={{json .HostConfig.SecurityOpt}}'
+
+Explanation:
+Inspects `session55-secure` and prints its configured Docker security options.
+
+Options:
+- --format 'SecurityOpt={{json .HostConfig.SecurityOpt}}' = format the inspect output and serialize `HostConfig.SecurityOpt` as JSON.
+------------------------------------------------------------
+# docker exec session55-secure \
+  sh -c 'grep NoNewPrivs /proc/1/status'
+
+Explanation:
+Executes a shell inside the running `session55-secure` container and checks the `NoNewPrivs` status of PID 1.
+
+Options:
+- -c = command string for `sh`: execute the following quoted string as a shell command.
+------------------------------------------------------------
+# docker exec session55-secure \
+  ip link add dummy55 type dummy
+
+Explanation:
+Executes `ip link add` inside `session55-secure` to attempt to create a dummy network interface named `dummy55`.
+------------------------------------------------------------
+# nano compose.yaml
+
+Explanation:
+Opens the `compose.yaml` file in the Nano text editor.
+------------------------------------------------------------
+# sleep infinity
+
+Explanation:
+Keeps a process running indefinitely and is used as the container command in the Compose configuration.
+------------------------------------------------------------
+# docker compose config
+
+Explanation:
+Parses and renders the effective Docker Compose configuration so the Compose file can be validated.
+------------------------------------------------------------
+# docker compose up -d
+
+Explanation:
+Creates and starts the services defined in the Compose file in the background.
+
+Options:
+- -d = --detach (detach): run the Compose services in the background.
+------------------------------------------------------------
+# docker compose ps
+
+Explanation:
+Lists the containers and current status of services in the active Docker Compose project.
+------------------------------------------------------------
+# docker inspect session55-compose-secure \
+  --format 'Privileged={{.HostConfig.Privileged}}'
+
+Explanation:
+Inspects `session55-compose-secure` and prints only its privileged-mode setting.
+
+Options:
+- --format 'Privileged={{.HostConfig.Privileged}}' = format the inspect output with a Go template and display the `HostConfig.Privileged` value.
+------------------------------------------------------------
+# docker inspect session55-compose-secure \
+  --format 'CapDrop={{json .HostConfig.CapDrop}}'
+
+Explanation:
+Inspects `session55-compose-secure` and prints the capabilities removed from the container.
+
+Options:
+- --format 'CapDrop={{json .HostConfig.CapDrop}}' = format the inspect output and serialize `HostConfig.CapDrop` as JSON.
+------------------------------------------------------------
+# docker inspect session55-compose-secure \
+  --format 'CapAdd={{json .HostConfig.CapAdd}}'
+
+Explanation:
+Inspects `session55-compose-secure` and prints the capabilities added to the container.
+
+Options:
+- --format 'CapAdd={{json .HostConfig.CapAdd}}' = format the inspect output and serialize `HostConfig.CapAdd` as JSON.
+------------------------------------------------------------
+# docker inspect session55-compose-secure \
+  --format 'SecurityOpt={{json .HostConfig.SecurityOpt}}'
+
+Explanation:
+Inspects `session55-compose-secure` and prints its configured Docker security options.
+
+Options:
+- --format 'SecurityOpt={{json .HostConfig.SecurityOpt}}' = format the inspect output and serialize `HostConfig.SecurityOpt` as JSON.
+------------------------------------------------------------
+# docker exec session55-compose-secure \
+  sh -c 'grep NoNewPrivs /proc/1/status'
+
+Explanation:
+Executes a shell inside `session55-compose-secure` and checks the `NoNewPrivs` status of PID 1.
+
+Options:
+- -c = command string for `sh`: execute the following quoted string as a shell command.
+------------------------------------------------------------
+# docker exec session55-compose-secure \
+  sh -c 'touch /tmp/test && chown 1000:1000 /tmp/test && ls -ln /tmp/test'
+
+Explanation:
+Creates `/tmp/test` inside the Compose container, changes its numeric owner and group, and displays the result.
+
+Options:
+- -c = command string for `sh`: execute the following quoted string as shell commands.
+- && = shell AND operator: run the next command only if the previous command succeeds.
+- 1000:1000 = target numeric UID and GID used by `chown`.
+- -l = long listing format for `ls`.
+- -n = --numeric-uid-gid: show numeric user and group IDs instead of names.
+------------------------------------------------------------
+# docker exec session55-compose-secure \
+  ip link add dummy55 type dummy
+
+Explanation:
+Executes `ip link add` inside `session55-compose-secure` to attempt to create a dummy network interface named `dummy55`.
+------------------------------------------------------------
+# docker compose down
+
+Explanation:
+Stops and removes the containers and network created by the current Docker Compose project.
+------------------------------------------------------------
+# docker rm -f session55-secure 2>/dev/null || true
+
+Explanation:
+Force-removes `session55-secure`, hides any error message, and makes the overall shell command succeed even if the removal fails.
+
+Options:
+- -f = --force (force): force removal of the running container by sending it a termination signal first.
+- 2>/dev/null = redirect file descriptor 2, standard error, to `/dev/null`.
+- || = shell OR operator: run `true` only if `docker rm` fails.
+------------------------------------------------------------
