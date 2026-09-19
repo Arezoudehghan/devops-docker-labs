@@ -1,0 +1,57 @@
+stages:
+  - deploy
+
+variables:
+  NEXUS_REGISTRY: "192.0.2.10:8085"
+  IMAGE_NAME: "cicd-session2-app"
+  DEPLOY_HOST: "192.0.2.20"
+  DEPLOY_USER: "deploy"
+  DEPLOY_PORT: "8088"
+  CONTAINER_NAME: "cicd-session2-app"
+
+rollback_production:
+  stage: deploy
+
+  tags:
+    - dev-shell
+
+  when: manual
+
+  allow_failure: false
+
+  script:
+    - |
+      if [ -z "${ROLLBACK_TAG:-}" ]; then
+        echo "ERROR: ROLLBACK_TAG is required"
+        exit 1
+      fi
+
+    - |
+      case "${ROLLBACK_TAG}" in
+        *[!A-Za-z0-9_.-]*)
+          echo "ERROR: Invalid ROLLBACK_TAG"
+          exit 1
+          ;;
+      esac
+
+    - |
+      ROLLBACK_IMAGE="${NEXUS_REGISTRY}/${IMAGE_NAME}:${ROLLBACK_TAG}"
+      echo "Rollback image: ${ROLLBACK_IMAGE}"
+
+    - chmod 600 "${SSH_PRIVATE_KEY}"
+
+    - |
+      printf '%s' "${NEXUS_PASSWORD}" |
+      ssh         -i "${SSH_PRIVATE_KEY}"         -o UserKnownHostsFile="${SSH_KNOWN_HOSTS}"         -o StrictHostKeyChecking=yes         "${DEPLOY_USER}@${DEPLOY_HOST}"         "docker login '${NEXUS_REGISTRY}' -u '${NEXUS_USER}' --password-stdin"
+
+    - |
+      ssh         -i "${SSH_PRIVATE_KEY}"         -o UserKnownHostsFile="${SSH_KNOWN_HOSTS}"         -o StrictHostKeyChecking=yes         "${DEPLOY_USER}@${DEPLOY_HOST}"         "docker pull '${ROLLBACK_IMAGE}'"
+
+    - |
+      ssh         -i "${SSH_PRIVATE_KEY}"         -o UserKnownHostsFile="${SSH_KNOWN_HOSTS}"         -o StrictHostKeyChecking=yes         "${DEPLOY_USER}@${DEPLOY_HOST}"         "docker rm -f '${CONTAINER_NAME}' || true"
+
+    - |
+      ssh         -i "${SSH_PRIVATE_KEY}"         -o UserKnownHostsFile="${SSH_KNOWN_HOSTS}"         -o StrictHostKeyChecking=yes         "${DEPLOY_USER}@${DEPLOY_HOST}"         "docker run -d         --name '${CONTAINER_NAME}'         --restart unless-stopped         -p '${DEPLOY_PORT}:8000'         '${ROLLBACK_IMAGE}'"
+
+    - |
+      curl         --fail         --silent         --show-error         --retry 5         --retry-delay 2         "http://${DEPLOY_HOST}:${DEPLOY_PORT}/"
