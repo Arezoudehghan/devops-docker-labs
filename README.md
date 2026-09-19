@@ -209,7 +209,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 74 | Swarm Service, Replica, Overlay Network, routing mesh, scaling, and self-healing | [`swarm/session-74-service-replica-overlay-network`](swarm/session-74-service-replica-overlay-network/) | `DEV-1` + `DEV-2` |
 | 73 | Docker Swarm introduction: manager, worker, services, tasks, desired state, scaling, self-healing, and routing mesh | [`swarm/session-73-docker-swarm-intro`](swarm/session-73-docker-swarm-intro/) | `DEV-1` + `DEV-2` |
 | 75 | Swarm rolling update and rollback | [`swarm/session-75-swarm-rolling-update`](swarm/session-75-swarm-rolling-update/) | `DEV-1` + `DEV-2` |
-| 76 | Docker Compose vs Docker Swarm | [`swarm/session-76-compose-vs-swarm`](swarm/session-76-compose-vs-swarm/) | `DEV-1` + `DEV-2` |
+| 76 | Docker Compose vs Docker Swarm | [`swarm/session-76-compose-vs-swarm`](swarm/session-76-compose-vs-swarm/) | `DEV-1` + `DEV-2` |\n| 78 | Docker to Kubernetes mindset with a two-node K3s lab | [`swarm/session-78-docker-to-kubernetes-mindset`](swarm/session-78-docker-to-kubernetes-mindset/) | `DEV-1` + `DEV-2` |
 | 77 | Why learn Kubernetes after Docker? Desired state, self-healing, and orchestration mindset | [`swarm/session-77-why-kubernetes`](swarm/session-77-why-kubernetes/) | `DEV-1` + `DEV-2` |
 
 Each lab is isolated in its own directory and contains the files and documentation needed for that scenario.
