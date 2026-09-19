@@ -1,0 +1,282 @@
+------------------------------------------------------------
+# docker build -t myapp:1.0 .
+
+Explanation:
+Builds a Docker image from the Dockerfile in the current directory and tags it as myapp:1.0.
+
+Options:
+- -t = --tag (tag): Assigns the name and tag myapp:1.0 to the built image.
+- . = build context: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists Docker images stored on the local Docker host.
+------------------------------------------------------------
+# docker run -d --name test-app -p 18046:80 myapp:a82fd19
+
+Explanation:
+Starts a container named test-app from myapp:a82fd19 and publishes the application on host port 18046.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Sets the container name to test-app.
+- -p = --publish (publish): Maps host port 18046 to container port 80.
+------------------------------------------------------------
+# curl -f http://127.0.0.1:18046/
+
+Explanation:
+Requests the application on local port 18046 and returns a failure status if the HTTP request fails.
+
+Options:
+- -f = --fail (fail): Makes curl fail on HTTP response codes 400 or greater without printing the response body.
+------------------------------------------------------------
+# docker build -t myapp:${CI_COMMIT_SHORT_SHA} .
+
+Explanation:
+Builds a Docker image and uses the GitLab short commit SHA as the image tag for traceability.
+
+Options:
+- -t = --tag (tag): Assigns the image name myapp and the tag expanded from ${CI_COMMIT_SHORT_SHA}.
+- ${CI_COMMIT_SHORT_SHA} = shell variable expansion: Inserts the current value of the GitLab CI/CD variable.
+- . = build context: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/myapp:b222222
+
+Explanation:
+Downloads the b222222 version of the myapp image from the Nexus Docker registry.
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/myapp:a82fd19
+
+Explanation:
+Downloads the a82fd19 version of the myapp image from the Nexus Docker registry.
+------------------------------------------------------------
+# docker run -d \
+  --name myapp \
+  --restart unless-stopped \
+  -p 8088:80 \
+  192.168.94.90:8085/myapp:a82fd19
+
+Explanation:
+Starts the registry image as a background container named myapp, publishes it on port 8088, and applies an automatic restart policy.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Sets the container name to myapp.
+- --restart = restart policy: Uses unless-stopped, which restarts the container automatically unless it was explicitly stopped.
+- -p = --publish (publish): Maps host port 8088 to container port 80.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# mkdir -p /opt/docker-labs/session46
+
+Explanation:
+Creates the /opt/docker-labs/session46 directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and does not report an error if the directory already exists.
+------------------------------------------------------------
+# cd /opt/docker-labs/session46
+
+Explanation:
+Changes the current shell directory to /opt/docker-labs/session46.
+------------------------------------------------------------
+# cat > index.html <<'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CI/CD Session 46</title>
+</head>
+<body>
+    <h1>Docker in CI/CD Pipeline</h1>
+    <p>Session 46 is working.</p>
+</body>
+</html>
+EOF
+
+Explanation:
+Writes the complete HTML document into index.html by using a quoted here-document.
+
+Options:
+- > = shell output redirection: Creates or overwrites index.html with the command output.
+- <<'EOF' = quoted here-document redirection: Supplies the following lines to cat until the final EOF; quoting prevents shell expansion inside the document.
+------------------------------------------------------------
+# cat > Dockerfile <<'EOF'
+FROM nginx:alpine
+
+COPY index.html /usr/share/nginx/html/index.html
+
+HEALTHCHECK --interval=5s --timeout=2s --start-period=2s --retries=3 \
+  CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1
+EOF
+
+Explanation:
+Writes the complete Dockerfile used by this lab into a file named Dockerfile.
+
+Options:
+- > = shell output redirection: Creates or overwrites Dockerfile with the command output.
+- <<'EOF' = quoted here-document redirection: Supplies the following lines to cat until the final EOF; quoting prevents shell expansion inside the document.
+------------------------------------------------------------
+# FROM nginx:alpine
+
+Explanation:
+Uses nginx:alpine as the base image for the Docker image.
+------------------------------------------------------------
+# COPY index.html /usr/share/nginx/html/index.html
+
+Explanation:
+Copies index.html from the build context into the Nginx web root inside the image.
+------------------------------------------------------------
+# HEALTHCHECK --interval=5s --timeout=2s --start-period=2s --retries=3 \
+  CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1
+
+Explanation:
+Defines a Docker health check that requests the local Nginx page and marks the check as failed when the request fails.
+
+Options:
+- --interval=5s = health-check interval: Runs the health check every 5 seconds.
+- --timeout=2s = health-check timeout: Allows each health check up to 2 seconds to finish.
+- --start-period=2s = start period: Gives the container 2 seconds of startup time before health-check failures count normally.
+- --retries=3 = retry count: Marks the container unhealthy after 3 consecutive failed checks.
+- \ = Dockerfile line continuation: Continues the HEALTHCHECK instruction on the next line.
+- -q = --quiet (quiet): Makes wget suppress normal output.
+- -O- = --output-document=- (output document): Sends the downloaded content to standard output instead of a file.
+- > = shell output redirection: Sends standard output to /dev/null.
+- || = shell OR operator: Runs exit 1 only if wget fails.
+------------------------------------------------------------
+# docker build -t cicd-session46-app:local .
+
+Explanation:
+Builds the lab Docker image from the current directory and tags it as cicd-session46-app:local.
+
+Options:
+- -t = --tag (tag): Assigns the image name and tag cicd-session46-app:local.
+- . = build context: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+# docker image ls cicd-session46-app
+
+Explanation:
+Lists local Docker images whose repository name matches cicd-session46-app.
+------------------------------------------------------------
+# docker run -d \
+  --name s46-test \
+  -p 18046:80 \
+  cicd-session46-app:local
+
+Explanation:
+Starts a temporary test container from the locally built image and publishes it on host port 18046.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Sets the container name to s46-test.
+- -p = --publish (publish): Maps host port 18046 to container port 80.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# sleep 7
+
+Explanation:
+Pauses the shell for 7 seconds so the container health check has time to run.
+------------------------------------------------------------
+# docker inspect \
+  --format='{{.State.Health.Status}}' \
+  s46-test
+
+Explanation:
+Inspects the s46-test container and prints only its Docker health status.
+
+Options:
+- --format = output format: Uses the Go template {{.State.Health.Status}} to select only the health status field.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker rm -f s46-test
+
+Explanation:
+Removes the temporary s46-test container even if it is still running.
+
+Options:
+- -f = --force (force): Forces removal of the running container.
+------------------------------------------------------------
+# export REGISTRY=192.168.94.90:8085
+
+Explanation:
+Sets and exports the REGISTRY environment variable with the Nexus Docker registry address.
+------------------------------------------------------------
+# export IMAGE=cicd-session46-app
+
+Explanation:
+Sets and exports the IMAGE environment variable with the Docker image repository name.
+------------------------------------------------------------
+# export TAG=s46-v1
+
+Explanation:
+Sets and exports the TAG environment variable with the image version tag s46-v1.
+------------------------------------------------------------
+# docker tag \
+  ${IMAGE}:local \
+  ${REGISTRY}/${IMAGE}:${TAG}
+
+Explanation:
+Creates a new registry-qualified tag for the local image by expanding the IMAGE, REGISTRY, and TAG variables.
+
+Options:
+- ${IMAGE} = shell variable expansion: Inserts the current value of IMAGE.
+- ${REGISTRY} = shell variable expansion: Inserts the current value of REGISTRY.
+- ${TAG} = shell variable expansion: Inserts the current value of TAG.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker push \
+  ${REGISTRY}/${IMAGE}:${TAG}
+
+Explanation:
+Uploads the tagged Docker image to the Nexus Docker registry.
+
+Options:
+- ${REGISTRY} = shell variable expansion: Inserts the current registry address.
+- ${IMAGE} = shell variable expansion: Inserts the current image repository name.
+- ${TAG} = shell variable expansion: Inserts the current image tag.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker pull \
+  192.168.94.90:8085/cicd-session46-app:s46-v1
+
+Explanation:
+Downloads the s46-v1 application image from the Nexus Docker registry.
+
+Options:
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker rm -f cicd-session46-app 2>/dev/null || true
+
+Explanation:
+Removes the existing cicd-session46-app container if it exists and prevents the command sequence from failing when removal reports an error.
+
+Options:
+- -f = --force (force): Forces removal of the container if it is running.
+- 2> = standard-error redirection: Sends file descriptor 2, standard error, to /dev/null.
+- || = shell OR operator: Runs true only if docker rm returns a non-zero status.
+------------------------------------------------------------
+# docker run -d \
+  --name cicd-session46-app \
+  --restart unless-stopped \
+  -p 18046:80 \
+  192.168.94.90:8085/cicd-session46-app:s46-v1
+
+Explanation:
+Deploys the image from Nexus as a background container, publishes it on port 18046, and configures automatic restart behavior.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = container name: Sets the container name to cicd-session46-app.
+- --restart = restart policy: Uses unless-stopped, which restarts the container automatically unless it was explicitly stopped.
+- -p = --publish (publish): Maps host port 18046 to container port 80.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
+# docker ps \
+  --filter name=cicd-session46-app
+
+Explanation:
+Lists running containers filtered by the name cicd-session46-app.
+
+Options:
+- --filter = result filter: Limits the displayed containers to entries matching name=cicd-session46-app.
+- \ = shell line continuation: Continues the same command on the next line.
+------------------------------------------------------------
