@@ -1,0 +1,6 @@
+.git
+.gitlab-ci.yml
+docs/
+trivy-report.json
+__pycache__/
+*.pyc

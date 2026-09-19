@@ -1,0 +1,547 @@
+------------------------------------------------------------
+# FROM python:3.12-slim
+
+Explanation:
+Uses the official Python 3.12 slim image as the base image for the Docker build.
+------------------------------------------------------------
+# WORKDIR /app
+
+Explanation:
+Sets /app as the working directory for the following Dockerfile instructions and for the container at runtime.
+------------------------------------------------------------
+# COPY . .
+
+Explanation:
+Copies the current build-context directory into the current working directory inside the image.
+------------------------------------------------------------
+# RUN pip install -r requirements.txt
+
+Explanation:
+Runs pip during the image build and installs the packages listed in requirements.txt.
+
+Options:
+- -r = --requirement (requirement file): Installs packages from the specified requirements file.
+------------------------------------------------------------
+# CMD ["python", "app.py"]
+
+Explanation:
+Sets python app.py as the default command that runs when a container starts from the image.
+------------------------------------------------------------
+# trivy image IMAGE_NAME
+
+Explanation:
+Scans the specified container image with Trivy.
+------------------------------------------------------------
+# mkdir -p /opt/docker-labs/session57
+
+Explanation:
+Creates the /opt/docker-labs/session57 directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and does not fail if the directory already exists.
+------------------------------------------------------------
+# cd /opt/docker-labs/session57
+
+Explanation:
+Changes the current shell directory to /opt/docker-labs/session57.
+------------------------------------------------------------
+# trivy --version
+
+Explanation:
+Displays the installed Trivy version.
+
+Options:
+- --version = version: Prints version information.
+------------------------------------------------------------
+# trivy image --help
+
+Explanation:
+Displays help information for the Trivy image command.
+
+Options:
+- --help = help: Shows command usage and available options.
+------------------------------------------------------------
+# mkdir -p /opt/trivy-cache
+
+Explanation:
+Creates the /opt/trivy-cache directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and does not fail if the directory already exists.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --download-db-only
+
+Explanation:
+Downloads or updates the Trivy vulnerability database and stores Trivy cache data in /opt/trivy-cache without scanning an image.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --download-db-only = download database only: Downloads the vulnerability database and exits without running a scan.
+------------------------------------------------------------
+# du -sh /opt/trivy-cache
+
+Explanation:
+Shows the total disk space used by /opt/trivy-cache in a human-readable format.
+
+Options:
+- -s = --summarize (summarize): Shows only the total size for the specified path.
+- -h = --human-readable (human-readable): Displays sizes using readable units such as K, M, and G.
+------------------------------------------------------------
+# docker pull python:3.12-slim
+
+Explanation:
+Downloads the python:3.12-slim image from the configured container registry.
+------------------------------------------------------------
+# docker image ls python
+
+Explanation:
+Lists local Docker images whose repository matches python.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  python:3.12-slim
+
+Explanation:
+Scans the local python:3.12-slim image while using /opt/trivy-cache for Trivy cache data.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  python:3.12-slim
+
+Explanation:
+Scans python:3.12-slim for vulnerabilities only and uses the configured Trivy cache directory.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  python:3.12-slim
+
+Explanation:
+Scans python:3.12-slim for vulnerability findings with HIGH or CRITICAL severity.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  --ignore-unfixed \
+  python:3.12-slim
+
+Explanation:
+Scans python:3.12-slim for HIGH and CRITICAL vulnerabilities and hides findings that do not have an available fix.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+- --ignore-unfixed = ignore unfixed: Excludes vulnerabilities that do not currently have a fix.
+------------------------------------------------------------
+# echo $?
+
+Explanation:
+Prints the exit status of the most recently executed command.
+
+Options:
+- $? = shell special parameter: Expands to the exit status of the previous command.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  --exit-code 1 \
+  python:3.12-slim
+
+Explanation:
+Scans python:3.12-slim for HIGH and CRITICAL vulnerabilities and returns exit code 1 when matching findings are detected.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+- --exit-code 1 = exit code: Returns status 1 when findings match the configured scan policy.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  --ignore-unfixed \
+  --exit-code 1 \
+  python:3.12-slim
+
+Explanation:
+Scans python:3.12-slim for fixable HIGH and CRITICAL vulnerabilities and returns exit code 1 when matching findings are found.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+- --ignore-unfixed = ignore unfixed: Excludes vulnerabilities that do not currently have a fix.
+- --exit-code 1 = exit code: Returns status 1 when findings match the configured scan policy.
+------------------------------------------------------------
+# trivy image python:3.12-slim
+
+Explanation:
+Scans the python:3.12-slim image with Trivy using the default image-scan settings.
+------------------------------------------------------------
+# trivy image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  --exit-code 1 \
+  IMAGE_NAME
+
+Explanation:
+Scans IMAGE_NAME for HIGH and CRITICAL vulnerabilities only and returns exit code 1 when matching findings are found.
+
+Options:
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+- --exit-code 1 = exit code: Returns status 1 when findings match the configured scan policy.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  --format json \
+  --output trivy-report.json \
+  python:3.12-slim
+
+Explanation:
+Scans python:3.12-slim for vulnerabilities and writes the report in JSON format to trivy-report.json.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --format json = output format: Produces the report in JSON format.
+- --output trivy-report.json = output file: Writes the scan result to trivy-report.json.
+------------------------------------------------------------
+# ls -lh trivy-report.json
+
+Explanation:
+Displays detailed file information for trivy-report.json with a human-readable file size.
+
+Options:
+- -l = long listing format: Shows detailed file information.
+- -h = --human-readable (human-readable): Displays sizes using readable units such as K, M, and G.
+------------------------------------------------------------
+# head -n 30 trivy-report.json
+
+Explanation:
+Displays the first 30 lines of trivy-report.json.
+
+Options:
+- -n 30 = --lines 30 (number of lines): Limits the output to the first 30 lines.
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists Docker images stored locally on the Docker host.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  cicd-session57-app:abc12345
+
+Explanation:
+Scans the local cicd-session57-app:abc12345 image for vulnerabilities only.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  --ignore-unfixed \
+  --exit-code 1 \
+  cicd-session57-app:abc12345
+
+Explanation:
+Applies a security gate to cicd-session57-app:abc12345 by failing with exit code 1 when fixable HIGH or CRITICAL vulnerabilities are found.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+- --ignore-unfixed = ignore unfixed: Excludes vulnerabilities that do not currently have a fix.
+- --exit-code 1 = exit code: Returns status 1 when findings match the configured scan policy.
+------------------------------------------------------------
+# trivy registry login \
+  --username YOUR_NEXUS_USERNAME \
+  --password-stdin \
+  192.168.94.90:8085
+
+Explanation:
+Logs Trivy in to the Nexus registry at 192.168.94.90:8085 using the specified username and a password read from standard input.
+
+Options:
+- --username YOUR_NEXUS_USERNAME = username: Uses YOUR_NEXUS_USERNAME as the registry username.
+- --password-stdin = password from standard input: Reads the registry password from standard input instead of placing it directly in the command line.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  192.168.94.90:8085/docker-hosted/myapp:1.0
+
+Explanation:
+Scans the specified Nexus-hosted image and reports HIGH and CRITICAL vulnerabilities.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+------------------------------------------------------------
+# trivy image \
+  --insecure \
+  REGISTRY/IMAGE:TAG
+
+Explanation:
+Scans the specified registry image while allowing an insecure registry connection.
+
+Options:
+- --insecure = insecure connection: Allows insecure communication with the registry.
+------------------------------------------------------------
+# env | grep -iE '^(http|https|no)_proxy='
+
+Explanation:
+Prints environment variables and filters the output for HTTP, HTTPS, or NO_PROXY settings without case sensitivity.
+
+Options:
+- | = pipe operator: Sends the output of env to grep as input.
+- -i = --ignore-case (ignore case): Makes the pattern match case-insensitively.
+- -E = --extended-regexp (extended regular expression): Interprets the pattern as an extended regular expression.
+------------------------------------------------------------
+# export HTTP_PROXY=http://192.168.95.204:2081
+
+Explanation:
+Sets and exports the HTTP_PROXY environment variable for commands started from the current shell.
+------------------------------------------------------------
+# export HTTPS_PROXY=http://192.168.95.204:2081
+
+Explanation:
+Sets and exports the HTTPS_PROXY environment variable for commands started from the current shell.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  --ignore-unfixed \
+  --exit-code 1 \
+  "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+
+Explanation:
+Scans the CI-built image identified by IMAGE_NAME and CI_COMMIT_SHORT_SHA and fails the job when fixable HIGH or CRITICAL vulnerabilities are found.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+- --ignore-unfixed = ignore unfixed: Excludes vulnerabilities that do not currently have a fix.
+- --exit-code 1 = exit code: Returns status 1 when findings match the configured scan policy.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  --format json \
+  --output trivy-report.json \
+  "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+
+Explanation:
+Scans the CI-built image for HIGH and CRITICAL vulnerabilities and saves the result as trivy-report.json.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+- --format json = output format: Produces the report in JSON format.
+- --output trivy-report.json = output file: Writes the scan result to trivy-report.json.
+------------------------------------------------------------
+# trivy image \
+  --image-config-scanners misconfig \
+  python:3.12-slim
+
+Explanation:
+Scans the image configuration of python:3.12-slim for misconfiguration findings.
+
+Options:
+- --image-config-scanners misconfig = image configuration scanners: Enables the misconfiguration scanner for image configuration checks.
+------------------------------------------------------------
+# trivy image IMAGE:TAG
+
+Explanation:
+Scans the container image identified by IMAGE:TAG.
+------------------------------------------------------------
+# trivy image \
+  --scanners vuln \
+  IMAGE:TAG
+
+Explanation:
+Scans IMAGE:TAG using only the vulnerability scanner.
+
+Options:
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+------------------------------------------------------------
+# trivy image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  IMAGE:TAG
+
+Explanation:
+Scans IMAGE:TAG for HIGH and CRITICAL vulnerabilities only.
+
+Options:
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+------------------------------------------------------------
+# trivy image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  --ignore-unfixed \
+  IMAGE:TAG
+
+Explanation:
+Scans IMAGE:TAG for fixable HIGH and CRITICAL vulnerabilities.
+
+Options:
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+- --ignore-unfixed = ignore unfixed: Excludes vulnerabilities that do not currently have a fix.
+------------------------------------------------------------
+# trivy image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  --ignore-unfixed \
+  --exit-code 1 \
+  IMAGE:TAG
+
+Explanation:
+Uses Trivy as a security gate for IMAGE:TAG and returns exit code 1 when fixable HIGH or CRITICAL vulnerabilities are found.
+
+Options:
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+- --ignore-unfixed = ignore unfixed: Excludes vulnerabilities that do not currently have a fix.
+- --exit-code 1 = exit code: Returns status 1 when findings match the configured scan policy.
+------------------------------------------------------------
+# trivy image \
+  --scanners vuln \
+  --format json \
+  --output trivy-report.json \
+  IMAGE:TAG
+
+Explanation:
+Scans IMAGE:TAG for vulnerabilities and writes the result to trivy-report.json in JSON format.
+
+Options:
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --format json = output format: Produces the report in JSON format.
+- --output trivy-report.json = output file: Writes the scan result to trivy-report.json.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  --format json \
+  --output /opt/docker-labs/session57/trivy-report.json \
+  python:3.12-slim
+
+Explanation:
+Scans python:3.12-slim for vulnerabilities and writes the JSON report to /opt/docker-labs/session57/trivy-report.json.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --format json = output format: Produces the report in JSON format.
+- --output /opt/docker-labs/session57/trivy-report.json = output file: Writes the scan result to the specified absolute path.
+------------------------------------------------------------
+# ls -lh /opt/docker-labs/session57/trivy-report.json
+
+Explanation:
+Displays detailed information about the generated Trivy report with a human-readable file size.
+
+Options:
+- -l = long listing format: Shows detailed file information.
+- -h = --human-readable (human-readable): Displays sizes using readable units such as K, M, and G.
+------------------------------------------------------------
+# docker build \
+  --no-cache \
+  -t cicd-session57-app:v2 \
+  .
+
+Explanation:
+Builds a Docker image from the current directory, disables build cache, and tags the result as cicd-session57-app:v2.
+
+Options:
+- --no-cache = no cache: Builds all layers without reusing cached build layers.
+- -t = --tag (tag): Assigns the name and tag cicd-session57-app:v2 to the built image.
+------------------------------------------------------------
+# trivy \
+  --cache-dir /opt/trivy-cache \
+  image \
+  --scanners vuln \
+  --severity HIGH,CRITICAL \
+  cicd-session57-app:v2
+
+Explanation:
+Scans cicd-session57-app:v2 for HIGH and CRITICAL vulnerabilities only.
+
+Options:
+- --cache-dir /opt/trivy-cache = cache directory: Uses /opt/trivy-cache as the Trivy cache directory.
+- --scanners vuln = scanners: Enables only the vulnerability scanner.
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+------------------------------------------------------------
+# RUN apt-get update && apt-get upgrade -y
+
+Explanation:
+Runs apt-get update and, only if it succeeds, upgrades installed packages while automatically answering yes to prompts.
+
+Options:
+- && = AND operator: Runs apt-get upgrade -y only if apt-get update exits successfully.
+- -y = --yes / --assume-yes (assume yes): Automatically answers yes to package-manager confirmation prompts.
+------------------------------------------------------------
+# trivy image \
+  --severity HIGH,CRITICAL \
+  --exit-code 1 \
+  IMAGE
+
+Explanation:
+Scans IMAGE and returns exit code 1 when HIGH or CRITICAL findings match the scan policy.
+
+Options:
+- --severity HIGH,CRITICAL = severity filter: Limits reported findings to HIGH and CRITICAL severities.
+- --exit-code 1 = exit code: Returns status 1 when findings match the configured scan policy.
+------------------------------------------------------------
+# trivy image IMAGE
+
+Explanation:
+Scans the specified container image with Trivy.
+------------------------------------------------------------

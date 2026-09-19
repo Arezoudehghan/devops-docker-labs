@@ -1,0 +1,42 @@
+stages:
+  - build
+  - security
+
+variables:
+  IMAGE_NAME: "cicd-session57-app"
+
+build_image:
+  stage: build
+  tags:
+    - dev-shell
+  script:
+    - docker build -t "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}" .
+
+trivy_scan:
+  stage: security
+  tags:
+    - dev-shell
+  script:
+    - |
+      trivy \
+        --cache-dir /opt/trivy-cache \
+        image \
+        --scanners vuln \
+        --severity HIGH,CRITICAL \
+        --format json \
+        --output trivy-report.json \
+        "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+    - |
+      trivy \
+        --cache-dir /opt/trivy-cache \
+        image \
+        --scanners vuln \
+        --severity HIGH,CRITICAL \
+        --ignore-unfixed \
+        --exit-code 1 \
+        "${IMAGE_NAME}:${CI_COMMIT_SHORT_SHA}"
+  artifacts:
+    when: always
+    paths:
+      - trivy-report.json
+    expire_in: 7 days
