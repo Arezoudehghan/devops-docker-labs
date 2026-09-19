@@ -118,6 +118,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
 | 39 | Docker Registry fundamentals: registry, repository, tag, digest, push, and pull | [`registry/session-39-registry-basics`](registry/session-39-registry-basics/) | `DEV-1` + `DEV-2` |
+| 44 | Login to Nexus Docker Registry and authentication troubleshooting | [`registry/session-44-nexus-login`](registry/session-44-nexus-login/) | `DEV-1` + `DEV-2` |
 | 40 | Docker Hub: build, tag, push, pull, and run | [`registry/session-40-docker-hub`](registry/session-40-docker-hub/) | `DEV-1` + `DEV-2` |
 
 ### Docker Registry and Nexus
