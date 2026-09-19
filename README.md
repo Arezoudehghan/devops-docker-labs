@@ -61,7 +61,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-46-docker-in-pipeline/
 │   ├── session-47-build-image-gitlab-runner/
 │   ├── session-48-image-tag-strategy/
-│   └── session-49-push-to-nexus-from-pipeline/
+│   ├── session-49-push-to-nexus-from-pipeline/
+│   └── session-50-deploy-with-ssh/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -143,6 +144,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 47 | Build a Docker image in GitLab Runner with a Shell executor and commit-SHA tagging | [`cicd/session-47-build-image-gitlab-runner`](cicd/session-47-build-image-gitlab-runner/) | `DEV-1` |
 | 48 | Docker image tag strategy with commit SHA and branch/ref tags | [`cicd/session-48-image-tag-strategy`](cicd/session-48-image-tag-strategy/) | `DEV-1` |
 | 49 | Push Docker images to Nexus from a GitLab pipeline | [`cicd/session-49-push-to-nexus-from-pipeline`](cicd/session-49-push-to-nexus-from-pipeline/) | `DEV-1` |
+| 50 | Deploy a commit-tagged Docker image to a remote server over SSH | [`cicd/session-50-deploy-with-ssh`](cicd/session-50-deploy-with-ssh/) | `DEV-1` + `DEV-2` |
 
 ### Docker in Production
 
