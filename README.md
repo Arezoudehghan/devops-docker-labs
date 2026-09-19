@@ -49,7 +49,8 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 │   ├── session-36-networks/
 │   └── session-37-depends-on-restart/
 ├── registry/
-│   └── session-39-registry-basics/
+│   ├── session-39-registry-basics/
+│   └── session-40-docker-hub/
 ├── production/
 │   └── session-71-zero-downtime-deploy/
 ├── swarm/
@@ -115,11 +116,6 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
 | 39 | Docker Registry fundamentals: registry, repository, tag, digest, push, and pull | [`registry/session-39-registry-basics`](registry/session-39-registry-basics/) | `DEV-1` + `DEV-2` |
-
-### Docker Registry and Nexus
-
-| Session | Topic | Lab directory | Execution host |
-|---|---|---|---|
 | 40 | Docker Hub: build, tag, push, pull, and run | [`registry/session-40-docker-hub`](registry/session-40-docker-hub/) | `DEV-1` + `DEV-2` |
 
 ### Docker in Production
