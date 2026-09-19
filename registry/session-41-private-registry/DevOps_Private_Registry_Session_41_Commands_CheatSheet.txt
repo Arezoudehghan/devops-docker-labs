@@ -1,0 +1,352 @@
+------------------------------------------------------------
+# docker pull nginx
+
+Explanation:
+Pulls the nginx image from Docker's default registry.
+
+------------------------------------------------------------
+# docker pull 192.168.94.90:5005/nginx:1.29
+
+Explanation:
+Pulls the nginx image tagged 1.29 from the private registry at 192.168.94.90:5005.
+
+------------------------------------------------------------
+# docker login registry.company.local
+
+Explanation:
+Authenticates the Docker client to registry.company.local.
+
+------------------------------------------------------------
+# docker push registry.company.local/payment-api:1.0
+
+Explanation:
+Pushes the payment-api image tagged 1.0 to registry.company.local.
+
+------------------------------------------------------------
+# docker pull registry.company.local/payment-api:1.0
+
+Explanation:
+Pulls the payment-api image tagged 1.0 from registry.company.local.
+
+------------------------------------------------------------
+# docker tag payment-api:1.0 192.168.94.90:5005/payment-api:1.0
+
+Explanation:
+Creates a new tag for the existing payment-api:1.0 image so it points to the private registry.
+
+------------------------------------------------------------
+# docker images
+
+Explanation:
+Lists Docker images stored locally.
+
+------------------------------------------------------------
+# docker push 192.168.94.90:5005/payment-api:1.0
+
+Explanation:
+Pushes payment-api:1.0 to the private registry at 192.168.94.90:5005.
+
+------------------------------------------------------------
+# docker pull 192.168.94.90:5005/payment-api:1.0
+
+Explanation:
+Pulls payment-api:1.0 from the private registry at 192.168.94.90:5005.
+
+------------------------------------------------------------
+# docker run -d --name payment-api 192.168.94.90:5005/payment-api:1.0
+
+Explanation:
+Starts a container from the private-registry image in detached mode and names the container payment-api.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name payment-api = container name: Assigns payment-api as the container name.
+------------------------------------------------------------
+# docker build -t 192.168.94.90:8085/payment-api:${CI_COMMIT_SHORT_SHA} .
+
+Explanation:
+Builds a Docker image from the current directory and tags it with the GitLab short commit SHA.
+
+Options:
+- -t = --tag (tag): Sets the image name and tag.
+- ${CI_COMMIT_SHORT_SHA} = shell parameter expansion: Inserts the current value of the CI_COMMIT_SHORT_SHA environment variable into the image tag.
+- . = build context: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+# docker push 192.168.94.90:8085/payment-api:${CI_COMMIT_SHORT_SHA}
+
+Explanation:
+Pushes the commit-specific payment-api image to the private registry.
+
+Options:
+- ${CI_COMMIT_SHORT_SHA} = shell parameter expansion: Inserts the current value of the CI_COMMIT_SHORT_SHA environment variable into the image tag.
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/payment-api:${CI_COMMIT_SHORT_SHA}
+
+Explanation:
+Pulls the commit-specific payment-api image from the private registry.
+
+Options:
+- ${CI_COMMIT_SHORT_SHA} = shell parameter expansion: Inserts the current value of the CI_COMMIT_SHORT_SHA environment variable into the image tag.
+------------------------------------------------------------
+# sudo ss -lntp | grep ':5005' || true
+
+Explanation:
+Shows listening TCP sockets and filters the result for port 5005. If grep finds no match, true prevents the command chain from ending with a failure status.
+
+Options:
+- -l = --listening (listening): Shows only listening sockets.
+- -n = --numeric (numeric): Shows numeric addresses and ports instead of resolving names.
+- -t = --tcp (TCP): Shows TCP sockets.
+- -p = --processes (processes): Shows the process using each socket.
+- | = pipe operator: Sends the output of ss to grep.
+- || = OR operator: Runs true only if the command on the left fails.
+------------------------------------------------------------
+# sudo mkdir -p /opt/docker-labs/session41/registry-data
+
+Explanation:
+Creates the registry-data directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Creates missing parent directories and does not fail if the directory already exists.
+------------------------------------------------------------
+# docker run -d \
+  --name session41-registry \
+  --restart unless-stopped \
+  -p 5005:5000 \
+  -v /opt/docker-labs/session41/registry-data:/var/lib/registry \
+  registry:3
+
+Explanation:
+Starts a private Registry container in the background, publishes host port 5005, and persists registry data on the host.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name session41-registry = container name: Assigns session41-registry as the container name.
+- --restart unless-stopped = restart policy: Restarts the container automatically unless it was explicitly stopped.
+- -p = --publish (publish): Maps host port 5005 to container port 5000.
+- -v = --volume (volume): Mounts /opt/docker-labs/session41/registry-data on the host to /var/lib/registry in the container.
+------------------------------------------------------------
+# docker ps --filter name=session41-registry
+
+Explanation:
+Lists running containers whose name matches session41-registry.
+
+Options:
+- --filter name=session41-registry = filter: Limits the result to containers matching the specified name filter.
+------------------------------------------------------------
+# curl -i http://127.0.0.1:5005/v2/
+
+Explanation:
+Requests the Registry V2 API endpoint and includes the HTTP response headers in the output.
+
+Options:
+- -i = --include (include): Includes HTTP response headers in the output.
+------------------------------------------------------------
+# sudo cp -a /etc/docker/daemon.json \
+  /etc/docker/daemon.json.backup-session41 2>/dev/null || true
+
+Explanation:
+Copies daemon.json to a backup file while preserving its attributes. Errors are discarded, and true prevents a missing source file from causing the command chain to fail.
+
+Options:
+- -a = --archive (archive): Copies recursively when needed and preserves file attributes as much as possible.
+- 2>/dev/null = stderr redirection: Sends standard error, file descriptor 2, to /dev/null.
+- || = OR operator: Runs true only if the copy command fails.
+------------------------------------------------------------
+# sudo python3 - <<'PY'
+import json
+from pathlib import Path
+
+path = Path("/etc/docker/daemon.json")
+
+if path.exists() and path.read_text().strip():
+    data = json.loads(path.read_text())
+else:
+    data = {}
+
+registry = "192.168.94.90:5005"
+
+registries = data.get("insecure-registries", [])
+
+if registry not in registries:
+    registries.append(registry)
+
+data["insecure-registries"] = registries
+
+path.write_text(json.dumps(data, indent=2) + "\n")
+PY
+
+Explanation:
+Runs an inline Python script that safely adds 192.168.94.90:5005 to the insecure-registries list in /etc/docker/daemon.json without overwriting unrelated settings.
+
+Options:
+- - = standard input script source: Tells python3 to read the program from standard input.
+- <<'PY' = quoted here-document: Sends all lines up to PY to python3 and prevents shell expansion inside the here-document.
+------------------------------------------------------------
+# cat /etc/docker/daemon.json
+
+Explanation:
+Displays the current contents of /etc/docker/daemon.json.
+
+------------------------------------------------------------
+# sudo dockerd --validate --config-file=/etc/docker/daemon.json
+
+Explanation:
+Validates the Docker daemon configuration file without starting the daemon.
+
+Options:
+- --validate = validate configuration: Checks the configuration and exits.
+- --config-file=/etc/docker/daemon.json = configuration file: Uses /etc/docker/daemon.json as the daemon configuration file.
+------------------------------------------------------------
+# sudo systemctl restart docker
+
+Explanation:
+Restarts the Docker systemd service.
+
+------------------------------------------------------------
+# sudo systemctl --no-pager --full status docker
+
+Explanation:
+Shows the full status of the Docker systemd service without opening a pager.
+
+Options:
+- --no-pager = no pager: Prints the output directly instead of sending it to a pager.
+- --full = full output: Does not ellipsize long lines in the status output.
+------------------------------------------------------------
+# docker info | sed -n '/Insecure Registries/,+8p'
+
+Explanation:
+Displays Docker information and prints the Insecure Registries section plus the next eight lines.
+
+Options:
+- | = pipe operator: Sends the output of docker info to sed.
+- -n = --quiet / --silent (quiet/silent): Suppresses sed's automatic printing.
+- '/Insecure Registries/,+8p' = sed address range: Starts at the matching line and prints that line plus the next eight lines.
+------------------------------------------------------------
+# docker pull busybox:1.36.1
+
+Explanation:
+Pulls BusyBox version 1.36.1 from the default registry.
+
+------------------------------------------------------------
+# docker images busybox
+
+Explanation:
+Lists local Docker images whose repository name is busybox.
+
+------------------------------------------------------------
+# docker tag \
+  busybox:1.36.1 \
+  192.168.94.90:5005/session41-busybox:1.0
+
+Explanation:
+Creates a private-registry tag for the local busybox:1.36.1 image.
+
+------------------------------------------------------------
+# docker images | grep session41-busybox
+
+Explanation:
+Lists local Docker images and filters the output for session41-busybox.
+
+Options:
+- | = pipe operator: Sends the output of docker images to grep.
+------------------------------------------------------------
+# docker push 192.168.94.90:5005/session41-busybox:1.0
+
+Explanation:
+Pushes the session41-busybox image tagged 1.0 to the private registry.
+
+------------------------------------------------------------
+# sudo du -sh /opt/docker-labs/session41/registry-data
+
+Explanation:
+Shows the total disk usage of the registry-data directory in a human-readable format.
+
+Options:
+- -s = --summarize (summarize): Displays only the total size for the specified path.
+- -h = --human-readable (human-readable): Shows sizes using readable units such as K, M, and G.
+------------------------------------------------------------
+# sudo find /opt/docker-labs/session41/registry-data \
+  -maxdepth 3 \
+  -type d \
+  | head -30
+
+Explanation:
+Finds directories under registry-data up to three levels deep and shows the first 30 result lines.
+
+Options:
+- -maxdepth 3 = maximum search depth: Descends no more than three directory levels below the starting path.
+- -type d = file type filter: Returns only directories.
+- | = pipe operator: Sends the find output to head.
+- -30 = first 30 lines: GNU head compatibility syntax equivalent to requesting the first 30 lines.
+------------------------------------------------------------
+# docker image rm \
+  192.168.94.90:5005/session41-busybox:1.0 \
+  2>/dev/null || true
+
+Explanation:
+Removes the specified local image tag. Errors are discarded, and true keeps the command chain successful if the image does not exist.
+
+Options:
+- 2>/dev/null = stderr redirection: Sends standard error, file descriptor 2, to /dev/null.
+- || = OR operator: Runs true only if docker image rm fails.
+------------------------------------------------------------
+# docker pull 192.168.94.90:5005/session41-busybox:1.0
+
+Explanation:
+Pulls session41-busybox:1.0 from the private registry to the local Docker host.
+
+------------------------------------------------------------
+# docker run --rm \
+  192.168.94.90:5005/session41-busybox:1.0 \
+  echo "Private Registry Works"
+
+Explanation:
+Runs a temporary BusyBox container from the private-registry image and prints Private Registry Works.
+
+Options:
+- --rm = remove after exit: Automatically removes the container when it exits.
+------------------------------------------------------------
+# docker build -t payment-api:1.0 .
+
+Explanation:
+Builds a Docker image from the current directory and tags it as payment-api:1.0.
+
+Options:
+- -t = --tag (tag): Sets the image name and tag.
+- . = build context: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+# docker tag \
+  payment-api:1.0 \
+  nexus.company.local/payment-api:1.0
+
+Explanation:
+Creates a new tag for payment-api:1.0 that points to nexus.company.local.
+
+------------------------------------------------------------
+# docker login nexus.company.local
+
+Explanation:
+Authenticates the Docker client to nexus.company.local.
+
+------------------------------------------------------------
+# docker push nexus.company.local/payment-api:1.0
+
+Explanation:
+Pushes payment-api:1.0 to nexus.company.local.
+
+------------------------------------------------------------
+# docker push 192.168.94.90:5005/myapp:1.0
+
+Explanation:
+Attempts to push the local image tagged 192.168.94.90:5005/myapp:1.0 to the private registry.
+
+------------------------------------------------------------
+# docker tag \
+  myapp:1.0 \
+  192.168.94.90:5005/myapp:1.0
+
+Explanation:
+Creates the private-registry tag required before pushing myapp:1.0.
+
+------------------------------------------------------------
