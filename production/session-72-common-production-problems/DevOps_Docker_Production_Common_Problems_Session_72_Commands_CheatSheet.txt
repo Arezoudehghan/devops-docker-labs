@@ -1,0 +1,502 @@
+------------------------------------------------------------
+# docker restart app
+
+Explanation:
+Restarts the container named `app`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all Docker containers, including stopped containers.
+
+Options:
+- -a = --all (all): Show all containers, not only running ones.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect --format='status={{.State.Status}} exit={{.State.ExitCode}} oom={{.State.OOMKilled}} error={{.State.Error}}' app
+
+Explanation:
+Shows selected runtime state fields for the `app` container, including status, exit code, OOM status, and error information.
+
+Options:
+- --format = format output using a custom template: The quoted Go template selects and labels the requested container state fields.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs --tail 100 app
+
+Explanation:
+Shows the last 100 log lines from the `app` container.
+
+Options:
+- --tail 100 = number of lines from the end of the logs: Show only the most recent 100 lines.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker events --since 10m
+
+Explanation:
+Shows Docker daemon events that occurred during the last 10 minutes.
+
+Options:
+- --since 10m = show events created since a time value: `10m` means 10 minutes ago.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect --format='{{.State.ExitCode}}' app
+
+Explanation:
+Prints only the exit code of the `app` container.
+
+Options:
+- --format = format output using a custom template: The template returns `.State.ExitCode` only.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect --format='{{.State.OOMKilled}}' app
+
+Explanation:
+Shows whether the `app` container process was killed because of an out-of-memory condition.
+
+Options:
+- --format = format output using a custom template: The template returns `.State.OOMKilled` only.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs --tail 200 app
+
+Explanation:
+Shows the last 200 log lines from the `app` container.
+
+Options:
+- --tail 200 = number of lines from the end of the logs: Show only the most recent 200 lines.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect --format='{{.HostConfig.RestartPolicy.Name}}' app
+
+Explanation:
+Prints the configured restart policy name for the `app` container.
+
+Options:
+- --format = format output using a custom template: The template returns the restart policy name.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stats
+
+Explanation:
+Displays a live stream of resource usage statistics for running containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stats --no-stream
+
+Explanation:
+Displays one snapshot of container resource usage instead of continuously streaming updates.
+
+Options:
+- --no-stream = disable streaming: Print one statistics snapshot and exit.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect --format='{{.HostConfig.Memory}}' app
+
+Explanation:
+Prints the configured memory limit for the `app` container in bytes.
+
+Options:
+- --format = format output using a custom template: The template returns the container memory limit value.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# free -h
+
+Explanation:
+Shows system memory and swap usage in human-readable units.
+
+Options:
+- -h = --human (human-readable): Scale values automatically to units such as KiB, MiB, or GiB.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo dmesg -T | grep -i -E 'out of memory|killed process'
+
+Explanation:
+Reads kernel messages with readable timestamps and filters for common out-of-memory messages.
+
+Options:
+- -T = --ctime (ctime): Show human-readable timestamps in `dmesg`.
+- | = pipe operator: Send the output of `dmesg` to `grep`.
+- -i = --ignore-case (ignore case): Match upper- and lowercase text equally in `grep`.
+- -E = --extended-regexp (extended regular expression): Interpret the pattern as an extended regular expression.
+- `out of memory|killed process` = search pattern: The `|` inside the quoted regular expression means match either phrase.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d \
+  --name app \
+  --memory=512m \
+  --cpus=1.0 \
+  myapp:1.4
+
+Explanation:
+Creates and starts a container named `app` from `myapp:1.4` with CPU and memory limits.
+
+Options:
+- -d = --detach (detached): Run the container in the background.
+- --name app = assign a container name: Name the container `app`.
+- --memory=512m = memory limit: Limit the container to 512 MiB of memory.
+- --cpus=1.0 = CPU limit: Limit the container to the equivalent of 1 CPU.
+- `\` = shell line continuation: Continue the same command on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker top app
+
+Explanation:
+Shows the processes running inside the `app` container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# top
+
+Explanation:
+Starts the interactive Linux process and system resource monitor.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# htop
+
+Explanation:
+Starts the interactive `htop` process and resource monitor.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# df -h
+
+Explanation:
+Shows filesystem disk-space usage in human-readable units.
+
+Options:
+- -h = --human-readable (human-readable): Display sizes using units such as KiB, MiB, and GiB.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker system df
+
+Explanation:
+Shows disk-space usage by Docker images, containers, local volumes, and build cache.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker system df -v
+
+Explanation:
+Shows detailed Docker disk-space usage information.
+
+Options:
+- -v = --verbose (verbose): Display detailed space-usage information.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker system prune -a --volumes
+
+Explanation:
+Removes unused Docker data, including unused images and unused volumes, according to Docker prune rules.
+
+Options:
+- -a = --all (all): Remove all unused images, not only dangling images.
+- --volumes = prune anonymous volumes: Also remove unused anonymous volumes.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect --format='{{.HostConfig.LogConfig.Type}}' app
+
+Explanation:
+Prints the logging driver configured for the `app` container.
+
+Options:
+- --format = format output using a custom template: The template returns the logging driver type.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  app:
+    image: myapp:1.4
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+Explanation:
+This Docker Compose fragment configures the `app` service to use the `json-file` logging driver with log rotation limits.
+
+Options:
+- `driver: json-file` = logging driver setting: Store container logs with the `json-file` driver.
+- `max-size: "10m"` = maximum log-file size: Rotate a log file when it reaches 10 MB.
+- `max-file: "3"` = maximum rotated files: Keep up to three log files.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+  app:
+    image: myapp:1.4
+
+    logging:
+      driver: local
+
+Explanation:
+This Docker Compose fragment configures the `app` service to use Docker's `local` logging driver.
+
+Options:
+- `driver: local` = logging driver setting: Use the `local` driver for container logs.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps --format 'table {{.Names}}\t{{.Ports}}'
+
+Explanation:
+Lists running containers in a table that shows only container names and published port information.
+
+Options:
+- --format = format output using a custom template: The template creates table columns for `.Names` and `.Ports`.
+- `\t` = tab character in the format template: Separate the displayed columns.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -ltnp | grep :8088
+
+Explanation:
+Shows listening TCP sockets and filters the result for port 8088.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -t = --tcp (TCP): Show TCP sockets.
+- -n = --numeric (numeric): Do not resolve service names; show numeric ports and addresses.
+- -p = --processes (processes): Show the process using each socket when permitted.
+- | = pipe operator: Send the output of `ss` to `grep`.
+- `:8088` = search pattern: Match lines containing port 8088.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker port app
+
+Explanation:
+Shows the published port mappings for the `app` container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}no-healthcheck{{end}}' app
+
+Explanation:
+Shows the health status of the `app` container, or prints `no-healthcheck` when no health check is configured.
+
+Options:
+- --format = format output using a custom template: The conditional template checks `.State.Health` and returns the health status when available.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD curl -f http://localhost:8000/health || exit 1
+
+Explanation:
+Defines a Dockerfile health check that requests the local `/health` endpoint and reports failure when the HTTP request fails.
+
+Options:
+- --interval=30s = health-check interval: Run the check every 30 seconds.
+- --timeout=5s = health-check timeout: Allow each check up to 5 seconds.
+- --retries=3 = consecutive failure threshold: Mark the container unhealthy after three failed checks.
+- -f = --fail (fail): Make `curl` fail on HTTP response codes 400 or greater without normal response output.
+- || = OR shell operator: Run `exit 1` only if the `curl` command fails.
+- `exit 1` = nonzero shell exit status: Report the health-check command as failed.
+- `\` = line continuation in the Dockerfile instruction: Continue the same `HEALTHCHECK` instruction on the next line.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network ls
+
+Explanation:
+Lists Docker networks.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect --format='{{json .NetworkSettings.Networks}}' app
+
+Explanation:
+Prints the Docker network settings for the `app` container as JSON.
+
+Options:
+- --format = format output using a custom template: The template converts `.NetworkSettings.Networks` to JSON.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker network inspect my-network
+
+Explanation:
+Shows detailed configuration and connection information for the Docker network named `my-network`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec app getent hosts db
+
+Explanation:
+Runs `getent hosts db` inside the `app` container to test name resolution for the host name `db`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect --format='{{range .Mounts}}{{println .Type .Source "->" .Destination "RW=" .RW}}{{end}}' app
+
+Explanation:
+Prints each mount used by the `app` container, including its type, source, destination, and read/write state.
+
+Options:
+- --format = format output using a custom template: The template loops through `.Mounts` and prints selected mount fields.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec app id
+
+Explanation:
+Runs `id` inside the `app` container to show the current user and group identifiers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -ld /path/to/data
+
+Explanation:
+Shows detailed information about the directory `/path/to/data` itself, including its permissions and ownership.
+
+Options:
+- -l = long listing format: Show permissions, ownership, size, and other detailed metadata.
+- -d = --directory (directory): Show information about the directory itself instead of listing its contents.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec app sh -c 'touch /data/.write-test && rm /data/.write-test'
+
+Explanation:
+Runs a shell inside the `app` container to create and then remove a test file in `/data`, verifying write access.
+
+Options:
+- -c = command string for `sh`: Execute the following quoted string as a shell command.
+- && = AND shell operator: Run `rm` only if `touch` succeeds.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# chmod -R 777 /data
+
+Explanation:
+Recursively changes permissions under `/data` to mode `777`.
+
+Options:
+- -R = --recursive (recursive): Apply the permission change to the directory and all files and subdirectories below it.
+- `777` = permission mode: Give read, write, and execute permission to owner, group, and others.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# systemctl status docker
+
+Explanation:
+Shows the current systemd status and recent status information for the Docker service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker update --restart=unless-stopped app
+
+Explanation:
+Changes the restart policy of the existing `app` container to `unless-stopped`.
+
+Options:
+- --restart=unless-stopped = restart policy: Restart the container after exits and daemon restarts unless it was explicitly stopped.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# services:
+
+  web:
+    image: myapp:1.4
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:17
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+Explanation:
+This Docker Compose fragment makes `web` wait for the `db` service health check to become healthy before Compose starts `web`.
+
+Options:
+- `depends_on` = service dependency setting: Define that `web` depends on `db`.
+- `condition: service_healthy` = dependency condition: Wait for the dependency health check to report healthy.
+- `healthcheck` = service health-check configuration: Define how Compose checks the `db` service.
+- `test` = health-check command: Run `pg_isready -U postgres` through a shell.
+- -U = --username (username) in `pg_isready`: Check readiness using the database user `postgres`.
+- `interval: 10s` = health-check interval: Run the check every 10 seconds.
+- `timeout: 5s` = health-check timeout: Allow each check up to 5 seconds.
+- `retries: 5` = consecutive failure threshold: Require five failed checks before the service is considered unhealthy.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect --format='image-name={{.Config.Image}} image-id={{.Image}}' app
+
+Explanation:
+Prints the configured image name and the image ID used by the `app` container.
+
+Options:
+- --format = format output using a custom template: The template labels and prints `.Config.Image` and `.Image`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists Docker images stored on the host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs --tail 50 app
+
+Explanation:
+Shows the last 50 log lines from the `app` container.
+
+Options:
+- --tail 50 = number of lines from the end of the logs: Show only the most recent 50 lines.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo ss -ltnp
+
+Explanation:
+Shows listening TCP sockets with numeric addresses and the processes using them.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -t = --tcp (TCP): Show TCP sockets.
+- -n = --numeric (numeric): Do not resolve service names; show numeric ports and addresses.
+- -p = --processes (processes): Show the process using each socket when permitted.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect app
+
+Explanation:
+Shows detailed low-level JSON information about the `app` container.
+------------------------------------------------------------
