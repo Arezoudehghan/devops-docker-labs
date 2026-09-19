@@ -125,6 +125,7 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | 42 | Push and pull images with Nexus | [`registry/session-42-push-pull-image`](registry/session-42-push-pull-image/) | `DEV-1` + `DEV-2` |
 | 43 | Connect Docker to Nexus | [`registry/session-43-connect-docker-to-nexus`](registry/session-43-connect-docker-to-nexus/) | `DEV-1` + `DEV-2` |
 | 44 | Login to Nexus Docker Registry and authentication troubleshooting | [`registry/session-44-nexus-login`](registry/session-44-nexus-login/) | `DEV-1` + `DEV-2` |
+| 45 | Build Server → Nexus → Deploy Server | [`registry/session-45-build-server-nexus-deploy-server`](registry/session-45-build-server-nexus-deploy-server/) | `DEV-1` + `DEV-2` |
 
 ### Docker in Production
 

@@ -1,0 +1,542 @@
+------------------------------------------------------------
+# mkdir -p /opt/docker-labs/session45
+
+Explanation:
+Creates the session 45 lab directory and any missing parent directories.
+
+Options:
+- -p = --parents (parents): Create parent directories as needed and do not report an error if the directory already exists.
+------------------------------------------------------------
+# cd /opt/docker-labs/session45
+
+Explanation:
+Changes the current shell directory to the session 45 lab directory.
+------------------------------------------------------------
+# pwd
+
+Explanation:
+Prints the absolute path of the current working directory.
+------------------------------------------------------------
+# cat > index.html <<'EOF'
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Session 45</title>
+</head>
+<body>
+    <h1>Docker Registry Lab - Session 45</h1>
+    <p>Build Server -> Nexus -> Deploy Server</p>
+    <p>Version: 1.0</p>
+</body>
+</html>
+EOF
+
+Explanation:
+Creates index.html and writes the complete HTML document into it.
+
+Options:
+- > = output redirection: Creates or overwrites index.html with the command output.
+- <<'EOF' = quoted here-document: Sends all following lines to cat until the final EOF line; quoting EOF prevents shell expansion inside the document.
+------------------------------------------------------------
+# cat index.html
+
+Explanation:
+Prints the contents of index.html to the terminal.
+------------------------------------------------------------
+# cat > Dockerfile <<'EOF'
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY index.html /app/index.html
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=2)"
+
+CMD ["python", "-m", "http.server", "8000", "--bind", "0.0.0.0"]
+EOF
+
+Explanation:
+Creates the Dockerfile and writes all Docker build instructions into it.
+
+Options:
+- > = output redirection: Creates or overwrites Dockerfile with the command output.
+- <<'EOF' = quoted here-document: Sends all following lines to cat until the final EOF line; quoting EOF prevents shell expansion inside the document.
+------------------------------------------------------------
+# FROM python:3.12-slim
+
+Explanation:
+Sets python:3.12-slim as the base image for the Docker image.
+------------------------------------------------------------
+# WORKDIR /app
+
+Explanation:
+Sets /app as the working directory for following Dockerfile instructions and for the container runtime.
+------------------------------------------------------------
+# COPY index.html /app/index.html
+
+Explanation:
+Copies index.html from the build context into /app/index.html inside the image.
+------------------------------------------------------------
+# EXPOSE 8000
+
+Explanation:
+Documents that the containerized application listens on TCP port 8000.
+------------------------------------------------------------
+# HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=2)"
+
+Explanation:
+Defines a container health check that requests the local HTTP service on port 8000. The health check is considered failed after three consecutive failed checks after the start period.
+
+Options:
+- --interval=10s = interval: Run the health check every 10 seconds.
+- --timeout=3s = timeout: Allow each health check command up to 3 seconds to finish.
+- --start-period=5s = start period: Give the container 5 seconds of startup time before failures count toward retries.
+- --retries=3 = retries: Mark the container unhealthy after 3 consecutive health check failures.
+- -c = Python command string: Execute the following Python code string.
+------------------------------------------------------------
+# CMD ["python", "-m", "http.server", "8000", "--bind", "0.0.0.0"]
+
+Explanation:
+Sets the default container command to start Python's built-in HTTP server on port 8000 and bind it to all interfaces.
+
+Options:
+- -m = module name: Run the Python module named http.server as a script.
+- --bind = bind address: Bind the HTTP server to the specified address, here 0.0.0.0.
+------------------------------------------------------------
+# cat Dockerfile
+
+Explanation:
+Prints the Dockerfile contents to the terminal.
+------------------------------------------------------------
+# ls -lah
+
+Explanation:
+Lists files in the current directory with details, including hidden files and human-readable sizes.
+
+Options:
+- -l = long listing format: Show detailed file information.
+- -a = --all (all): Include entries whose names start with a dot.
+- -h = --human-readable (human-readable): Show sizes using units such as K, M, and G.
+------------------------------------------------------------
+# docker build -t session45-web:1.0 .
+
+Explanation:
+Builds a Docker image from the Dockerfile in the current directory and tags it as session45-web:1.0.
+
+Options:
+- -t = --tag (tag): Set the image name and tag.
+- . = build context: Use the current directory as the Docker build context.
+------------------------------------------------------------
+# docker image ls session45-web
+
+Explanation:
+Lists local Docker images whose repository name matches session45-web.
+------------------------------------------------------------
+# ss -ltnp | grep ':18045 ' || true
+
+Explanation:
+Checks whether a TCP listening socket is using port 18045. The command intentionally returns success even when grep finds no match.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -t = --tcp (TCP): Show TCP sockets.
+- -n = --numeric (numeric): Do not resolve service or host names.
+- -p = --processes (processes): Show the process using each socket when permitted.
+- | = pipeline: Send the output of ss to grep.
+- || = OR operator: Run true only if the preceding pipeline fails.
+------------------------------------------------------------
+# docker run -d \
+  --name session45-build-test \
+  -p 18045:8000 \
+  session45-web:1.0
+
+Explanation:
+Starts a detached test container named session45-build-test and maps host port 18045 to container port 8000.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name = container name: Assign the name session45-build-test to the container.
+- -p = --publish (publish): Publish container port 8000 on host port 18045.
+------------------------------------------------------------
+# docker ps --filter name=session45-build-test
+
+Explanation:
+Lists running containers and filters the result to the session45-build-test container.
+
+Options:
+- --filter name=session45-build-test = filter: Show containers whose name matches session45-build-test.
+------------------------------------------------------------
+# curl -fsS http://127.0.0.1:18045/
+
+Explanation:
+Requests the local web application and prints its response body while treating HTTP errors as failures.
+
+Options:
+- -f = --fail (fail): Return a failure status for HTTP response codes 400 and above without printing the error page.
+- -s = --silent (silent): Suppress progress and normal curl status output.
+- -S = --show-error (show error): Show an error message when -s is also used and the request fails.
+------------------------------------------------------------
+# curl -sS \
+  -o /dev/null \
+  -w 'HTTP Status: %{http_code}\n' \
+  http://127.0.0.1:18045/
+
+Explanation:
+Requests the local application, discards the response body, and prints only the HTTP status code.
+
+Options:
+- -s = --silent (silent): Suppress progress and normal curl status output.
+- -S = --show-error (show error): Show an error message when -s is also used and the request fails.
+- -o /dev/null = --output /dev/null (output): Write the response body to /dev/null so it is discarded.
+- -w 'HTTP Status: %{http_code}\n' = --write-out (write out): Print the HTTP status code using the specified output format.
+------------------------------------------------------------
+# docker inspect session45-build-test \
+  --format '{{json .State.Health}}'
+
+Explanation:
+Shows the health state of the session45-build-test container as JSON-formatted template output.
+
+Options:
+- --format '{{json .State.Health}}' = format: Apply the Docker Go template and print the .State.Health object as JSON.
+------------------------------------------------------------
+# docker rm -f session45-build-test
+
+Explanation:
+Removes the session45-build-test container and force-stops it first if it is still running.
+
+Options:
+- -f = --force (force): Force removal of a running container by stopping it first.
+------------------------------------------------------------
+# docker ps -a --filter name=session45-build-test
+
+Explanation:
+Lists all containers, including stopped ones, and filters the result by the session45-build-test name.
+
+Options:
+- -a = --all (all): Show all containers instead of only running containers.
+- --filter name=session45-build-test = filter: Show containers whose name matches session45-build-test.
+------------------------------------------------------------
+# export NEXUS_REGISTRY='192.168.94.90:8085'
+
+Explanation:
+Exports the Nexus Docker Registry address into the NEXUS_REGISTRY environment variable.
+------------------------------------------------------------
+# export IMAGE_NAME='session45-web'
+
+Explanation:
+Exports session45-web as the IMAGE_NAME environment variable.
+------------------------------------------------------------
+# export IMAGE_TAG='1.0'
+
+Explanation:
+Exports 1.0 as the IMAGE_TAG environment variable.
+------------------------------------------------------------
+# export REMOTE_IMAGE="${NEXUS_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
+
+Explanation:
+Builds the complete remote image reference from the registry, image name, and image tag variables and exports it as REMOTE_IMAGE.
+------------------------------------------------------------
+# echo "$REMOTE_IMAGE"
+
+Explanation:
+Prints the current value of the REMOTE_IMAGE environment variable.
+------------------------------------------------------------
+# docker tag \
+  session45-web:1.0 \
+  "$REMOTE_IMAGE"
+
+Explanation:
+Creates a new registry-qualified tag for the existing local session45-web:1.0 image.
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists local Docker images.
+------------------------------------------------------------
+# docker image inspect \
+  session45-web:1.0 \
+  --format '{{.Id}}'
+
+Explanation:
+Prints the Docker image ID for session45-web:1.0.
+
+Options:
+- --format '{{.Id}}' = format: Apply the Docker Go template and print only the image ID.
+------------------------------------------------------------
+# docker image inspect \
+  "$REMOTE_IMAGE" \
+  --format '{{.Id}}'
+
+Explanation:
+Prints the Docker image ID for the image referenced by REMOTE_IMAGE.
+
+Options:
+- --format '{{.Id}}' = format: Apply the Docker Go template and print only the image ID.
+------------------------------------------------------------
+# read -rp 'Nexus username: ' NEXUS_USER
+
+Explanation:
+Reads the Nexus username from the terminal and stores it in NEXUS_USER without treating backslashes as escape characters.
+
+Options:
+- -r = raw input: Do not treat backslashes as escape characters.
+- -p = prompt: Display the following prompt before reading input.
+------------------------------------------------------------
+# read -rsp 'Nexus password: ' NEXUS_PASS
+
+Explanation:
+Reads the Nexus password into NEXUS_PASS without echoing the typed characters and without treating backslashes as escapes.
+
+Options:
+- -r = raw input: Do not treat backslashes as escape characters.
+- -s = silent input: Do not echo typed characters.
+- -p = prompt: Display the following prompt before reading input.
+------------------------------------------------------------
+# echo
+
+Explanation:
+Prints a blank line, which is useful after entering a password with silent input.
+------------------------------------------------------------
+# printf '%s\n' "$NEXUS_PASS" | \
+docker login "$NEXUS_REGISTRY" \
+  --username "$NEXUS_USER" \
+  --password-stdin
+
+Explanation:
+Sends the Nexus password through standard input to docker login and authenticates to the registry using the provided username.
+
+Options:
+- '%s\n' = printf format string: Print the password string followed by a newline.
+- | = pipeline: Send the output of printf to docker login standard input.
+- --username "$NEXUS_USER" = username: Use the value of NEXUS_USER as the registry username.
+- --password-stdin = password from standard input: Read the password from standard input instead of placing it directly on the command line.
+------------------------------------------------------------
+# unset NEXUS_PASS
+
+Explanation:
+Removes the NEXUS_PASS variable from the current shell environment.
+------------------------------------------------------------
+# docker push "$REMOTE_IMAGE"
+
+Explanation:
+Uploads the image referenced by REMOTE_IMAGE to the Nexus Docker Registry.
+------------------------------------------------------------
+# docker image inspect \
+  "$REMOTE_IMAGE" \
+  --format '{{json .RepoDigests}}'
+
+Explanation:
+Prints the repository digest information for the remote-tagged image as JSON.
+
+Options:
+- --format '{{json .RepoDigests}}' = format: Apply the Docker Go template and print the .RepoDigests value as JSON.
+------------------------------------------------------------
+# curl -sS \
+  -o /dev/null \
+  -w 'HTTP Status: %{http_code}\n' \
+  http://192.168.94.90:8085/v2/
+
+Explanation:
+Tests the Nexus Docker Registry API endpoint and prints only its HTTP status code.
+
+Options:
+- -s = --silent (silent): Suppress progress and normal curl status output.
+- -S = --show-error (show error): Show an error message when -s is also used and the request fails.
+- -o /dev/null = --output /dev/null (output): Discard the response body.
+- -w 'HTTP Status: %{http_code}\n' = --write-out (write out): Print the HTTP status code using the specified format.
+------------------------------------------------------------
+# docker image ls "$NEXUS_REGISTRY/$IMAGE_NAME"
+
+Explanation:
+Lists local Docker images matching the repository built from NEXUS_REGISTRY and IMAGE_NAME.
+------------------------------------------------------------
+# docker image rm "$REMOTE_IMAGE" 2>/dev/null || true
+
+Explanation:
+Removes the local image reference stored in REMOTE_IMAGE and suppresses error output. The command still returns success if the image cannot be removed.
+
+Options:
+- 2>/dev/null = standard-error redirection: Send file descriptor 2, standard error, to /dev/null.
+- || = OR operator: Run true only if docker image rm fails.
+------------------------------------------------------------
+# docker pull "$REMOTE_IMAGE"
+
+Explanation:
+Downloads the image referenced by REMOTE_IMAGE from the Nexus Docker Registry.
+------------------------------------------------------------
+# docker rm -f session45-web 2>/dev/null || true
+
+Explanation:
+Force-removes any existing session45-web container and suppresses errors if it does not exist.
+
+Options:
+- -f = --force (force): Force removal of a running container by stopping it first.
+- 2>/dev/null = standard-error redirection: Send standard error to /dev/null.
+- || = OR operator: Run true only if docker rm fails.
+------------------------------------------------------------
+# docker run -d \
+  --name session45-web \
+  --restart unless-stopped \
+  -p 18045:8000 \
+  "$REMOTE_IMAGE"
+
+Explanation:
+Runs the pulled image as a detached container named session45-web, publishes port 18045, and configures an automatic restart policy.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name = container name: Assign the name session45-web to the container.
+- --restart unless-stopped = restart policy: Restart the container automatically unless it was explicitly stopped.
+- -p = --publish (publish): Publish container port 8000 on host port 18045.
+------------------------------------------------------------
+# docker ps --filter name=session45-web
+
+Explanation:
+Lists running containers and filters the output to the session45-web container.
+
+Options:
+- --filter name=session45-web = filter: Show containers whose name matches session45-web.
+------------------------------------------------------------
+# docker inspect session45-web \
+  --format '{{json .State.Health}}'
+
+Explanation:
+Prints the health state of the session45-web container as JSON-formatted template output.
+
+Options:
+- --format '{{json .State.Health}}' = format: Apply the Docker Go template and print the .State.Health object as JSON.
+------------------------------------------------------------
+# curl -sS \
+  -o /dev/null \
+  -w 'HTTP Status: %{http_code}\n' \
+  http://192.168.94.91:18045/
+
+Explanation:
+Tests the deployed application on DEV-2 and prints only its HTTP status code.
+
+Options:
+- -s = --silent (silent): Suppress progress and normal curl status output.
+- -S = --show-error (show error): Show an error message when -s is also used and the request fails.
+- -o /dev/null = --output /dev/null (output): Discard the response body.
+- -w 'HTTP Status: %{http_code}\n' = --write-out (write out): Print the HTTP status code using the specified format.
+------------------------------------------------------------
+# docker info | sed -n '/Insecure Registries/,+10p'
+
+Explanation:
+Shows Docker information and prints the Insecure Registries section plus the next ten lines.
+
+Options:
+- | = pipeline: Send docker info output to sed.
+- -n = --quiet / --silent: Suppress sed's normal automatic printing.
+- '/Insecure Registries/,+10p' = sed address and print command: Start at the matching line, include the next 10 lines, and print that range.
+------------------------------------------------------------
+# docker logout 192.168.94.90:8085
+
+Explanation:
+Removes the stored Docker login credentials for the Nexus Registry at 192.168.94.90:8085.
+------------------------------------------------------------
+# docker login 192.168.94.90:8085
+
+Explanation:
+Starts an interactive Docker login to the Nexus Registry at 192.168.94.90:8085.
+------------------------------------------------------------
+# curl -v http://192.168.94.90:8085/v2/
+
+Explanation:
+Connects to the Nexus Docker Registry API endpoint and shows verbose request and response details.
+
+Options:
+- -v = --verbose (verbose): Show detailed connection, request, and response information.
+------------------------------------------------------------
+# nc -zv 192.168.94.90 8085
+
+Explanation:
+Tests whether a TCP connection can be established to 192.168.94.90 on port 8085 without sending application data.
+
+Options:
+- -z = zero-I/O mode: Scan for a listening service without sending data.
+- -v = verbose mode: Show more detailed connection information.
+------------------------------------------------------------
+# ss -ltnp | grep ':8085'
+
+Explanation:
+Checks for a local TCP listening socket using port 8085 and shows the matching line.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -t = --tcp (TCP): Show TCP sockets.
+- -n = --numeric (numeric): Do not resolve service or host names.
+- -p = --processes (processes): Show the process using each socket when permitted.
+- | = pipeline: Send the output of ss to grep.
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/session45-web:1.0
+
+Explanation:
+Downloads version 1.0 of session45-web directly from the Nexus Docker Registry using its full image reference.
+------------------------------------------------------------
+# docker image inspect \
+  192.168.94.90:8085/session45-web:1.0 \
+  --format '{{json .RepoDigests}}'
+
+Explanation:
+Prints the repository digest information for the explicitly named Nexus image as JSON.
+
+Options:
+- --format '{{json .RepoDigests}}' = format: Apply the Docker Go template and print the .RepoDigests value as JSON.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# docker logs session45-web
+
+Explanation:
+Prints the logs produced by the session45-web container.
+------------------------------------------------------------
+# docker port session45-web
+
+Explanation:
+Shows the host port mappings configured for the session45-web container.
+------------------------------------------------------------
+# curl -v http://127.0.0.1:18045/
+
+Explanation:
+Requests the local application on port 18045 and prints verbose connection and HTTP details.
+
+Options:
+- -v = --verbose (verbose): Show detailed connection, request, and response information.
+------------------------------------------------------------
+# docker tag \
+  session45-web:1.0 \
+  192.168.94.90:8085/session45-web:1.0
+
+Explanation:
+Creates a registry-qualified tag for session45-web:1.0 using the Nexus Registry address.
+------------------------------------------------------------
+# docker push \
+  192.168.94.90:8085/session45-web:1.0
+
+Explanation:
+Uploads session45-web:1.0 to the Nexus Docker Registry using its full image reference.
+------------------------------------------------------------
+# docker run -d \
+  --name session45-web \
+  --restart unless-stopped \
+  -p 18045:8000 \
+  192.168.94.90:8085/session45-web:1.0
+
+Explanation:
+Runs the Nexus-hosted image as a detached session45-web container with restart policy and port mapping.
+
+Options:
+- -d = --detach (detach): Run the container in the background.
+- --name = container name: Assign the name session45-web to the container.
+- --restart unless-stopped = restart policy: Restart the container automatically unless it was explicitly stopped.
+- -p = --publish (publish): Publish container port 8000 on host port 18045.
+------------------------------------------------------------
