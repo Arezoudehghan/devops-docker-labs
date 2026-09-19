@@ -1,0 +1,495 @@
+------------------------------------------------------------
+# sudo -u gitlab-runner docker info
+
+Explanation:
+Runs docker info as the gitlab-runner user to verify that the GitLab Runner account can access the Docker daemon.
+
+Options:
+- -u = --user (user): Runs the following command as the specified user, here gitlab-runner.
+------------------------------------------------------------
+# docker version
+
+Explanation:
+Shows Docker client and server version information.
+------------------------------------------------------------
+# sudo -u deploy docker ps
+
+Explanation:
+Runs docker ps as the deploy user to verify that this account can access Docker on the deployment server.
+
+Options:
+- -u = --user (user): Runs the following command as the specified user, here deploy.
+------------------------------------------------------------
+# ssh deploy@192.0.2.11 hostname
+
+Explanation:
+Connects to DEV-2 as the deploy user and runs hostname on the remote server.
+------------------------------------------------------------
+# docker info
+
+Explanation:
+Displays detailed information about the Docker installation, daemon, storage, runtime, and current configuration.
+------------------------------------------------------------
+# test -f Dockerfile
+
+Explanation:
+Checks that a regular file named Dockerfile exists. The command exits with a non-zero status if the file is missing.
+
+Options:
+- -f = regular-file test: Returns success only when the specified path exists and is a regular file.
+------------------------------------------------------------
+# set -eu
+
+Explanation:
+Enables stricter shell error handling so the script stops on command failures and on references to unset variables.
+
+Options:
+- -e = errexit: Exits the shell when an unhandled command returns a non-zero status.
+- -u = nounset: Treats the use of an unset variable as an error.
+------------------------------------------------------------
+# echo "Building image:"
+
+Explanation:
+Prints a label before displaying the Docker image reference being built.
+------------------------------------------------------------
+# echo "${IMAGE_REF}"
+
+Explanation:
+Prints the current value of the IMAGE_REF shell variable.
+------------------------------------------------------------
+# docker build \
+  --pull \
+  --build-arg HTTP_PROXY="${HTTP_PROXY}" \
+  --build-arg HTTPS_PROXY="${HTTPS_PROXY}" \
+  --build-arg NO_PROXY="${NO_PROXY}" \
+  --tag "${IMAGE_REF}" \
+  .
+
+Explanation:
+Builds a Docker image from the current directory, refreshes the base image when possible, passes proxy-related build arguments, and applies the image tag stored in IMAGE_REF.
+
+Options:
+- --pull = always attempt to pull a newer version of referenced base images before building.
+- --build-arg HTTP_PROXY="${HTTP_PROXY}" = build argument: Passes the current HTTP_PROXY value into the build.
+- --build-arg HTTPS_PROXY="${HTTPS_PROXY}" = build argument: Passes the current HTTPS_PROXY value into the build.
+- --build-arg NO_PROXY="${NO_PROXY}" = build argument: Passes the current NO_PROXY value into the build.
+- --tag "${IMAGE_REF}" = image name and tag: Names and tags the built image with the value of IMAGE_REF.
+------------------------------------------------------------
+# docker image inspect "${IMAGE_REF}" >/dev/null
+
+Explanation:
+Checks that the image referenced by IMAGE_REF exists and can be inspected while discarding normal output.
+
+Options:
+- > = output redirection: Sends standard output to the specified destination.
+- /dev/null = null device: Discards the redirected standard output.
+------------------------------------------------------------
+# docker save "${IMAGE_REF}" | gzip > image.tar.gz
+
+Explanation:
+Exports the Docker image as a tar stream, compresses it with gzip, and writes the compressed archive to image.tar.gz.
+
+Options:
+- | = pipe: Sends the standard output of docker save to the standard input of gzip.
+- > = output redirection: Writes the compressed output to image.tar.gz.
+------------------------------------------------------------
+# docker rm -f "${TEST_CONTAINER}" >/dev/null 2>&1 || true
+
+Explanation:
+Force-removes the test container and suppresses all output. If removal fails, true prevents the cleanup step from failing the whole script.
+
+Options:
+- -f = --force (force): Force-removes a running container by sending SIGKILL before removal when needed.
+- > = output redirection: Sends standard output to /dev/null.
+- 2>&1 = file-descriptor redirection: Sends standard error to the same destination as standard output.
+- || = OR operator: Runs true only if the container removal command fails.
+------------------------------------------------------------
+# trap cleanup EXIT
+
+Explanation:
+Registers the cleanup shell function to run automatically whenever the current shell exits.
+------------------------------------------------------------
+# gunzip -c image.tar.gz | docker load
+
+Explanation:
+Decompresses image.tar.gz to standard output and pipes the Docker image archive directly into docker load.
+
+Options:
+- -c = --stdout (standard output): Writes decompressed data to standard output instead of creating a decompressed file.
+- | = pipe: Sends the decompressed archive directly to docker load.
+------------------------------------------------------------
+# docker run -d \
+  --name "${TEST_CONTAINER}" \
+  -p "127.0.0.1::${APP_PORT}" \
+  "${IMAGE_REF}"
+
+Explanation:
+Starts a test container in the background, gives it a unique name, and publishes its application port only on loopback using an automatically selected host port.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints the container ID.
+- --name "${TEST_CONTAINER}" = container name: Assigns the name stored in TEST_CONTAINER.
+- -p = --publish (publish): Publishes the container port to the host; the empty host-port field lets Docker choose an available port on 127.0.0.1.
+------------------------------------------------------------
+# HOST_PORT="$(docker port "${TEST_CONTAINER}" "${APP_PORT}/tcp" | awk -F: 'NR==1 {print $NF}')"
+
+Explanation:
+Finds the published host port for the test container and stores the first matching port number in HOST_PORT. awk splits the mapping on : and prints the final field.
+
+Options:
+- $(...) = command substitution: Executes the enclosed pipeline and inserts its standard output into the assignment.
+- | = pipe: Sends docker port output to awk.
+- -F: = field-separator option: Tells awk to use : as the field separator.
+------------------------------------------------------------
+# test -n "${HOST_PORT}"
+
+Explanation:
+Checks that the HOST_PORT variable contains a non-empty string.
+
+Options:
+- -n = non-zero-length string test: Returns success when the string length is greater than zero.
+------------------------------------------------------------
+# echo "Testing container on port ${HOST_PORT}"
+
+Explanation:
+Prints the dynamically selected host port used for the smoke test.
+------------------------------------------------------------
+# seq 1 20
+
+Explanation:
+Generates the integer sequence from 1 through 20 for the retry loop.
+------------------------------------------------------------
+# curl -fsS "http://127.0.0.1:${HOST_PORT}/" >/dev/null
+
+Explanation:
+Requests the test application over HTTP and treats HTTP errors as failures while suppressing the response body.
+
+Options:
+- -f = --fail (fail): Returns a failure status for HTTP response codes of 400 or greater without printing the response body.
+- -s = --silent (silent): Disables the progress meter and normal error output.
+- -S = --show-error (show error): Shows an error message when used together with --silent and the request fails.
+- > = output redirection: Sends standard output to /dev/null.
+------------------------------------------------------------
+# echo "Smoke test passed."
+
+Explanation:
+Prints a success message after the test endpoint responds successfully.
+------------------------------------------------------------
+# exit 0
+
+Explanation:
+Ends the current shell or script with exit status 0, which means success.
+------------------------------------------------------------
+# sleep 2
+
+Explanation:
+Pauses execution for 2 seconds between smoke-test attempts.
+------------------------------------------------------------
+# echo "Smoke test failed."
+
+Explanation:
+Prints a failure message after all smoke-test retries are exhausted.
+------------------------------------------------------------
+# docker logs "${TEST_CONTAINER}" || true
+
+Explanation:
+Prints the logs of the test container for troubleshooting. If log collection fails, true prevents that secondary failure from replacing the main test failure.
+
+Options:
+- || = OR operator: Runs true only if docker logs returns a non-zero status.
+------------------------------------------------------------
+# exit 1
+
+Explanation:
+Ends the current shell or script with exit status 1, which indicates failure.
+------------------------------------------------------------
+# printf '%s' "${NEXUS_PASSWORD}" \
+  | docker login "${NEXUS_REGISTRY}" \
+      --username "${NEXUS_USERNAME}" \
+      --password-stdin
+
+Explanation:
+Sends the Nexus password through standard input to docker login and authenticates to the private Docker registry without placing the password directly in the command arguments.
+
+Options:
+- '%s' = printf string format: Prints the password value exactly as a string without adding a newline.
+- | = pipe: Sends printf output to the standard input of docker login.
+- --username "${NEXUS_USERNAME}" = registry username: Uses the username stored in NEXUS_USERNAME.
+- --password-stdin = password from standard input: Reads the registry password from standard input.
+------------------------------------------------------------
+# docker push "${IMAGE_SHA}"
+
+Explanation:
+Pushes the commit-SHA-tagged Docker image referenced by IMAGE_SHA to the configured registry.
+------------------------------------------------------------
+# docker tag "${IMAGE_SHA}" "${IMAGE_LATEST}"
+
+Explanation:
+Creates an additional latest tag for the same local image referenced by IMAGE_SHA.
+------------------------------------------------------------
+# docker push "${IMAGE_LATEST}"
+
+Explanation:
+Pushes the latest image tag referenced by IMAGE_LATEST to the registry.
+------------------------------------------------------------
+# docker tag "${IMAGE_SHA}" "${IMAGE_RELEASE}"
+
+Explanation:
+Creates a release-version tag for the same image referenced by IMAGE_SHA.
+------------------------------------------------------------
+# docker push "${IMAGE_RELEASE}"
+
+Explanation:
+Pushes the release-tagged image referenced by IMAGE_RELEASE to the registry.
+------------------------------------------------------------
+# docker logout "${NEXUS_REGISTRY}"
+
+Explanation:
+Removes the stored Docker authentication credentials for the Nexus registry from the current Docker client context.
+------------------------------------------------------------
+# install -m 700 -d ~/.ssh
+
+Explanation:
+Creates the ~/.ssh directory if needed and sets its permissions to mode 700.
+
+Options:
+- -m = --mode (mode): Sets the created directory permissions to 700.
+- -d = --directory (directory): Creates directories instead of copying files.
+------------------------------------------------------------
+# cp "${SSH_PRIVATE_KEY}" ~/.ssh/id_ed25519
+
+Explanation:
+Copies the temporary GitLab file variable containing the SSH private key to ~/.ssh/id_ed25519.
+------------------------------------------------------------
+# chmod 600 ~/.ssh/id_ed25519
+
+Explanation:
+Sets the SSH private key permissions so only the file owner can read and write it.
+------------------------------------------------------------
+# cp "${SSH_KNOWN_HOSTS}" ~/.ssh/known_hosts
+
+Explanation:
+Copies the GitLab file variable containing trusted SSH host keys to the standard known_hosts file.
+------------------------------------------------------------
+# chmod 600 ~/.ssh/known_hosts
+
+Explanation:
+Sets the known_hosts file permissions so only the owner can read and write it.
+------------------------------------------------------------
+# echo "Deploying:"
+
+Explanation:
+Prints a label before displaying the image reference selected for deployment.
+------------------------------------------------------------
+# printf '%s' "${NEXUS_PASSWORD}" \
+  | ssh -i ~/.ssh/id_ed25519 \
+      "${DEPLOY_USER}@${DEPLOY_HOST}" \
+      "docker login '${NEXUS_REGISTRY}' \
+       --username '${NEXUS_USERNAME}' \
+       --password-stdin"
+
+Explanation:
+Pipes the Nexus password through SSH to a remote docker login command on the deployment server. The SSH connection uses the specified private key.
+
+Options:
+- '%s' = printf string format: Prints the password exactly as a string without adding a newline.
+- | = pipe: Sends the password to the standard input of ssh, which forwards it to the remote command.
+- -i = identity file: Tells ssh to use ~/.ssh/id_ed25519 as the private key.
+- --username '${NEXUS_USERNAME}' = registry username: Uses the Nexus username on the remote Docker client.
+- --password-stdin = password from standard input: Makes remote docker login read the password from its standard input.
+------------------------------------------------------------
+# ssh -i ~/.ssh/id_ed25519 \
+  "${DEPLOY_USER}@${DEPLOY_HOST}" \
+  "
+    set -eu
+
+    docker pull '${IMAGE_REF}'
+
+    docker rm -f '${CONTAINER_NAME}' \
+      >/dev/null 2>&1 || true
+
+    docker run -d \
+      --name '${CONTAINER_NAME}' \
+      --restart unless-stopped \
+      -p '${DEPLOY_PORT}:${APP_PORT}' \
+      '${IMAGE_REF}'
+  "
+
+Explanation:
+Connects to the deployment server and runs the complete remote deployment sequence: strict shell mode, image pull, old-container replacement, and startup of the new container.
+
+Options:
+- -i = identity file: Uses ~/.ssh/id_ed25519 as the SSH private key.
+- -e = errexit: Stops the remote shell on an unhandled command failure.
+- -u = nounset: Fails when the remote shell references an unset variable.
+- -f = --force (force): Force-removes the old container if it exists.
+- > = output redirection: Redirects standard output from the removal command to /dev/null.
+- 2>&1 = file-descriptor redirection: Sends standard error to the same destination as standard output.
+- || = OR operator: Runs true if old-container removal fails, such as on the first deployment.
+- -d = --detach (detach): Runs the new container in the background.
+- --name '${CONTAINER_NAME}' = container name: Assigns the configured production container name.
+- --restart unless-stopped = restart policy: Restarts the container automatically unless it was explicitly stopped.
+- -p = --publish (publish): Maps ${DEPLOY_PORT} on the host to ${APP_PORT} in the container.
+------------------------------------------------------------
+# ssh -i ~/.ssh/id_ed25519 \
+  "${DEPLOY_USER}@${DEPLOY_HOST}" \
+  "docker logout '${NEXUS_REGISTRY}' \
+   >/dev/null 2>&1 || true"
+
+Explanation:
+Connects to the deployment server and logs the remote Docker client out of the Nexus registry while suppressing output and ignoring logout failure.
+
+Options:
+- -i = identity file: Uses ~/.ssh/id_ed25519 as the SSH private key.
+- > = output redirection: Sends standard output to /dev/null.
+- 2>&1 = file-descriptor redirection: Sends standard error to the same destination as standard output.
+- || = OR operator: Runs true if docker logout fails.
+------------------------------------------------------------
+# echo "Checking:"
+
+Explanation:
+Prints a label before displaying the production URL being verified.
+------------------------------------------------------------
+# echo "${URL}"
+
+Explanation:
+Prints the value of the production verification URL stored in URL.
+------------------------------------------------------------
+# curl -fsS "${URL}" >/dev/null
+
+Explanation:
+Checks the production endpoint and fails on HTTP errors while suppressing the response body.
+
+Options:
+- -f = --fail (fail): Returns a failure status for HTTP response codes of 400 or greater.
+- -s = --silent (silent): Disables the progress meter and normal error output.
+- -S = --show-error (show error): Shows an error message if the silent request fails.
+- > = output redirection: Sends standard output to /dev/null.
+------------------------------------------------------------
+# echo "Production verification passed."
+
+Explanation:
+Prints a success message when the deployed production endpoint responds successfully.
+------------------------------------------------------------
+# sleep 3
+
+Explanation:
+Pauses execution for 3 seconds between production verification attempts.
+------------------------------------------------------------
+# echo "Production verification failed."
+
+Explanation:
+Prints a failure message after all production verification retries are exhausted.
+------------------------------------------------------------
+# echo "ERROR: ROLLBACK_TAG is required."
+
+Explanation:
+Prints an error message when the manual rollback job is started without a ROLLBACK_TAG value.
+------------------------------------------------------------
+# echo "Example: ROLLBACK_TAG=7ac39f12"
+
+Explanation:
+Prints an example showing the expected rollback tag variable format.
+------------------------------------------------------------
+# echo "Rolling back to:"
+
+Explanation:
+Prints a label before displaying the image reference selected for rollback.
+------------------------------------------------------------
+# git tag v1.2.0
+
+Explanation:
+Creates a local Git tag named v1.2.0 at the current commit.
+------------------------------------------------------------
+# git push origin v1.2.0
+
+Explanation:
+Pushes the local v1.2.0 tag to the remote repository named origin.
+------------------------------------------------------------
+# docker image inspect "${IMAGE_REF}"
+
+Explanation:
+Displays detailed metadata for the Docker image referenced by IMAGE_REF.
+------------------------------------------------------------
+# curl -fsS "http://127.0.0.1:${HOST_PORT}/"
+
+Explanation:
+Requests the local test endpoint, fails on HTTP errors, and keeps normal output quiet except for errors.
+
+Options:
+- -f = --fail (fail): Returns a failure status for HTTP response codes of 400 or greater.
+- -s = --silent (silent): Disables the progress meter and normal error output.
+- -S = --show-error (show error): Shows an error message when a silent request fails.
+------------------------------------------------------------
+# docker rm -f "${CONTAINER_NAME}"
+
+Explanation:
+Force-removes the container whose name is stored in CONTAINER_NAME.
+
+Options:
+- -f = --force (force): Force-removes a running container by stopping it immediately before removal when necessary.
+------------------------------------------------------------
+# nano .gitlab-ci.yml
+
+Explanation:
+Opens .gitlab-ci.yml in the Nano terminal text editor for editing.
+------------------------------------------------------------
+# git status
+
+Explanation:
+Shows the current Git working-tree and staging-area status.
+------------------------------------------------------------
+# git add .gitlab-ci.yml
+
+Explanation:
+Stages the .gitlab-ci.yml file for the next Git commit.
+------------------------------------------------------------
+# git commit -m "Add complete Docker CI/CD pipeline"
+
+Explanation:
+Creates a Git commit containing the staged changes and uses the provided commit message.
+
+Options:
+- -m = --message (message): Sets the commit message directly from the command line.
+------------------------------------------------------------
+# git push origin main
+
+Explanation:
+Pushes the local main branch to the remote repository named origin.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# docker inspect cicd-session52-app \
+  --format '{{.Config.Image}}'
+
+Explanation:
+Inspects the deployed container and prints only the Docker image reference stored in its configuration.
+
+Options:
+- --format '{{.Config.Image}}' = Go-template output format: Selects only the .Config.Image field from the inspection data.
+------------------------------------------------------------
+# curl -i http://127.0.0.1:8088/
+
+Explanation:
+Requests the deployed application through the local loopback address and includes HTTP response headers in the output.
+
+Options:
+- -i = --include (include): Includes HTTP response headers in the displayed output.
+------------------------------------------------------------
+# curl -i http://192.0.2.11:8088/
+
+Explanation:
+Requests the deployed application on DEV-2 and includes HTTP response headers in the output.
+
+Options:
+- -i = --include (include): Includes HTTP response headers in the displayed output.
+------------------------------------------------------------
+# docker image ls \
+  192.0.2.10:8085/cicd-session52-app
+
+Explanation:
+Lists local Docker images that match the specified Nexus repository name.
+------------------------------------------------------------
