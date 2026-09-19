@@ -1,0 +1,295 @@
+------------------------------------------------------------
+# docker stats
+
+Explanation:
+Shows live CPU, memory, network, and block I/O statistics for running containers.
+------------------------------------------------------------
+# docker ps -a --filter name=cadvisor
+
+Explanation:
+Lists containers and filters the result to containers whose name matches cadvisor.
+
+Options:
+- -a = --all (all): Show all containers, including stopped containers.
+- --filter = filter: Limit the output using a filter condition.
+- name=cadvisor = filter value: Match containers by the name field with the value cadvisor.
+------------------------------------------------------------
+# sudo ss -lntp | grep ':8080' || true
+
+Explanation:
+Shows listening TCP sockets and searches the result for port 8080. If no match is found, the final true command prevents the shell command from being treated as failed.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -n = --numeric (numeric): Show numeric addresses and port numbers instead of resolving names.
+- -t = --tcp (TCP): Show TCP sockets.
+- -p = --processes (processes): Show the process using each socket when permitted.
+- | = pipe operator: Send the output of ss to grep.
+- || = OR operator: Run true only if the command on the left returns a non-zero status.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+# docker inspect cadvisor \
+  --format '{{.Config.Image}}'
+
+Explanation:
+Inspects the cadvisor container and prints only the image configured for that container.
+
+Options:
+- --format = format output using a custom template: Use the Go template '{{.Config.Image}}' to print the container image value only.
+------------------------------------------------------------
+# docker pull ghcr.io/google/cadvisor:v0.60.5
+
+Explanation:
+Downloads the cAdvisor image tagged v0.60.5 from the GitHub Container Registry.
+------------------------------------------------------------
+# docker image ls ghcr.io/google/cadvisor
+
+Explanation:
+Lists local Docker images whose repository is ghcr.io/google/cadvisor.
+------------------------------------------------------------
+# ls -l /dev/kmsg
+
+Explanation:
+Shows detailed information about the /dev/kmsg device file.
+
+Options:
+- -l = long listing format: Display permissions, owner, group, size, time, and name.
+------------------------------------------------------------
+# docker rm -f cadvisor 2>/dev/null || true
+
+Explanation:
+Force-removes the cadvisor container if it exists. Error output is discarded, and the command is treated as successful even when the container does not exist.
+
+Options:
+- -f = --force (force): Force removal of the running container by sending SIGKILL.
+- 2> = standard-error redirection: Redirect file descriptor 2, which is stderr.
+- /dev/null = redirection target: Discard the redirected error output.
+- || = OR operator: Run true if docker rm returns a non-zero status.
+------------------------------------------------------------
+# docker run -d \
+  --name cadvisor \
+  --restart unless-stopped \
+  --volume=/:/rootfs:ro \
+  --volume=/var/run:/var/run:ro \
+  --volume=/sys:/sys:ro \
+  --volume=/var/lib/docker/:/var/lib/docker:ro \
+  --volume=/dev/disk/:/dev/disk:ro \
+  --publish=192.168.94.91:8080:8080 \
+  --privileged \
+  --device=/dev/kmsg \
+  ghcr.io/google/cadvisor:v0.60.5
+
+Explanation:
+Runs cAdvisor in the background with access to the host paths and devices needed for container monitoring. It publishes the cAdvisor service on 192.168.94.91 port 8080.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+- --name cadvisor = container name: Assign the name cadvisor to the container.
+- --restart unless-stopped = restart policy: Restart the container automatically unless it was explicitly stopped.
+- --volume=/:/rootfs:ro = volume mount: Mount the host root filesystem at /rootfs inside the container as read-only.
+- --volume=/var/run:/var/run:ro = volume mount: Mount /var/run from the host at the same path inside the container as read-only.
+- --volume=/sys:/sys:ro = volume mount: Mount /sys from the host at the same path inside the container as read-only.
+- --volume=/var/lib/docker/:/var/lib/docker:ro = volume mount: Mount Docker's data directory inside the container as read-only.
+- --volume=/dev/disk/:/dev/disk:ro = volume mount: Mount host disk device information inside the container as read-only.
+- --publish=192.168.94.91:8080:8080 = published port mapping: Bind host IP 192.168.94.91 and host port 8080 to container port 8080.
+- --privileged = privileged mode: Give the container extended privileges and broad access to host devices.
+- --device=/dev/kmsg = device mapping: Make the host /dev/kmsg device available inside the container.
+------------------------------------------------------------
+# docker ps --filter name=cadvisor
+
+Explanation:
+Lists running containers and filters the result to containers whose name matches cadvisor.
+
+Options:
+- --filter = filter: Limit the output using a filter condition.
+- name=cadvisor = filter value: Match containers by the name field with the value cadvisor.
+------------------------------------------------------------
+# docker logs --tail 50 cadvisor
+
+Explanation:
+Shows the last 50 log lines from the cadvisor container.
+
+Options:
+- --tail 50 = number of lines from the end: Show only the last 50 log lines.
+------------------------------------------------------------
+# docker logs -f cadvisor
+
+Explanation:
+Shows the cadvisor container logs and continues following new log output.
+
+Options:
+- -f = --follow (follow): Keep streaming new log output until the command is stopped.
+------------------------------------------------------------
+# curl -fsS http://192.168.94.91:8080/metrics | head
+
+Explanation:
+Requests the cAdvisor Prometheus metrics endpoint and shows only the first lines of the response.
+
+Options:
+- -f = --fail (fail): Return an error for HTTP response codes of 400 or greater without printing the response body.
+- -s = --silent (silent): Suppress the progress meter and normal curl status output.
+- -S = --show-error (show error): Show an error message when -s is also used and curl fails.
+- | = pipe operator: Send the curl output to head.
+------------------------------------------------------------
+# curl -fsS http://192.168.94.91:8080/metrics \
+  | grep '^container_cpu_usage_seconds_total' \
+  | head
+
+Explanation:
+Requests cAdvisor metrics, keeps lines that start with the CPU usage metric name, and shows only the first matching lines.
+
+Options:
+- -f = --fail (fail): Return an error for HTTP response codes of 400 or greater without printing the response body.
+- -s = --silent (silent): Suppress the progress meter and normal curl status output.
+- -S = --show-error (show error): Show an error message when -s is also used and curl fails.
+- | = pipe operator: Send output from one command to the next command.
+- '^container_cpu_usage_seconds_total' = grep pattern: The ^ character anchors the match to the beginning of the line.
+------------------------------------------------------------
+# curl -fsS http://192.168.94.91:8080/metrics \
+  | grep '^container_memory_usage_bytes' \
+  | head
+
+Explanation:
+Requests cAdvisor metrics, keeps lines that start with the container memory usage metric name, and shows only the first matching lines.
+
+Options:
+- -f = --fail (fail): Return an error for HTTP response codes of 400 or greater without printing the response body.
+- -s = --silent (silent): Suppress the progress meter and normal curl status output.
+- -S = --show-error (show error): Show an error message when -s is also used and curl fails.
+- | = pipe operator: Send output from one command to the next command.
+- '^container_memory_usage_bytes' = grep pattern: The ^ character anchors the match to the beginning of the line.
+------------------------------------------------------------
+# curl -fsS http://192.168.94.91:8080/metrics \
+  | grep '^container_spec_memory_limit_bytes' \
+  | head
+
+Explanation:
+Requests cAdvisor metrics, keeps lines that start with the container memory limit metric name, and shows only the first matching lines.
+
+Options:
+- -f = --fail (fail): Return an error for HTTP response codes of 400 or greater without printing the response body.
+- -s = --silent (silent): Suppress the progress meter and normal curl status output.
+- -S = --show-error (show error): Show an error message when -s is also used and curl fails.
+- | = pipe operator: Send output from one command to the next command.
+- '^container_spec_memory_limit_bytes' = grep pattern: The ^ character anchors the match to the beginning of the line.
+------------------------------------------------------------
+# curl -fsS http://192.168.94.91:8080/metrics \
+  | grep '^container_network_' \
+  | head -n 20
+
+Explanation:
+Requests cAdvisor metrics, keeps container network metric lines, and shows the first 20 matching lines.
+
+Options:
+- -f = --fail (fail): Return an error for HTTP response codes of 400 or greater without printing the response body.
+- -s = --silent (silent): Suppress the progress meter and normal curl status output.
+- -S = --show-error (show error): Show an error message when -s is also used and curl fails.
+- | = pipe operator: Send output from one command to the next command.
+- '^container_network_' = grep pattern: The ^ character anchors the match to the beginning of the line.
+- -n = --lines (lines): Tell head to print the specified number of lines.
+- 20 = option value for -n: Print the first 20 matching lines.
+------------------------------------------------------------
+# curl -fsS http://192.168.94.91:8080/metrics \
+  | grep '^container_fs_' \
+  | head -n 20
+
+Explanation:
+Requests cAdvisor metrics, keeps container filesystem metric lines, and shows the first 20 matching lines.
+
+Options:
+- -f = --fail (fail): Return an error for HTTP response codes of 400 or greater without printing the response body.
+- -s = --silent (silent): Suppress the progress meter and normal curl status output.
+- -S = --show-error (show error): Show an error message when -s is also used and curl fails.
+- | = pipe operator: Send output from one command to the next command.
+- '^container_fs_' = grep pattern: The ^ character anchors the match to the beginning of the line.
+- -n = --lines (lines): Tell head to print the specified number of lines.
+- 20 = option value for -n: Print the first 20 matching lines.
+------------------------------------------------------------
+# curl -fsS http://192.168.94.91:8080/metrics \
+  | grep '^container_oom_events_total'
+
+Explanation:
+Requests cAdvisor metrics and keeps only lines that start with the container OOM event metric name.
+
+Options:
+- -f = --fail (fail): Return an error for HTTP response codes of 400 or greater without printing the response body.
+- -s = --silent (silent): Suppress the progress meter and normal curl status output.
+- -S = --show-error (show error): Show an error message when -s is also used and curl fails.
+- | = pipe operator: Send the curl output to grep.
+- '^container_oom_events_total' = grep pattern: The ^ character anchors the match to the beginning of the line.
+------------------------------------------------------------
+# docker run -d \
+  --name cadvisor-lab \
+  --memory=128m \
+  --cpus=0.50 \
+  nginx:alpine
+
+Explanation:
+Runs an nginx container in the background with CPU and memory limits for the cAdvisor monitoring lab.
+
+Options:
+- -d = --detach (detach): Run the container in the background and print its container ID.
+- --name cadvisor-lab = container name: Assign the name cadvisor-lab to the container.
+- --memory=128m = memory limit: Limit the container memory to 128 megabytes.
+- --cpus=0.50 = CPU limit: Limit the container to 0.50 CPU units.
+------------------------------------------------------------
+# docker ps --filter name=cadvisor-lab
+
+Explanation:
+Lists running containers and filters the result to containers whose name matches cadvisor-lab.
+
+Options:
+- --filter = filter: Limit the output using a filter condition.
+- name=cadvisor-lab = filter value: Match containers by the name field with the value cadvisor-lab.
+------------------------------------------------------------
+# docker stats --no-stream cadvisor-lab
+
+Explanation:
+Shows one snapshot of resource usage statistics for the cadvisor-lab container instead of continuously streaming updates.
+
+Options:
+- --no-stream = disable streaming: Show a single statistics result and then exit.
+------------------------------------------------------------
+# scrape_configs:
+  - job_name: cadvisor
+    scrape_interval: 5s
+
+    static_configs:
+      - targets:
+          - cadvisor:8080
+
+Explanation:
+Defines a Prometheus scrape job named cadvisor and tells Prometheus to scrape the cAdvisor target at cadvisor:8080 every 5 seconds.
+------------------------------------------------------------
+# sudo ss -lntp | grep ':8080'
+
+Explanation:
+Shows listening TCP sockets and searches the result for port 8080.
+
+Options:
+- -l = --listening (listening): Show only listening sockets.
+- -n = --numeric (numeric): Show numeric addresses and port numbers instead of resolving names.
+- -t = --tcp (TCP): Show TCP sockets.
+- -p = --processes (processes): Show the process using each socket when permitted.
+- | = pipe operator: Send the output of ss to grep.
+------------------------------------------------------------
+# curl -I http://192.168.94.91:8080/
+
+Explanation:
+Sends an HTTP HEAD request to the cAdvisor web interface and displays the response headers.
+
+Options:
+- -I = --head (head): Fetch headers only by using an HTTP HEAD request.
+------------------------------------------------------------
+# docker rm -f cadvisor-lab
+
+Explanation:
+Force-removes the cadvisor-lab container.
+
+Options:
+- -f = --force (force): Force removal of the running container by sending SIGKILL.
+------------------------------------------------------------
