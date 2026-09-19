@@ -2,7 +2,7 @@
 
 [![Validate DevOps Docker Labs](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml/badge.svg)](https://github.com/Arezoudehghan/devops-docker-labs/actions/workflows/validate.yml)
 
-A structured collection of hands-on Docker labs covering Docker fundamentals, persistent storage, Docker Compose, networking, registry and Nexus workflows, security practices, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
+A structured collection of hands-on Docker labs covering Docker fundamentals, persistent storage, Docker Compose, networking, registry and Nexus workflows, security practices, container monitoring, production practices, Docker Swarm, and deployment scenarios in a two-VM DevOps learning environment.
 
 ## Lab environment
 
@@ -177,6 +177,12 @@ A structured collection of hands-on Docker labs covering Docker fundamentals, pe
 | Session | Topic | Lab directory | Execution host |
 |---|---|---|---|
 | 60 | Docker logs, stdout/stderr, logging drivers, log rotation, and daemon logs | [`monitoring/session-60-docker-logging`](monitoring/session-60-docker-logging/) | `DEV-1` |
+
+### Docker Logging and Monitoring
+
+| Session | Topic | Lab directory | Execution host |
+|---|---|---|---|
+| 62 | Monitor Docker containers with cAdvisor and inspect Prometheus metrics | [`monitoring/session-62-cadvisor`](monitoring/session-62-cadvisor/) | `DEV-2` |
 
 ### Docker in Production
 
