@@ -1,0 +1,264 @@
+------------------------------------------------------------
+# docker build -t my-app:abc12345 .
+
+Explanation:
+Builds a Docker image from the Dockerfile in the current directory and names it my-app with the tag abc12345.
+
+Options:
+- -t = --tag (tag): Sets the image name and optional tag.
+- . = build context: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker login 192.168.94.90:8085
+
+Explanation:
+Logs in to the Docker registry running at 192.168.94.90 on port 8085.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl --noproxy '*' -i http://192.168.94.90:8085/v2/
+
+Explanation:
+Sends an HTTP request directly to the Nexus Docker Registry API endpoint and includes the response headers.
+
+Options:
+- --noproxy '*' = no-proxy host list: The value '*' disables proxy use for all hosts for this request.
+- -i = --include (include): Includes HTTP response headers in the output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo -u gitlab-runner docker version
+
+Explanation:
+Runs docker version as the gitlab-runner user to verify that the runner user can access Docker.
+
+Options:
+- -u = --user (user): Runs the command as the specified user, gitlab-runner.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo -u gitlab-runner docker info
+
+Explanation:
+Runs docker info as the gitlab-runner user to verify Docker daemon access and display Docker system information.
+
+Options:
+- -u = --user (user): Runs the command as the specified user, gitlab-runner.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker info | sed -n '/Insecure Registries/,+10p'
+
+Explanation:
+Displays Docker information and prints the Insecure Registries section plus the next ten lines.
+
+Options:
+- | = pipe operator: Sends the output of docker info to sed as input.
+- -n = --quiet / --silent: Suppresses sed's automatic printing.
+- '/Insecure Registries/,+10p' = sed address and print command: Starts at the matching line, includes the next ten lines, and prints that range.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo cat /etc/docker/daemon.json
+
+Explanation:
+Displays the current Docker daemon configuration file with elevated privileges.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# IMAGE_NAME="${NEXUS_REGISTRY}/${CI_PROJECT_PATH_SLUG}"
+
+Explanation:
+Creates the shell variable IMAGE_NAME by combining the Nexus registry address with the GitLab project path slug.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# echo "Building ${IMAGE_NAME}:${IMAGE_TAG}"
+
+Explanation:
+Prints the full image name and tag that the pipeline is about to build.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker build --pull -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+
+Explanation:
+Builds the Docker image, attempts to refresh referenced base images, and tags the result with the Nexus image name and commit-based tag.
+
+Options:
+- --pull = always attempt to pull newer referenced images: Checks for a newer version of referenced base images before building.
+- -t = --tag (tag): Sets the image name and tag.
+- . = build context: Uses the current directory as the Docker build context.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image inspect "${IMAGE_NAME}:${IMAGE_TAG}" > /dev/null
+
+Explanation:
+Inspects the built image to verify that it exists, while discarding normal output.
+
+Options:
+- > = output redirection operator: Redirects standard output to another destination.
+- /dev/null = null device: Discards the redirected output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# mkdir -p "${CI_PROJECT_DIR}/.docker"
+
+Explanation:
+Creates a temporary Docker configuration directory inside the GitLab project directory.
+
+Options:
+- -p = --parents (parents): Creates parent directories as needed and does not fail if the directory already exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# printf '%s' "${NEXUS_PASSWORD}" | docker --config "${CI_PROJECT_DIR}/.docker" login "${NEXUS_REGISTRY}" --username "${NEXUS_USERNAME}" --password-stdin
+
+Explanation:
+Sends the Nexus password through standard input and logs Docker in to the Nexus registry using a temporary Docker configuration directory.
+
+Options:
+- '%s' = printf string format: Prints the password value as a string without adding extra text.
+- | = pipe operator: Sends printf output to docker login as standard input.
+- --config "${CI_PROJECT_DIR}/.docker" = Docker configuration directory: Uses this directory instead of the default Docker CLI configuration directory.
+- --username "${NEXUS_USERNAME}" = username: Supplies the Nexus username.
+- --password-stdin = password from standard input: Reads the password from standard input instead of a command-line argument.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker --config "${CI_PROJECT_DIR}/.docker" push "${IMAGE_NAME}:${IMAGE_TAG}"
+
+Explanation:
+Pushes the commit-tagged image to Nexus using the temporary Docker configuration directory.
+
+Options:
+- --config "${CI_PROJECT_DIR}/.docker" = Docker configuration directory: Uses this directory instead of the default Docker CLI configuration directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker tag "${IMAGE_NAME}:${IMAGE_TAG}" "${IMAGE_NAME}:latest"
+
+Explanation:
+Creates an additional latest tag that points to the same local image as the commit-specific tag.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker --config "${CI_PROJECT_DIR}/.docker" push "${IMAGE_NAME}:latest"
+
+Explanation:
+Pushes the latest tag to Nexus using the temporary Docker configuration directory.
+
+Options:
+- --config "${CI_PROJECT_DIR}/.docker" = Docker configuration directory: Uses this directory instead of the default Docker CLI configuration directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker --config "${CI_PROJECT_DIR}/.docker" logout "${NEXUS_REGISTRY}" || true
+
+Explanation:
+Logs out from the Nexus registry and keeps the shell command successful even if logout fails.
+
+Options:
+- --config "${CI_PROJECT_DIR}/.docker" = Docker configuration directory: Uses this directory instead of the default Docker CLI configuration directory.
+- || = OR operator: Runs true only if docker logout returns a non-zero exit status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# rm -rf "${CI_PROJECT_DIR}/.docker"
+
+Explanation:
+Removes the temporary Docker configuration directory and all content inside it.
+
+Options:
+- -r = --recursive (recursive): Removes directories and their contents recursively.
+- -f = --force (force): Ignores nonexistent files and does not prompt for confirmation.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker login -u user -p password 192.168.94.90:8085
+
+Explanation:
+Logs in to the Nexus Docker registry using the username and password supplied directly as command arguments.
+
+Options:
+- -u = --username (username): Supplies the registry username.
+- -p = --password (password): Supplies the registry password.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push 192.168.94.90:8085/root-docker-demo:a82b6d91
+
+Explanation:
+Pushes the root-docker-demo image with tag a82b6d91 to the Nexus registry at 192.168.94.90:8085.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git status
+
+Explanation:
+Shows the current Git working tree and staging area status.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git add .gitlab-ci.yml
+
+Explanation:
+Adds .gitlab-ci.yml to the Git staging area for the next commit.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git commit -m "Add Nexus image push stage"
+
+Explanation:
+Creates a Git commit with the staged changes and sets the commit message.
+
+Options:
+- -m = --message (message): Uses the supplied text as the commit message.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# git push origin main
+
+Explanation:
+Pushes the local main branch to the remote repository named origin.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker images | grep '192.168.94.90:8085'
+
+Explanation:
+Lists local Docker images and filters the output to lines containing the Nexus registry address.
+
+Options:
+- | = pipe operator: Sends the output of docker images to grep as input.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rmi 192.168.94.90:8085/root-docker-demo:a82b6d91
+
+Explanation:
+Removes the specified local Docker image tag from the Docker host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull 192.168.94.90:8085/root-docker-demo:a82b6d91
+
+Explanation:
+Pulls the specified root-docker-demo image and tag from the Nexus registry.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker tag myapp:a82b6d91 192.168.94.90:8085/myapp:a82b6d91
+
+Explanation:
+Creates a new registry-qualified tag for the existing local image myapp:a82b6d91.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker push 192.168.94.90:8085/myapp:a82b6d91
+
+Explanation:
+Pushes the myapp image with tag a82b6d91 to the Nexus registry at 192.168.94.90:8085.
+------------------------------------------------------------
