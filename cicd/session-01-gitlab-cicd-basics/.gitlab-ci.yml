@@ -1,0 +1,44 @@
+stages:
+  - validate
+  - test
+  - package
+
+default:
+  tags:
+    - dev-shell
+  interruptible: true
+
+variables:
+  APP_NAME: "cicd-pipeline-lab"
+
+validate_script:
+  stage: validate
+  script:
+    - echo "Checking Bash syntax..."
+    - bash -n app.sh
+
+test_script:
+  stage: test
+  needs:
+    - validate_script
+  script:
+    - echo "Running application test..."
+    - OUTPUT="$(bash app.sh)"
+    - printf 'Program output: %s\n' "$OUTPUT"
+    - test "$OUTPUT" = "Hello from GitLab CI/CD"
+
+package_script:
+  stage: package
+  needs:
+    - test_script
+  script:
+    - echo "Creating application package..."
+    - install -d dist
+    - install -m 0755 app.sh dist/app.sh
+    - sha256sum dist/app.sh > dist/app.sh.sha256
+  artifacts:
+    name: "${APP_NAME}-${CI_COMMIT_SHORT_SHA}"
+    paths:
+      - dist/
+    expire_in: 7 days
+    when: on_success
