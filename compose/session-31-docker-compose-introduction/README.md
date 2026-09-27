@@ -5,7 +5,7 @@ Chapter 6 of the DevOps course introduces Docker Compose and the basic lifecycle
 ## Lab environment
 
 - Host: `DEV-1`
-- IP: `192.168.94.90`
+- IP: `192.168.10.90`
 - Service: Nginx
 - Host port: `18031`
 - Container port: `80`
@@ -72,7 +72,7 @@ curl -I http://127.0.0.1:18031
 Test from another system in the lab network:
 
 ```bash
-curl -I http://192.168.94.90:18031
+curl -I http://192.168.10.90:18031
 ```
 
 View logs:

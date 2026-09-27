@@ -284,7 +284,7 @@ Options:
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# curl -I http://192.168.94.91:8086
+# curl -I http://192.168.10.91:8086
 
 Explanation:
 Sends an HTTP request to the Adminer endpoint and displays the response headers.

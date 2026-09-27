@@ -32,7 +32,7 @@ Shows Swarm state and whether the node has manager control-plane capability.
 ## 2. Initialize Swarm when required
 
 ```bash
-docker swarm init --advertise-addr 192.168.94.90
+docker swarm init --advertise-addr 192.168.10.90
 ```
 
 Initializes the Swarm manager on DEV-1 and advertises the manager address.
@@ -52,13 +52,13 @@ Lists Swarm nodes and their current status. Run from a manager.
 ## 3. Registry access
 
 ```bash
-docker login 192.168.94.90:8085
+docker login 192.168.10.90:8085
 ```
 
 Authenticates to the Nexus Docker registry used by this lab.
 
 ```bash
-curl -i http://192.168.94.90:8085/v2/
+curl -i http://192.168.10.90:8085/v2/
 ```
 
 Checks whether the Docker Registry API endpoint is reachable.
@@ -83,19 +83,19 @@ Moves into the project directory.
 docker build \
   --build-arg APP_VERSION=v1 \
   --build-arg HEALTH_MODE=ok \
-  -t 192.168.94.90:8085/swarm-rolling-demo:v1 .
+  -t 192.168.10.90:8085/swarm-rolling-demo:v1 .
 ```
 
 Builds the initial healthy application image.
 
 ```bash
-docker image inspect 192.168.94.90:8085/swarm-rolling-demo:v1
+docker image inspect 192.168.10.90:8085/swarm-rolling-demo:v1
 ```
 
 Inspects the local v1 image metadata.
 
 ```bash
-docker push 192.168.94.90:8085/swarm-rolling-demo:v1
+docker push 192.168.10.90:8085/swarm-rolling-demo:v1
 ```
 
 Pushes the v1 image to Nexus.
@@ -106,13 +106,13 @@ Pushes the v1 image to Nexus.
 docker build \
   --build-arg APP_VERSION=v2 \
   --build-arg HEALTH_MODE=ok \
-  -t 192.168.94.90:8085/swarm-rolling-demo:v2 .
+  -t 192.168.10.90:8085/swarm-rolling-demo:v2 .
 ```
 
 Builds the healthy v2 image used for the rolling update.
 
 ```bash
-docker push 192.168.94.90:8085/swarm-rolling-demo:v2
+docker push 192.168.10.90:8085/swarm-rolling-demo:v2
 ```
 
 Pushes v2 to Nexus.
@@ -123,13 +123,13 @@ Pushes v2 to Nexus.
 docker build \
   --build-arg APP_VERSION=v3-broken \
   --build-arg HEALTH_MODE=fail \
-  -t 192.168.94.90:8085/swarm-rolling-demo:v3-broken .
+  -t 192.168.10.90:8085/swarm-rolling-demo:v3-broken .
 ```
 
 Builds the intentionally unhealthy image used to test automatic rollback.
 
 ```bash
-docker push 192.168.94.90:8085/swarm-rolling-demo:v3-broken
+docker push 192.168.10.90:8085/swarm-rolling-demo:v3-broken
 ```
 
 Pushes the broken test image to Nexus.
@@ -182,14 +182,14 @@ Displays a readable service specification including update and rollback configur
 ## 11. Test the application
 
 ```bash
-curl http://192.168.94.90:8088/
+curl http://192.168.10.90:8088/
 ```
 
 Tests the published application port through DEV-1.
 
 ```bash
 for i in $(seq 1 10); do
-  curl -s http://192.168.94.90:8088/
+  curl -s http://192.168.10.90:8088/
   sleep 1
 done
 ```
@@ -197,7 +197,7 @@ done
 Sends repeated requests so different replicas and versions can be observed.
 
 ```bash
-curl http://192.168.94.91:8088/
+curl http://192.168.10.91:8088/
 ```
 
 Tests the Swarm routing mesh through DEV-2.
@@ -228,7 +228,7 @@ Refreshes the Swarm task list every second so the rollout can be observed.
 
 ```bash
 while true; do
-  curl -s http://192.168.94.90:8088/
+  curl -s http://192.168.10.90:8088/
   sleep 1
 done
 ```
@@ -253,7 +253,7 @@ Displays the image reference currently declared in the service specification.
 
 ```bash
 for i in $(seq 1 10); do
-  curl -s http://192.168.94.90:8088/
+  curl -s http://192.168.10.90:8088/
 done
 ```
 
@@ -290,7 +290,7 @@ docker service ps rolling_web --no-trunc
 Shows full task errors and complete task IDs during a failed rollout.
 
 ```bash
-curl http://192.168.94.90:8088/
+curl http://192.168.10.90:8088/
 ```
 
 Confirms that the service has returned to the previous healthy version after rollback.
@@ -364,13 +364,13 @@ docker service logs -f rolling_web
 Follows service logs in real time.
 
 ```bash
-docker pull 192.168.94.90:8085/swarm-rolling-demo:v2
+docker pull 192.168.10.90:8085/swarm-rolling-demo:v2
 ```
 
 Tests whether the healthy v2 image can be pulled manually from Nexus.
 
 ```bash
-docker login 192.168.94.90:8085
+docker login 192.168.10.90:8085
 ```
 
 Re-authenticates to the registry when image pulls fail.

@@ -28,15 +28,15 @@ Builds a Docker image from the current directory and uses the GitLab short commi
 Options:
 - -t = --tag (tag): Assigns the image name and the value of CI_COMMIT_SHORT_SHA as its tag.
 ------------------------------------------------------------
-# docker build -t 192.168.94.90:8085/myapp:${CI_COMMIT_SHORT_SHA} .
+# docker build -t 192.168.10.90:8085/myapp:${CI_COMMIT_SHORT_SHA} .
 
 Explanation:
-Builds a Docker image and tags it for the Nexus registry at 192.168.94.90:8085 using the GitLab short commit SHA.
+Builds a Docker image and tags it for the Nexus registry at 192.168.10.90:8085 using the GitLab short commit SHA.
 
 Options:
 - -t = --tag (tag): Assigns the full registry image name and the value of CI_COMMIT_SHORT_SHA as its tag.
 ------------------------------------------------------------
-# docker push 192.168.94.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
+# docker push 192.168.10.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
 
 Explanation:
 Pushes the image tagged with the current GitLab short commit SHA to the Nexus registry.
@@ -75,7 +75,7 @@ Options:
 - --name = container name: Assigns the container name myapp.
 - -p = --publish (publish): Publishes a container port on the host; 8080:8000 maps host port 8080 to container port 8000.
 ------------------------------------------------------------
-# docker pull 192.168.94.90:8085/myapp:2.3.0
+# docker pull 192.168.10.90:8085/myapp:2.3.0
 
 Explanation:
 Pulls version 2.3.0 of myapp from the Nexus registry.
@@ -83,7 +83,7 @@ Pulls version 2.3.0 of myapp from the Nexus registry.
 # docker run -d \
   --name myapp \
   -p 8080:8000 \
-  192.168.94.90:8085/myapp:2.3.0
+  192.168.10.90:8085/myapp:2.3.0
 
 Explanation:
 Starts version 2.3.0 of myapp from the Nexus registry in the background and publishes container port 8000 on host port 8080.
@@ -116,7 +116,7 @@ Options:
 Explanation:
 Pushes the image identified by IMAGE_NAME and CI_COMMIT_SHORT_SHA to the configured registry.
 ------------------------------------------------------------
-# docker pull 192.168.94.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
+# docker pull 192.168.10.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
 
 Explanation:
 Pulls the myapp image whose tag matches the current GitLab short commit SHA from the Nexus registry.
@@ -133,7 +133,7 @@ Options:
 # docker run -d \
   --name myapp \
   -p 8088:8000 \
-  192.168.94.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
+  192.168.10.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
 
 Explanation:
 Starts the commit-specific myapp image from the Nexus registry in the background and publishes container port 8000 on host port 8088.

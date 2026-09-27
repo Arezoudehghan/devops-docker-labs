@@ -86,7 +86,7 @@ export NO_PROXY="127.0.0.1,localhost,192.168.0.0/16,10.42.0.0/16,10.43.0.0/16"
 
 ```bash
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION='v1.36.4+k3s1' sh -s - server \
-  --node-ip 192.168.94.90 \
+  --node-ip 192.168.10.90 \
   --disable traefik \
   --disable servicelb \
   --disable metrics-server
@@ -122,10 +122,10 @@ sudo cat /var/lib/rancher/k3s/server/node-token
 
 ```bash
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION='v1.36.4+k3s1' \
-  K3S_URL='https://192.168.94.90:6443' \
+  K3S_URL='https://192.168.10.90:6443' \
   K3S_TOKEN='TOKEN_FROM_DEV_1' \
   sh -s - agent \
-  --node-ip 192.168.94.91
+  --node-ip 192.168.10.91
 ```
 
 19. Show cluster information.
@@ -209,19 +209,19 @@ kubectl -n devops-lab get service
 31. Test NodePort through DEV-1.
 
 ```bash
-curl http://192.168.94.90:30080/
+curl http://192.168.10.90:30080/
 ```
 
 32. Test NodePort through DEV-2.
 
 ```bash
-curl http://192.168.94.91:30080/
+curl http://192.168.10.91:30080/
 ```
 
 33. Send ten requests through DEV-1.
 
 ```bash
-for i in $(seq 1 10); do curl -s http://192.168.94.90:30080/; done
+for i in $(seq 1 10); do curl -s http://192.168.10.90:30080/; done
 ```
 
 ## Self-healing
@@ -293,7 +293,7 @@ kubectl -n devops-lab rollout status deployment/web-demo
 44. Send ten requests after the update.
 
 ```bash
-for i in $(seq 1 10); do curl -s http://192.168.94.90:30080/; done
+for i in $(seq 1 10); do curl -s http://192.168.10.90:30080/; done
 ```
 
 ## Rollback
@@ -313,7 +313,7 @@ kubectl -n devops-lab rollout undo deployment/web-demo
 47. Test the application after rollback.
 
 ```bash
-curl -s http://192.168.94.90:30080/
+curl -s http://192.168.10.90:30080/
 ```
 
 ## Common kubectl operations
@@ -445,7 +445,7 @@ kubectl describe node dev-2
 68. Test connectivity to the Kubernetes API endpoint.
 
 ```bash
-curl -k https://192.168.94.90:6443/
+curl -k https://192.168.10.90:6443/
 ```
 
 69. Check Flannel VXLAN UDP/8472.

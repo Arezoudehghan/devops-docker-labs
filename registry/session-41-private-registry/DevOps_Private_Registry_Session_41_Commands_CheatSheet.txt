@@ -5,10 +5,10 @@ Explanation:
 Pulls the nginx image from Docker's default registry.
 
 ------------------------------------------------------------
-# docker pull 192.168.94.90:5005/nginx:1.29
+# docker pull 192.168.10.90:5005/nginx:1.29
 
 Explanation:
-Pulls the nginx image tagged 1.29 from the private registry at 192.168.94.90:5005.
+Pulls the nginx image tagged 1.29 from the private registry at 192.168.10.90:5005.
 
 ------------------------------------------------------------
 # docker login registry.company.local
@@ -29,7 +29,7 @@ Explanation:
 Pulls the payment-api image tagged 1.0 from registry.company.local.
 
 ------------------------------------------------------------
-# docker tag payment-api:1.0 192.168.94.90:5005/payment-api:1.0
+# docker tag payment-api:1.0 192.168.10.90:5005/payment-api:1.0
 
 Explanation:
 Creates a new tag for the existing payment-api:1.0 image so it points to the private registry.
@@ -41,19 +41,19 @@ Explanation:
 Lists Docker images stored locally.
 
 ------------------------------------------------------------
-# docker push 192.168.94.90:5005/payment-api:1.0
+# docker push 192.168.10.90:5005/payment-api:1.0
 
 Explanation:
-Pushes payment-api:1.0 to the private registry at 192.168.94.90:5005.
+Pushes payment-api:1.0 to the private registry at 192.168.10.90:5005.
 
 ------------------------------------------------------------
-# docker pull 192.168.94.90:5005/payment-api:1.0
+# docker pull 192.168.10.90:5005/payment-api:1.0
 
 Explanation:
-Pulls payment-api:1.0 from the private registry at 192.168.94.90:5005.
+Pulls payment-api:1.0 from the private registry at 192.168.10.90:5005.
 
 ------------------------------------------------------------
-# docker run -d --name payment-api 192.168.94.90:5005/payment-api:1.0
+# docker run -d --name payment-api 192.168.10.90:5005/payment-api:1.0
 
 Explanation:
 Starts a container from the private-registry image in detached mode and names the container payment-api.
@@ -62,7 +62,7 @@ Options:
 - -d = --detach (detach): Runs the container in the background.
 - --name payment-api = container name: Assigns payment-api as the container name.
 ------------------------------------------------------------
-# docker build -t 192.168.94.90:8085/payment-api:${CI_COMMIT_SHORT_SHA} .
+# docker build -t 192.168.10.90:8085/payment-api:${CI_COMMIT_SHORT_SHA} .
 
 Explanation:
 Builds a Docker image from the current directory and tags it with the GitLab short commit SHA.
@@ -72,7 +72,7 @@ Options:
 - ${CI_COMMIT_SHORT_SHA} = shell parameter expansion: Inserts the current value of the CI_COMMIT_SHORT_SHA environment variable into the image tag.
 - . = build context: Uses the current directory as the Docker build context.
 ------------------------------------------------------------
-# docker push 192.168.94.90:8085/payment-api:${CI_COMMIT_SHORT_SHA}
+# docker push 192.168.10.90:8085/payment-api:${CI_COMMIT_SHORT_SHA}
 
 Explanation:
 Pushes the commit-specific payment-api image to the private registry.
@@ -80,7 +80,7 @@ Pushes the commit-specific payment-api image to the private registry.
 Options:
 - ${CI_COMMIT_SHORT_SHA} = shell parameter expansion: Inserts the current value of the CI_COMMIT_SHORT_SHA environment variable into the image tag.
 ------------------------------------------------------------
-# docker pull 192.168.94.90:8085/payment-api:${CI_COMMIT_SHORT_SHA}
+# docker pull 192.168.10.90:8085/payment-api:${CI_COMMIT_SHORT_SHA}
 
 Explanation:
 Pulls the commit-specific payment-api image from the private registry.
@@ -164,7 +164,7 @@ if path.exists() and path.read_text().strip():
 else:
     data = {}
 
-registry = "192.168.94.90:5005"
+registry = "192.168.10.90:5005"
 
 registries = data.get("insecure-registries", [])
 
@@ -177,7 +177,7 @@ path.write_text(json.dumps(data, indent=2) + "\n")
 PY
 
 Explanation:
-Runs an inline Python script that safely adds 192.168.94.90:5005 to the insecure-registries list in /etc/docker/daemon.json without overwriting unrelated settings.
+Runs an inline Python script that safely adds 192.168.10.90:5005 to the insecure-registries list in /etc/docker/daemon.json without overwriting unrelated settings.
 
 Options:
 - - = standard input script source: Tells python3 to read the program from standard input.
@@ -237,7 +237,7 @@ Lists local Docker images whose repository name is busybox.
 ------------------------------------------------------------
 # docker tag \
   busybox:1.36.1 \
-  192.168.94.90:5005/session41-busybox:1.0
+  192.168.10.90:5005/session41-busybox:1.0
 
 Explanation:
 Creates a private-registry tag for the local busybox:1.36.1 image.
@@ -251,7 +251,7 @@ Lists local Docker images and filters the output for session41-busybox.
 Options:
 - | = pipe operator: Sends the output of docker images to grep.
 ------------------------------------------------------------
-# docker push 192.168.94.90:5005/session41-busybox:1.0
+# docker push 192.168.10.90:5005/session41-busybox:1.0
 
 Explanation:
 Pushes the session41-busybox image tagged 1.0 to the private registry.
@@ -281,7 +281,7 @@ Options:
 - -30 = first 30 lines: GNU head compatibility syntax equivalent to requesting the first 30 lines.
 ------------------------------------------------------------
 # docker image rm \
-  192.168.94.90:5005/session41-busybox:1.0 \
+  192.168.10.90:5005/session41-busybox:1.0 \
   2>/dev/null || true
 
 Explanation:
@@ -291,14 +291,14 @@ Options:
 - 2>/dev/null = stderr redirection: Sends standard error, file descriptor 2, to /dev/null.
 - || = OR operator: Runs true only if docker image rm fails.
 ------------------------------------------------------------
-# docker pull 192.168.94.90:5005/session41-busybox:1.0
+# docker pull 192.168.10.90:5005/session41-busybox:1.0
 
 Explanation:
 Pulls session41-busybox:1.0 from the private registry to the local Docker host.
 
 ------------------------------------------------------------
 # docker run --rm \
-  192.168.94.90:5005/session41-busybox:1.0 \
+  192.168.10.90:5005/session41-busybox:1.0 \
   echo "Private Registry Works"
 
 Explanation:
@@ -336,15 +336,15 @@ Explanation:
 Pushes payment-api:1.0 to nexus.company.local.
 
 ------------------------------------------------------------
-# docker push 192.168.94.90:5005/myapp:1.0
+# docker push 192.168.10.90:5005/myapp:1.0
 
 Explanation:
-Attempts to push the local image tagged 192.168.94.90:5005/myapp:1.0 to the private registry.
+Attempts to push the local image tagged 192.168.10.90:5005/myapp:1.0 to the private registry.
 
 ------------------------------------------------------------
 # docker tag \
   myapp:1.0 \
-  192.168.94.90:5005/myapp:1.0
+  192.168.10.90:5005/myapp:1.0
 
 Explanation:
 Creates the private-registry tag required before pushing myapp:1.0.

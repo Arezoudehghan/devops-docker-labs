@@ -33,7 +33,7 @@ docker compose ps
 
 Open:
 
-`http://192.168.94.91:8086`
+`http://192.168.10.91:8086`
 
 Adminer connection values:
 

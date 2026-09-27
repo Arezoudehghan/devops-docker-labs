@@ -2,7 +2,7 @@
 set -euo pipefail
 
 VERSION="${1:-}"
-REGISTRY="${REGISTRY:-192.168.94.90:8085}"
+REGISTRY="${REGISTRY:-192.168.10.90:8085}"
 IMAGE_NAME="${IMAGE_NAME:-devops/versioning-demo}"
 
 if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then

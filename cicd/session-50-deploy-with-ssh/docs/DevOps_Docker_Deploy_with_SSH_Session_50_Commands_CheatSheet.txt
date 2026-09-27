@@ -20,7 +20,7 @@ Removes the specified stopped Docker container.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# docker pull 192.168.94.90:8085/cicd-session50-app:a82c91f4
+# docker pull 192.168.10.90:8085/cicd-session50-app:a82c91f4
 
 Explanation:
 Pulls the image tagged a82c91f4 from the Nexus Docker registry.
@@ -45,7 +45,7 @@ Removes the stopped container named cicd-session50-app.
   --name cicd-session50-app \
   --restart unless-stopped \
   -p 8088:8000 \
-  192.168.94.90:8085/cicd-session50-app:a82c91f4
+  192.168.10.90:8085/cicd-session50-app:a82c91f4
 
 Explanation:
 Starts the specified image as a background container named cicd-session50-app and publishes host port 8088 to container port 8000.
@@ -58,14 +58,14 @@ Options:
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# docker pull 192.168.94.90:8085/cicd-session50-app:latest
+# docker pull 192.168.10.90:8085/cicd-session50-app:latest
 
 Explanation:
 Pulls the image tagged latest from the Nexus Docker registry.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# docker pull 192.168.94.90:8085/cicd-session50-app:${CI_COMMIT_SHORT_SHA}
+# docker pull 192.168.10.90:8085/cicd-session50-app:${CI_COMMIT_SHORT_SHA}
 
 Explanation:
 Pulls the application image whose tag is taken from the GitLab short commit SHA variable.
@@ -119,7 +119,7 @@ Options:
 ------------------------------------------------------------
 # ssh-copy-id \
   -i ./gitlab-ci-deploy.pub \
-  deploy@192.168.94.91
+  deploy@192.168.10.91
 
 Explanation:
 Copies the selected public SSH key to the deploy account on DEV-2 so key-based login can be used.
@@ -131,7 +131,7 @@ Options:
 ------------------------------------------------------------
 # ssh \
   -i ./gitlab-ci-deploy \
-  deploy@192.168.94.91 \
+  deploy@192.168.10.91 \
   'hostname && whoami'
 
 Explanation:
@@ -145,7 +145,7 @@ Options:
 ------------------------------------------------------------
 # ssh-keyscan \
   -t ed25519 \
-  192.168.94.91 \
+  192.168.10.91 \
   > /tmp/dev2_known_hosts
 
 Explanation:
@@ -196,7 +196,7 @@ Prints the file referenced by SSH_PRIVATE_KEY. In the lesson this command was sh
 
 ------------------------------------------------------------
 # sudo -u gitlab-runner ssh \
-  deploy@192.168.94.91 \
+  deploy@192.168.10.91 \
   hostname
 
 Explanation:
@@ -512,7 +512,7 @@ Options:
 ------------------------------------------------------------
 # curl \
   -i \
-  http://192.168.94.91:8088/
+  http://192.168.10.91:8088/
 
 Explanation:
 Sends an HTTP request to the application on DEV-2 and includes response headers in the output.
@@ -597,15 +597,15 @@ Queries the system group database and prints the docker group entry.
 
 ------------------------------------------------------------
 # docker login \
-  192.168.94.90:8085
+  192.168.10.90:8085
 
 Explanation:
-Starts an interactive login to the Nexus Docker registry at 192.168.94.90:8085.
+Starts an interactive login to the Nexus Docker registry at 192.168.10.90:8085.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
 # docker pull \
-  192.168.94.90:8085/cicd-session50-app:TAG
+  192.168.10.90:8085/cicd-session50-app:TAG
 
 Explanation:
 Pulls the application image with the placeholder tag TAG from the Nexus registry.
@@ -613,7 +613,7 @@ Pulls the application image with the placeholder tag TAG from the Nexus registry
 
 ------------------------------------------------------------
 # docker pull \
-  192.168.94.90:8085/cicd-session50-app:71bc30da
+  192.168.10.90:8085/cicd-session50-app:71bc30da
 
 Explanation:
 Pulls the previous application image tagged 71bc30da from Nexus for rollback.
@@ -625,7 +625,7 @@ Pulls the previous application image tagged 71bc30da from Nexus for rollback.
   --name cicd-session50-app \
   --restart unless-stopped \
   -p 8088:8000 \
-  192.168.94.90:8085/cicd-session50-app:71bc30da
+  192.168.10.90:8085/cicd-session50-app:71bc30da
 
 Explanation:
 Starts the rollback image tagged 71bc30da as the application container.

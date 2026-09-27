@@ -329,10 +329,10 @@ Options:
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# curl -I http://192.168.94.90:18031
+# curl -I http://192.168.10.90:18031
 
 Explanation:
-Sends an HTTP request to 192.168.94.90 on port 18031 and displays response headers only.
+Sends an HTTP request to 192.168.10.90 on port 18031 and displays response headers only.
 
 Options:
 - -I = --head (head): Fetches and displays HTTP response headers without downloading the response body.

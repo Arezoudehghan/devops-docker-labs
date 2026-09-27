@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REGISTRY="${REGISTRY:-192.168.94.90:8085}"
+REGISTRY="${REGISTRY:-192.168.10.90:8085}"
 DAEMON_JSON="/etc/docker/daemon.json"
 
 if [[ "${EUID}" -ne 0 ]]; then

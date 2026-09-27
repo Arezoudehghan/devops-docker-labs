@@ -6,17 +6,17 @@ A practical Docker Production lab for immutable image versioning, Semantic Versi
 
 ```text
 DEV-1 — Build / Git / Nexus
-192.168.94.90
+192.168.10.90
         |
         | push versioned images
         v
 Nexus Docker Registry
-192.168.94.90:8085
+192.168.10.90:8085
         |
         | pull exact tag
         v
 DEV-2 — Deploy
-192.168.94.91
+192.168.10.91
 ```
 
 ## Project structure
@@ -73,8 +73,8 @@ VERSION=1.0.0
 The release script publishes two tags that point to the same build:
 
 ```text
-192.168.94.90:8085/devops/versioning-demo:1.0.0
-192.168.94.90:8085/devops/versioning-demo:git-<12-char-sha>
+192.168.10.90:8085/devops/versioning-demo:1.0.0
+192.168.10.90:8085/devops/versioning-demo:git-<12-char-sha>
 ```
 
 Make the script executable once:
@@ -128,7 +128,7 @@ curl -fsS http://127.0.0.1:8080/version.txt
 Change only `IMAGE_REF` in `.env`, for example:
 
 ```text
-IMAGE_REF=192.168.94.90:8085/devops/versioning-demo:1.1.0
+IMAGE_REF=192.168.10.90:8085/devops/versioning-demo:1.1.0
 ```
 
 Then deploy the new immutable tag:
@@ -143,7 +143,7 @@ docker compose --env-file .env up -d
 Set `IMAGE_REF` back to the previous known-good version:
 
 ```text
-IMAGE_REF=192.168.94.90:8085/devops/versioning-demo:1.0.0
+IMAGE_REF=192.168.10.90:8085/devops/versioning-demo:1.0.0
 ```
 
 Then pull and recreate the service:

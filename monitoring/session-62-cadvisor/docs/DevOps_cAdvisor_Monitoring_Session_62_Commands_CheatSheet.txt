@@ -78,13 +78,13 @@ Options:
   --volume=/sys:/sys:ro \
   --volume=/var/lib/docker/:/var/lib/docker:ro \
   --volume=/dev/disk/:/dev/disk:ro \
-  --publish=192.168.94.91:8080:8080 \
+  --publish=192.168.10.91:8080:8080 \
   --privileged \
   --device=/dev/kmsg \
   ghcr.io/google/cadvisor:v0.60.5
 
 Explanation:
-Runs cAdvisor in the background with access to the host paths and devices needed for container monitoring. It publishes the cAdvisor service on 192.168.94.91 port 8080.
+Runs cAdvisor in the background with access to the host paths and devices needed for container monitoring. It publishes the cAdvisor service on 192.168.10.91 port 8080.
 
 Options:
 - -d = --detach (detach): Run the container in the background and print its container ID.
@@ -95,7 +95,7 @@ Options:
 - --volume=/sys:/sys:ro = volume mount: Mount /sys from the host at the same path inside the container as read-only.
 - --volume=/var/lib/docker/:/var/lib/docker:ro = volume mount: Mount Docker's data directory inside the container as read-only.
 - --volume=/dev/disk/:/dev/disk:ro = volume mount: Mount host disk device information inside the container as read-only.
-- --publish=192.168.94.91:8080:8080 = published port mapping: Bind host IP 192.168.94.91 and host port 8080 to container port 8080.
+- --publish=192.168.10.91:8080:8080 = published port mapping: Bind host IP 192.168.10.91 and host port 8080 to container port 8080.
 - --privileged = privileged mode: Give the container extended privileges and broad access to host devices.
 - --device=/dev/kmsg = device mapping: Make the host /dev/kmsg device available inside the container.
 ------------------------------------------------------------
@@ -124,7 +124,7 @@ Shows the cadvisor container logs and continues following new log output.
 Options:
 - -f = --follow (follow): Keep streaming new log output until the command is stopped.
 ------------------------------------------------------------
-# curl -fsS http://192.168.94.91:8080/metrics | head
+# curl -fsS http://192.168.10.91:8080/metrics | head
 
 Explanation:
 Requests the cAdvisor Prometheus metrics endpoint and shows only the first lines of the response.
@@ -135,7 +135,7 @@ Options:
 - -S = --show-error (show error): Show an error message when -s is also used and curl fails.
 - | = pipe operator: Send the curl output to head.
 ------------------------------------------------------------
-# curl -fsS http://192.168.94.91:8080/metrics \
+# curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_cpu_usage_seconds_total' \
   | head
 
@@ -149,7 +149,7 @@ Options:
 - | = pipe operator: Send output from one command to the next command.
 - '^container_cpu_usage_seconds_total' = grep pattern: The ^ character anchors the match to the beginning of the line.
 ------------------------------------------------------------
-# curl -fsS http://192.168.94.91:8080/metrics \
+# curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_memory_usage_bytes' \
   | head
 
@@ -163,7 +163,7 @@ Options:
 - | = pipe operator: Send output from one command to the next command.
 - '^container_memory_usage_bytes' = grep pattern: The ^ character anchors the match to the beginning of the line.
 ------------------------------------------------------------
-# curl -fsS http://192.168.94.91:8080/metrics \
+# curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_spec_memory_limit_bytes' \
   | head
 
@@ -177,7 +177,7 @@ Options:
 - | = pipe operator: Send output from one command to the next command.
 - '^container_spec_memory_limit_bytes' = grep pattern: The ^ character anchors the match to the beginning of the line.
 ------------------------------------------------------------
-# curl -fsS http://192.168.94.91:8080/metrics \
+# curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_network_' \
   | head -n 20
 
@@ -193,7 +193,7 @@ Options:
 - -n = --lines (lines): Tell head to print the specified number of lines.
 - 20 = option value for -n: Print the first 20 matching lines.
 ------------------------------------------------------------
-# curl -fsS http://192.168.94.91:8080/metrics \
+# curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_fs_' \
   | head -n 20
 
@@ -209,7 +209,7 @@ Options:
 - -n = --lines (lines): Tell head to print the specified number of lines.
 - 20 = option value for -n: Print the first 20 matching lines.
 ------------------------------------------------------------
-# curl -fsS http://192.168.94.91:8080/metrics \
+# curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_oom_events_total'
 
 Explanation:
@@ -277,7 +277,7 @@ Options:
 - -p = --processes (processes): Show the process using each socket when permitted.
 - | = pipe operator: Send the output of ss to grep.
 ------------------------------------------------------------
-# curl -I http://192.168.94.91:8080/
+# curl -I http://192.168.10.91:8080/
 
 Explanation:
 Sends an HTTP HEAD request to the cAdvisor web interface and displays the response headers.

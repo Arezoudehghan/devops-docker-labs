@@ -27,7 +27,7 @@ Options:
 - --oneline = one-line commit format: Displays each commit in a shortened single-line form.
 - -5 = maximum count of 5 commits: Limits the output to the latest five commits.
 ------------------------------------------------------------
-# export NEXUS_REGISTRY="192.168.94.90:8085"
+# export NEXUS_REGISTRY="192.168.10.90:8085"
 
 Explanation:
 Creates or updates the NEXUS_REGISTRY environment variable and exports it to child processes.
@@ -339,7 +339,7 @@ Options:
 - --retry-delay 2 = retry delay: Waits two seconds between retries.
 ------------------------------------------------------------
 # docker pull \
-  192.168.94.90:8085/cicd-session2-app:latest
+  192.168.10.90:8085/cicd-session2-app:latest
 
 Explanation:
 Pulls the image currently referenced by the latest tag from the Nexus Docker registry.

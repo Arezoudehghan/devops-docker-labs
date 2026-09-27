@@ -12,10 +12,10 @@ Prints the environment variables inside the `app` container and sorts the output
 Options:
 - | = pipe operator: Sends the output of `docker compose exec app env` to `sort`.
 ------------------------------------------------------------
-# ssh your-user@192.168.94.90
+# ssh your-user@192.168.10.90
 
 Explanation:
-Opens an SSH session to the host at `192.168.94.90`. Replace `your-user` with the actual remote username.
+Opens an SSH session to the host at `192.168.10.90`. Replace `your-user` with the actual remote username.
 ------------------------------------------------------------
 # docker --version
 

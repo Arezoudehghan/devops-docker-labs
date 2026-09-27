@@ -6,10 +6,10 @@ Pulls the nginx image from the default Docker registry.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# docker pull 192.168.94.90:8085/myapp:1.0
+# docker pull 192.168.10.90:8085/myapp:1.0
 
 Explanation:
-Pulls the myapp image with tag 1.0 from the Nexus Docker registry at 192.168.94.90:8085.
+Pulls the myapp image with tag 1.0 from the Nexus Docker registry at 192.168.10.90:8085.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
@@ -27,7 +27,7 @@ Options:
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# curl -i http://192.168.94.90:8085/v2/
+# curl -i http://192.168.10.90:8085/v2/
 
 Explanation:
 Sends an HTTP request to the Docker Registry API v2 endpoint and includes the response headers.
@@ -72,7 +72,7 @@ if p.exists() and p.stat().st_size:
     data = json.loads(p.read_text())
 
 registries = set(data.get("insecure-registries", []))
-registries.add("192.168.94.90:8085")
+registries.add("192.168.10.90:8085")
 
 data["insecure-registries"] = sorted(registries)
 
@@ -80,7 +80,7 @@ p.write_text(json.dumps(data, indent=2) + "\n")
 PY
 
 Explanation:
-Runs an inline Python script with root privileges. The script keeps existing daemon.json settings and adds 192.168.94.90:8085 to the insecure-registries list.
+Runs an inline Python script with root privileges. The script keeps existing daemon.json settings and adds 192.168.10.90:8085 to the insecure-registries list.
 
 Options:
 - - = standard input script source: Tells Python to read the program from standard input.
@@ -127,10 +127,10 @@ Options:
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# docker login 192.168.94.90:8085
+# docker login 192.168.10.90:8085
 
 Explanation:
-Technical correction: The path-based login examples shown as incorrect in the lesson must be replaced with this host-and-port form. It authenticates the Docker client to the Nexus Docker registry at 192.168.94.90:8085.
+Technical correction: The path-based login examples shown as incorrect in the lesson must be replaced with this host-and-port form. It authenticates the Docker client to the Nexus Docker registry at 192.168.10.90:8085.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
@@ -156,7 +156,7 @@ Lists locally stored Docker images whose repository name matches alpine.
 
 ------------------------------------------------------------
 # docker tag alpine:3.20 \
-  192.168.94.90:8085/lab/alpine:3.20
+  192.168.10.90:8085/lab/alpine:3.20
 
 Explanation:
 Creates a new tag for the local alpine:3.20 image so it points to the Nexus registry and lab namespace.
@@ -173,14 +173,14 @@ Lists locally stored Docker images.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# docker push 192.168.94.90:8085/lab/alpine:3.20
+# docker push 192.168.10.90:8085/lab/alpine:3.20
 
 Explanation:
 Pushes the lab/alpine image with tag 3.20 to the Nexus Docker registry.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# docker pull 192.168.94.90:8085/lab/alpine:3.20
+# docker pull 192.168.10.90:8085/lab/alpine:3.20
 
 Explanation:
 Pulls the lab/alpine image with tag 3.20 from the Nexus Docker registry.
@@ -188,7 +188,7 @@ Pulls the lab/alpine image with tag 3.20 from the Nexus Docker registry.
 
 ------------------------------------------------------------
 # docker run --rm \
-  192.168.94.90:8085/lab/alpine:3.20 \
+  192.168.10.90:8085/lab/alpine:3.20 \
   cat /etc/alpine-release
 
 Explanation:
@@ -200,15 +200,15 @@ Options:
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# docker logout 192.168.94.90:8085
+# docker logout 192.168.10.90:8085
 
 Explanation:
-Removes the stored Docker login credentials for the Nexus registry at 192.168.94.90:8085.
+Removes the stored Docker login credentials for the Nexus registry at 192.168.10.90:8085.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
 # docker tag payment-api:1.4.7 \
-  192.168.94.90:8085/payment/payment-api:1.4.7
+  192.168.10.90:8085/payment/payment-api:1.4.7
 
 Explanation:
 Creates a Nexus registry tag for payment-api version 1.4.7 under the payment namespace.
@@ -219,7 +219,7 @@ Options:
 
 ------------------------------------------------------------
 # docker push \
-  192.168.94.90:8085/payment/payment-api:1.4.7
+  192.168.10.90:8085/payment/payment-api:1.4.7
 
 Explanation:
 Pushes payment-api version 1.4.7 to the payment namespace in the Nexus Docker registry.
@@ -230,7 +230,7 @@ Options:
 
 ------------------------------------------------------------
 # docker pull \
-  192.168.94.90:8085/payment/payment-api:1.4.7
+  192.168.10.90:8085/payment/payment-api:1.4.7
 
 Explanation:
 Pulls payment-api version 1.4.7 from the payment namespace in the Nexus Docker registry.
@@ -243,7 +243,7 @@ Options:
 # docker run -d \
   --name payment-api \
   -p 8080:8080 \
-  192.168.94.90:8085/payment/payment-api:1.4.7
+  192.168.10.90:8085/payment/payment-api:1.4.7
 
 Explanation:
 Starts the payment-api image in the background, names the container payment-api, and publishes host port 8080 to container port 8080.
@@ -264,7 +264,7 @@ Pushes the local myapp image with tag 1.0 to the registry implied by the image n
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# docker login -u admin -p MyPassword123 192.168.94.90:8085
+# docker login -u admin -p MyPassword123 192.168.10.90:8085
 
 Explanation:
 Authenticates to the Nexus Docker registry using the supplied username and password.
@@ -276,7 +276,7 @@ Options:
 
 ------------------------------------------------------------
 # echo "$NEXUS_PASSWORD" \
-  | docker login 192.168.94.90:8085 \
+  | docker login 192.168.10.90:8085 \
       -u "$NEXUS_USERNAME" \
       --password-stdin
 
@@ -294,7 +294,7 @@ Options:
 
 ------------------------------------------------------------
 # docker push \
-  192.168.94.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
+  192.168.10.90:8085/myapp:${CI_COMMIT_SHORT_SHA}
 
 Explanation:
 Pushes myapp to Nexus using the current GitLab short commit SHA as the image tag.
@@ -305,10 +305,10 @@ Options:
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# ping -c 3 192.168.94.90
+# ping -c 3 192.168.10.90
 
 Explanation:
-Sends three ICMP echo requests to 192.168.94.90 and then stops.
+Sends three ICMP echo requests to 192.168.10.90 and then stops.
 
 Options:
 - -c = count: Sends exactly 3 echo requests.
@@ -316,7 +316,7 @@ Options:
 
 ------------------------------------------------------------
 # docker tag myapp:1.0 \
-  192.168.94.90:8085/myapp:1.0
+  192.168.10.90:8085/myapp:1.0
 
 Explanation:
 Creates a new tag for myapp:1.0 that points to the Nexus Docker registry.
@@ -327,7 +327,7 @@ Options:
 
 ------------------------------------------------------------
 # docker push \
-  192.168.94.90:8085/myapp:1.0
+  192.168.10.90:8085/myapp:1.0
 
 Explanation:
 Pushes myapp version 1.0 to the Nexus Docker registry.

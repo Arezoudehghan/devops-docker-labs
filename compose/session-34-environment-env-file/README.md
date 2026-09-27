@@ -4,8 +4,8 @@ Chapter 6 of the DevOps course continues Docker Compose with environment variabl
 
 ## Lab environment
 
-- `DEV-1`: `192.168.94.90` — development configuration — host port `18080`
-- `DEV-2`: `192.168.94.91` — production-like configuration — host port `18081`
+- `DEV-1`: `192.168.10.90` — development configuration — host port `18080`
+- `DEV-2`: `192.168.10.91` — production-like configuration — host port `18081`
 - Container application port: `8000`
 - Compose project name: `compose-env-lab`
 

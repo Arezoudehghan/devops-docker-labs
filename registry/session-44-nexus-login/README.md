@@ -15,9 +15,9 @@ Chapter 7 of the DevOps Docker course covers Registry and Nexus workflows. This 
 
 ## Lab environment
 
-- `DEV-1`: `192.168.94.90` — Nexus Repository and Docker Hosted Registry.
-- Nexus Docker Registry connector: `192.168.94.90:8085`.
-- `DEV-2`: `192.168.94.91` — Docker client used to test login.
+- `DEV-1`: `192.168.10.90` — Nexus Repository and Docker Hosted Registry.
+- Nexus Docker Registry connector: `192.168.10.90:8085`.
+- `DEV-2`: `192.168.10.91` — Docker client used to test login.
 
 > These are private lab addresses from the course environment. Replace them with the addresses assigned to your own lab.
 
@@ -54,13 +54,13 @@ sudo ss -lntp | grep ':8085'
 From the Docker client:
 
 ```bash
-nc -vz 192.168.94.90 8085
+nc -vz 192.168.10.90 8085
 ```
 
 Check the Docker Registry v2 endpoint:
 
 ```bash
-curl -i http://192.168.94.90:8085/v2/
+curl -i http://192.168.10.90:8085/v2/
 ```
 
 A `401 Unauthorized` response can be normal before authentication because it shows that the registry endpoint is reachable and requires credentials.
@@ -80,7 +80,7 @@ Example configuration:
 ```json
 {
   "insecure-registries": [
-    "192.168.94.90:8085"
+    "192.168.10.90:8085"
   ]
 }
 ```
@@ -113,13 +113,13 @@ The registry address must contain only the host or IP and the Docker connector p
 Correct:
 
 ```bash
-docker login 192.168.94.90:8085
+docker login 192.168.10.90:8085
 ```
 
 With a username:
 
 ```bash
-docker login 192.168.94.90:8085 -u "$NEXUS_USER"
+docker login 192.168.10.90:8085 -u "$NEXUS_USER"
 ```
 
 Do not add `http://`, `https://`, or a Nexus repository path such as `/repository/docker-hosted` to the `docker login` target.
@@ -129,7 +129,7 @@ Do not add `http://`, `https://`, or a Nexus repository path such as `/repositor
 For automation and CI/CD, pass the password through standard input:
 
 ```bash
-printf '%s' "$NEXUS_PASSWORD" | docker login 192.168.94.90:8085 -u "$NEXUS_USER" --password-stdin
+printf '%s' "$NEXUS_PASSWORD" | docker login 192.168.10.90:8085 -u "$NEXUS_USER" --password-stdin
 ```
 
 Avoid putting passwords directly in command-line arguments.
@@ -154,7 +154,7 @@ Using `sudo docker login` authenticates as root and therefore uses root's Docker
 ## Logout
 
 ```bash
-docker logout 192.168.94.90:8085
+docker logout 192.168.10.90:8085
 ```
 
 ## Troubleshooting
@@ -167,7 +167,7 @@ If Docker reports:
 server gave HTTP response to HTTPS client
 ```
 
-Check that `192.168.94.90:8085` is present in `insecure-registries`, restart Docker, and verify with:
+Check that `192.168.10.90:8085` is present in `insecure-registries`, restart Docker, and verify with:
 
 ```bash
 docker info | grep -A5 "Insecure Registries"
@@ -194,9 +194,9 @@ Check:
 Test basic reachability and the registry port:
 
 ```bash
-ping -c 4 192.168.94.90
-nc -vz 192.168.94.90 8085
-curl -i http://192.168.94.90:8085/v2/
+ping -c 4 192.168.10.90
+nc -vz 192.168.10.90 8085
+curl -i http://192.168.10.90:8085/v2/
 ```
 
 ## Authentication vs authorization

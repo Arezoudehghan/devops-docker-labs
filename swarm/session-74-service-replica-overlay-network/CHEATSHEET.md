@@ -37,7 +37,7 @@ docker node ls
 Initialize Swarm on DEV-1 when it is not already initialized:
 
 ```bash
-docker swarm init --advertise-addr 192.168.94.90
+docker swarm init --advertise-addr 192.168.10.90
 ```
 
 Display the worker join command and token:
@@ -180,13 +180,13 @@ head -n 1
 Test the published port through DEV-1:
 
 ```bash
-curl -I http://192.168.94.90:8088
+curl -I http://192.168.10.90:8088
 ```
 
 Test the same service through DEV-2:
 
 ```bash
-curl -I http://192.168.94.91:8088
+curl -I http://192.168.10.91:8088
 ```
 
 ## Overlay DNS and HTTP tests

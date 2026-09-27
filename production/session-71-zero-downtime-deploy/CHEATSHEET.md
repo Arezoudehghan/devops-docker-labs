@@ -158,7 +158,7 @@ docker ps
 docker exec app-proxy nginx -t
 docker exec app-proxy wget -qO- http://app-blue/
 curl -fsS http://127.0.0.1:8088/
-curl -fsS http://192.168.94.91:8088/
+curl -fsS http://192.168.10.91:8088/
 ```
 
 ---

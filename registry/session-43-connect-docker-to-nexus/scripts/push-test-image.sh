@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REGISTRY="${REGISTRY:-192.168.94.90:8085}"
+REGISTRY="${REGISTRY:-192.168.10.90:8085}"
 SOURCE_IMAGE="${SOURCE_IMAGE:-alpine:3.20}"
 TARGET_IMAGE="${TARGET_IMAGE:-${REGISTRY}/lab/alpine:3.20}"
 

@@ -19,8 +19,8 @@ By the end of this lab you should be able to explain and demonstrate:
 
 | Host | Address | Kubernetes role |
 |---|---|---|
-| `DEV-1` | `192.168.94.90` | K3s server / control plane / worker |
-| `DEV-2` | `192.168.94.91` | K3s agent / worker |
+| `DEV-1` | `192.168.10.90` | K3s server / control plane / worker |
+| `DEV-2` | `192.168.10.91` | K3s agent / worker |
 
 K3s version used in this lesson:
 
@@ -85,7 +85,7 @@ Run only on `DEV-1`:
 
 ```bash
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION='v1.36.4+k3s1' sh -s - server \
-  --node-ip 192.168.94.90 \
+  --node-ip 192.168.10.90 \
   --disable traefik \
   --disable servicelb \
   --disable metrics-server
@@ -115,10 +115,10 @@ Run on `DEV-2` and replace the placeholder with the real token:
 
 ```bash
 curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION='v1.36.4+k3s1' \
-  K3S_URL='https://192.168.94.90:6443' \
+  K3S_URL='https://192.168.10.90:6443' \
   K3S_TOKEN='TOKEN_FROM_DEV_1' \
   sh -s - agent \
-  --node-ip 192.168.94.91
+  --node-ip 192.168.10.91
 ```
 
 Verify from `DEV-1`:
@@ -183,19 +183,19 @@ nginx :80
 From `DEV-1`:
 
 ```bash
-curl http://192.168.94.90:30080/
+curl http://192.168.10.90:30080/
 ```
 
 From `DEV-2`:
 
 ```bash
-curl http://192.168.94.91:30080/
+curl http://192.168.10.91:30080/
 ```
 
 Run repeated requests:
 
 ```bash
-for i in $(seq 1 10); do curl -s http://192.168.94.90:30080/; done
+for i in $(seq 1 10); do curl -s http://192.168.10.90:30080/; done
 ```
 
 Expected response format:
@@ -255,7 +255,7 @@ kubectl -n devops-lab get pods -o wide
 Verify:
 
 ```bash
-for i in $(seq 1 10); do curl -s http://192.168.94.90:30080/; done
+for i in $(seq 1 10); do curl -s http://192.168.10.90:30080/; done
 ```
 
 The Deployment strategy uses:
@@ -280,7 +280,7 @@ Rollback:
 ```bash
 kubectl -n devops-lab rollout undo deployment/web-demo
 kubectl -n devops-lab rollout status deployment/web-demo
-curl -s http://192.168.94.90:30080/
+curl -s http://192.168.10.90:30080/
 ```
 
 ## 12. Docker-to-Kubernetes command mindset
@@ -362,7 +362,7 @@ kubectl get nodes
 kubectl describe node dev-2
 systemctl status k3s-agent --no-pager
 journalctl -u k3s-agent -n 100 --no-pager
-curl -k https://192.168.94.90:6443/
+curl -k https://192.168.10.90:6443/
 ```
 
 Check firewall, routing, VLAN connectivity, and TCP/6443.

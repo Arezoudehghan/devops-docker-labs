@@ -156,7 +156,7 @@ Login pattern:
 trivy registry login \
   --username YOUR_NEXUS_USERNAME \
   --password-stdin \
-  192.168.94.90:8085
+  192.168.10.90:8085
 ~~~
 
 Scan pattern used in this lesson:
@@ -167,7 +167,7 @@ trivy \
   image \
   --scanners vuln \
   --severity HIGH,CRITICAL \
-  192.168.94.90:8085/docker-hosted/myapp:1.0
+  192.168.10.90:8085/docker-hosted/myapp:1.0
 ~~~
 
 Replace the repository path and image tag with the actual Nexus image you want to scan.

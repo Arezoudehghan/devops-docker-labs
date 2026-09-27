@@ -293,10 +293,10 @@ Options:
 # trivy registry login \
   --username YOUR_NEXUS_USERNAME \
   --password-stdin \
-  192.168.94.90:8085
+  192.168.10.90:8085
 
 Explanation:
-Logs Trivy in to the Nexus registry at 192.168.94.90:8085 using the specified username and a password read from standard input.
+Logs Trivy in to the Nexus registry at 192.168.10.90:8085 using the specified username and a password read from standard input.
 
 Options:
 - --username YOUR_NEXUS_USERNAME = username: Uses YOUR_NEXUS_USERNAME as the registry username.
@@ -307,7 +307,7 @@ Options:
   image \
   --scanners vuln \
   --severity HIGH,CRITICAL \
-  192.168.94.90:8085/docker-hosted/myapp:1.0
+  192.168.10.90:8085/docker-hosted/myapp:1.0
 
 Explanation:
 Scans the specified Nexus-hosted image and reports HIGH and CRITICAL vulnerabilities.

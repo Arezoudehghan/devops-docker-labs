@@ -32,7 +32,7 @@ Pulls the nginx image explicitly using the latest tag.
 
 ------------------------------------------------------------
 # docker build \
-  -t "192.168.94.90:8085/cicd-session48-app:${CI_COMMIT_SHORT_SHA}" \
+  -t "192.168.10.90:8085/cicd-session48-app:${CI_COMMIT_SHORT_SHA}" \
   .
 
 Explanation:
@@ -55,7 +55,7 @@ Lists Docker images stored locally.
 # docker run -d \
   --name cicd-session48-app \
   -p 8088:8000 \
-  192.168.94.90:8085/cicd-session48-app:3308ad76
+  192.168.10.90:8085/cicd-session48-app:3308ad76
 
 Explanation:
 Starts the specified application image as a detached container named cicd-session48-app and publishes host port 8088 to container port 8000.
@@ -70,8 +70,8 @@ Options:
 
 ------------------------------------------------------------
 # docker tag \
-  "192.168.94.90:8085/cicd-session48-app:${CI_COMMIT_SHORT_SHA}" \
-  "192.168.94.90:8085/cicd-session48-app:${CI_COMMIT_REF_SLUG}"
+  "192.168.10.90:8085/cicd-session48-app:${CI_COMMIT_SHORT_SHA}" \
+  "192.168.10.90:8085/cicd-session48-app:${CI_COMMIT_REF_SLUG}"
 
 Explanation:
 Creates a second tag for the same image, using the GitLab branch or ref slug as the new tag.
@@ -135,10 +135,10 @@ Lists local Docker images that match the repository name built from NEXUS_REGIST
 
 ------------------------------------------------------------
 # docker image ls \
-  192.168.94.90:8085/cicd-session48-app
+  192.168.10.90:8085/cicd-session48-app
 
 Explanation:
-Lists local Docker images for the 192.168.94.90:8085/cicd-session48-app repository.
+Lists local Docker images for the 192.168.10.90:8085/cicd-session48-app repository.
 
 Options:
 - \ = line continuation: Continues the same shell command on the next line.
@@ -153,7 +153,7 @@ Sets IMAGE_TAG to a tag that combines the GitLab ref slug and short commit SHA.
 
 ------------------------------------------------------------
 # docker build \
-  -t "192.168.94.90:8085/cicd-session48-app:${IMAGE_TAG}" \
+  -t "192.168.10.90:8085/cicd-session48-app:${IMAGE_TAG}" \
   .
 
 Explanation:

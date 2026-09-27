@@ -4,11 +4,11 @@ Chapter 7 of the DevOps course introduces Docker Registry workflows with Nexus R
 
 ## Lab environment
 
-- `DEV-1`: `192.168.94.90` — Docker build host and Nexus
-- `DEV-2`: `192.168.94.91` — Docker deployment host
-- Nexus Docker Registry: `192.168.94.90:8085`
+- `DEV-1`: `192.168.10.90` — Docker build host and Nexus
+- `DEV-2`: `192.168.10.91` — Docker deployment host
+- Nexus Docker Registry: `192.168.10.90:8085`
 - Test image: `nginx:alpine`
-- Registry image: `192.168.94.90:8085/labs/session42-nginx:1.0`
+- Registry image: `192.168.10.90:8085/labs/session42-nginx:1.0`
 
 ## Workflow
 
@@ -21,7 +21,7 @@ nginx:alpine
   |
   | docker tag
   v
-192.168.94.90:8085/labs/session42-nginx:1.0
+192.168.10.90:8085/labs/session42-nginx:1.0
   |
   | docker login
   | docker push
@@ -43,7 +43,7 @@ Container
 Run on `DEV-1`:
 
 ```bash
-curl -i http://192.168.94.90:8085/v2/
+curl -i http://192.168.10.90:8085/v2/
 ```
 
 A response such as `200 OK` or `401 Unauthorized` confirms that the registry endpoint is reachable. A `401` response can be expected when authentication is enabled.
@@ -59,13 +59,13 @@ docker image ls nginx
 ## 3. Authenticate to Nexus
 
 ```bash
-docker login 192.168.94.90:8085
+docker login 192.168.10.90:8085
 ```
 
 For CI/CD jobs, use standard input for the password instead of placing the password directly in the command line:
 
 ```bash
-printf '%s\n' "$NEXUS_PASSWORD" | docker login 192.168.94.90:8085 \
+printf '%s\n' "$NEXUS_PASSWORD" | docker login 192.168.10.90:8085 \
   --username "$NEXUS_USERNAME" \
   --password-stdin
 ```
@@ -74,37 +74,37 @@ printf '%s\n' "$NEXUS_PASSWORD" | docker login 192.168.94.90:8085 \
 
 ```bash
 docker tag nginx:alpine \
-  192.168.94.90:8085/labs/session42-nginx:1.0
+  192.168.10.90:8085/labs/session42-nginx:1.0
 ```
 
 ## 5. Push the image to Nexus
 
 ```bash
-docker push 192.168.94.90:8085/labs/session42-nginx:1.0
+docker push 192.168.10.90:8085/labs/session42-nginx:1.0
 ```
 
 ## 6. Verify connectivity from DEV-2
 
 ```bash
-curl -i http://192.168.94.90:8085/v2/
-docker login 192.168.94.90:8085
+curl -i http://192.168.10.90:8085/v2/
+docker login 192.168.10.90:8085
 ```
 
 ## 7. Pull the image from Nexus
 
 ```bash
 docker image ls \
-  192.168.94.90:8085/labs/session42-nginx
+  192.168.10.90:8085/labs/session42-nginx
 ```
 
 ```bash
 docker pull \
-  192.168.94.90:8085/labs/session42-nginx:1.0
+  192.168.10.90:8085/labs/session42-nginx:1.0
 ```
 
 ```bash
 docker image ls \
-  192.168.94.90:8085/labs/session42-nginx
+  192.168.10.90:8085/labs/session42-nginx
 ```
 
 ## 8. Run the image on DEV-2
@@ -113,7 +113,7 @@ docker image ls \
 docker run -d \
   --name session42-nginx \
   -p 8042:80 \
-  192.168.94.90:8085/labs/session42-nginx:1.0
+  192.168.10.90:8085/labs/session42-nginx:1.0
 ```
 
 ```bash
@@ -131,24 +131,24 @@ On `DEV-1`:
 
 ```bash
 docker tag nginx:alpine \
-  192.168.94.90:8085/labs/session42-nginx:2.0
+  192.168.10.90:8085/labs/session42-nginx:2.0
 ```
 
 ```bash
 docker push \
-  192.168.94.90:8085/labs/session42-nginx:2.0
+  192.168.10.90:8085/labs/session42-nginx:2.0
 ```
 
 On `DEV-2`:
 
 ```bash
 docker pull \
-  192.168.94.90:8085/labs/session42-nginx:2.0
+  192.168.10.90:8085/labs/session42-nginx:2.0
 ```
 
 ```bash
 docker image ls \
-  192.168.94.90:8085/labs/session42-nginx
+  192.168.10.90:8085/labs/session42-nginx
 ```
 
 ## Troubleshooting
@@ -162,7 +162,7 @@ ss -lntp | grep 8085
 ```
 
 ```bash
-curl -i http://192.168.94.90:8085/v2/
+curl -i http://192.168.10.90:8085/v2/
 ```
 
 Common problems in this lab include:

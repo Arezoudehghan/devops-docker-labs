@@ -4,9 +4,9 @@ Practical DevOps lab for learning Docker Swarm services, replicas, tasks, overla
 
 ## Lab architecture
 
-- **DEV-1** — `192.168.94.90`
+- **DEV-1** — `192.168.10.90`
   - Docker Swarm Manager
-- **DEV-2** — `192.168.94.91`
+- **DEV-2** — `192.168.10.91`
   - Docker Swarm Worker
 
 ## Learning goals
@@ -58,7 +58,7 @@ If the swarm is already active, do not initialize it again.
 Run on **DEV-1** only when Swarm is not already initialized:
 
 ```bash
-docker swarm init --advertise-addr 192.168.94.90
+docker swarm init --advertise-addr 192.168.10.90
 ```
 
 Display the worker join command:
@@ -175,13 +175,13 @@ Remember:
 Test the published port through the manager:
 
 ```bash
-curl -I http://192.168.94.90:8088
+curl -I http://192.168.10.90:8088
 ```
 
 Test the same service through the worker:
 
 ```bash
-curl -I http://192.168.94.91:8088
+curl -I http://192.168.10.91:8088
 ```
 
 Both nodes should accept traffic on the published port because the service uses ingress mode.

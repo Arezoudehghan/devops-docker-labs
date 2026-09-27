@@ -5,7 +5,7 @@ Chapter 6 of the DevOps course introduces the first practical Docker Compose fil
 ## Lab environment
 
 - Host: `DEV-1`
-- IP: `192.168.94.90`
+- IP: `192.168.10.90`
 - Service: Nginx
 - Host port: `8080`
 - Container port: `80`

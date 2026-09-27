@@ -262,7 +262,7 @@ Options:
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# curl -s http://192.168.94.91:9100/metrics \
+# curl -s http://192.168.10.91:9100/metrics \
   | grep '^node_cpu_seconds_total' \
   | head
 
@@ -313,7 +313,7 @@ Options:
 
   static_configs:
     - targets:
-        - '192.168.94.91:9100'
+        - '192.168.10.91:9100'
 
 Explanation:
 Adds a Prometheus scrape job named `node-exporter` and tells Prometheus to scrape Node Exporter on DEV-2 port 9100.
@@ -321,7 +321,7 @@ Adds a Prometheus scrape job named `node-exporter` and tells Prometheus to scrap
 Options:
 - job_name = `node-exporter`: Sets the Prometheus job label for this scrape configuration.
 - static_configs = static target configuration: Defines manually listed scrape targets.
-- targets = `192.168.94.91:9100`: Sets the Node Exporter endpoint that Prometheus will scrape.
+- targets = `192.168.10.91:9100`: Sets the Node Exporter endpoint that Prometheus will scrape.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
@@ -547,7 +547,7 @@ Options:
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# curl -v http://192.168.94.91:9100/metrics
+# curl -v http://192.168.10.91:9100/metrics
 
 Explanation:
 Requests the DEV-2 Node Exporter metrics endpoint over the network and shows detailed connection and HTTP information.

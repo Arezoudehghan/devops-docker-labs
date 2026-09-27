@@ -414,14 +414,14 @@ Lists currently running Docker containers.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# curl http://192.168.94.90:18033
+# curl http://192.168.10.90:18033
 
 Explanation:
 Requests the web-image service on DEV-1 from another host through port 18033.
 ------------------------------------------------------------
 
 ------------------------------------------------------------
-# curl http://192.168.94.90:18034
+# curl http://192.168.10.90:18034
 
 Explanation:
 Requests the web-build service on DEV-1 from another host through port 18034.

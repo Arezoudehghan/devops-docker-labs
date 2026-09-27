@@ -5,7 +5,7 @@ Chapter 6 of the DevOps course continues Docker Compose with the core service de
 ## Lab environment
 
 - Host: `DEV-1`
-- IP: `192.168.94.90`
+- IP: `192.168.10.90`
 - Compose project: `session33`
 - Service 1: `web-image`
 - Service 2: `web-build`
@@ -128,8 +128,8 @@ curl http://127.0.0.1:18034
 Test from another host such as `DEV-2`:
 
 ```bash
-curl http://192.168.94.90:18033
-curl http://192.168.94.90:18034
+curl http://192.168.10.90:18033
+curl http://192.168.10.90:18034
 ```
 
 View service logs:

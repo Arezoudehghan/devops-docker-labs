@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   web:
-    image: 192.168.94.90:8085/swarm-rolling-demo:v1
+    image: 192.168.10.90:8085/swarm-rolling-demo:v1
 
     ports:
       - target: 8000

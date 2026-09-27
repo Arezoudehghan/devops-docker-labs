@@ -4,11 +4,11 @@ Practical DevOps lab for learning rolling updates, health checks, automatic roll
 
 ## Lab architecture
 
-- **DEV-1** — `192.168.94.90`
+- **DEV-1** — `192.168.10.90`
   - Docker Swarm Manager
   - Docker build host
-  - Nexus Docker Registry: `192.168.94.90:8085`
-- **DEV-2** — `192.168.94.91`
+  - Nexus Docker Registry: `192.168.10.90:8085`
+- **DEV-2** — `192.168.10.91`
   - Docker Swarm Worker
 
 ## Project files
@@ -33,7 +33,7 @@ The health endpoint returns `200 OK` when `HEALTH_MODE=ok` and `500` when `HEALT
 Login to the private registry first:
 
 ```bash
-docker login 192.168.94.90:8085
+docker login 192.168.10.90:8085
 ```
 
 Build and push the healthy `v1` image:
@@ -42,9 +42,9 @@ Build and push the healthy `v1` image:
 docker build \
   --build-arg APP_VERSION=v1 \
   --build-arg HEALTH_MODE=ok \
-  -t 192.168.94.90:8085/swarm-rolling-demo:v1 .
+  -t 192.168.10.90:8085/swarm-rolling-demo:v1 .
 
-docker push 192.168.94.90:8085/swarm-rolling-demo:v1
+docker push 192.168.10.90:8085/swarm-rolling-demo:v1
 ```
 
 Build and push the healthy `v2` image:
@@ -53,9 +53,9 @@ Build and push the healthy `v2` image:
 docker build \
   --build-arg APP_VERSION=v2 \
   --build-arg HEALTH_MODE=ok \
-  -t 192.168.94.90:8085/swarm-rolling-demo:v2 .
+  -t 192.168.10.90:8085/swarm-rolling-demo:v2 .
 
-docker push 192.168.94.90:8085/swarm-rolling-demo:v2
+docker push 192.168.10.90:8085/swarm-rolling-demo:v2
 ```
 
 Build and push the intentionally unhealthy image used to test automatic rollback:
@@ -64,9 +64,9 @@ Build and push the intentionally unhealthy image used to test automatic rollback
 docker build \
   --build-arg APP_VERSION=v3-broken \
   --build-arg HEALTH_MODE=fail \
-  -t 192.168.94.90:8085/swarm-rolling-demo:v3-broken .
+  -t 192.168.10.90:8085/swarm-rolling-demo:v3-broken .
 
-docker push 192.168.94.90:8085/swarm-rolling-demo:v3-broken
+docker push 192.168.10.90:8085/swarm-rolling-demo:v3-broken
 ```
 
 ## Validate the stack
@@ -89,7 +89,7 @@ Verify the service:
 ```bash
 docker stack services rolling
 docker service ps rolling_web
-curl http://192.168.94.90:8088/
+curl http://192.168.10.90:8088/
 ```
 
 ## Rolling update: v1 → v2
@@ -128,7 +128,7 @@ Inspect the result with:
 ```bash
 docker service inspect --pretty rolling_web
 docker service ps rolling_web --no-trunc
-curl http://192.168.94.90:8088/
+curl http://192.168.10.90:8088/
 ```
 
 After the test, restore `stack.yml` to the healthy `v2` tag so the declared configuration matches the running service.

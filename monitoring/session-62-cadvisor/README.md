@@ -10,7 +10,7 @@ Run this lab on `DEV-2`.
 
 Lab address used in this lesson:
 
-`192.168.94.91`
+`192.168.10.91`
 
 ## Architecture
 
@@ -102,7 +102,7 @@ docker run -d \
   --volume=/sys:/sys:ro \
   --volume=/var/lib/docker/:/var/lib/docker:ro \
   --volume=/dev/disk/:/dev/disk:ro \
-  --publish=192.168.94.91:8080:8080 \
+  --publish=192.168.10.91:8080:8080 \
   --privileged \
   --device=/dev/kmsg \
   ghcr.io/google/cadvisor:v0.60.5
@@ -133,13 +133,13 @@ docker logs -f cadvisor
 Open the web interface:
 
 ```text
-http://192.168.94.91:8080/
+http://192.168.10.91:8080/
 ```
 
 Check the Prometheus metrics endpoint:
 
 ```bash
-curl -fsS http://192.168.94.91:8080/metrics | head
+curl -fsS http://192.168.10.91:8080/metrics | head
 ```
 
 ## 5. Inspect important metrics
@@ -147,7 +147,7 @@ curl -fsS http://192.168.94.91:8080/metrics | head
 CPU:
 
 ```bash
-curl -fsS http://192.168.94.91:8080/metrics \
+curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_cpu_usage_seconds_total' \
   | head
 ```
@@ -155,7 +155,7 @@ curl -fsS http://192.168.94.91:8080/metrics \
 Memory usage:
 
 ```bash
-curl -fsS http://192.168.94.91:8080/metrics \
+curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_memory_usage_bytes' \
   | head
 ```
@@ -163,7 +163,7 @@ curl -fsS http://192.168.94.91:8080/metrics \
 Memory limit:
 
 ```bash
-curl -fsS http://192.168.94.91:8080/metrics \
+curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_spec_memory_limit_bytes' \
   | head
 ```
@@ -171,7 +171,7 @@ curl -fsS http://192.168.94.91:8080/metrics \
 Network metrics:
 
 ```bash
-curl -fsS http://192.168.94.91:8080/metrics \
+curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_network_' \
   | head -n 20
 ```
@@ -179,7 +179,7 @@ curl -fsS http://192.168.94.91:8080/metrics \
 Filesystem metrics:
 
 ```bash
-curl -fsS http://192.168.94.91:8080/metrics \
+curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_fs_' \
   | head -n 20
 ```
@@ -187,7 +187,7 @@ curl -fsS http://192.168.94.91:8080/metrics \
 OOM events:
 
 ```bash
-curl -fsS http://192.168.94.91:8080/metrics \
+curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_oom_events_total'
 ```
 
@@ -250,19 +250,19 @@ sudo ss -lntp | grep ':8080'
 Confirm HTTP responds:
 
 ```bash
-curl -I http://192.168.94.91:8080/
+curl -I http://192.168.10.91:8080/
 ```
 
 Confirm metrics are available:
 
 ```bash
-curl -fsS http://192.168.94.91:8080/metrics | head
+curl -fsS http://192.168.10.91:8080/metrics | head
 ```
 
 Confirm CPU metrics are exported:
 
 ```bash
-curl -fsS http://192.168.94.91:8080/metrics \
+curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_cpu_usage_seconds_total' \
   | head
 ```
@@ -270,7 +270,7 @@ curl -fsS http://192.168.94.91:8080/metrics \
 Confirm memory metrics are exported:
 
 ```bash
-curl -fsS http://192.168.94.91:8080/metrics \
+curl -fsS http://192.168.10.91:8080/metrics \
   | grep '^container_memory_usage_bytes' \
   | head
 ```

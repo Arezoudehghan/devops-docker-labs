@@ -48,7 +48,7 @@ sudo ufw allow from 192.168.94.0/24 to any port 7946 proto udp
 sudo ufw allow from 192.168.94.0/24 to any port 4789 proto udp
 
 15) Initialize DEV-1 as a Swarm manager using its management IP.
-docker swarm init --advertise-addr 192.168.94.90
+docker swarm init --advertise-addr 192.168.10.90
 
 16) Show Swarm state, manager control availability, and node ID.
 docker info --format 'Swarm={{.Swarm.LocalNodeState}} ControlAvailable={{.Swarm.ControlAvailable}} NodeID={{.Swarm.NodeID}}'
@@ -60,7 +60,7 @@ docker node ls
 docker swarm join-token worker
 
 19) Join DEV-2 as a worker. Replace the placeholder with the real generated token.
-docker swarm join --token YOUR_WORKER_TOKEN 192.168.94.90:2377
+docker swarm join --token YOUR_WORKER_TOKEN 192.168.10.90:2377
 
 20) List Docker networks.
 docker network ls
@@ -88,10 +88,10 @@ docker service ps web-demo
 docker ps --filter label=com.docker.swarm.service.name=web-demo
 
 27) Test the published service through DEV-1.
-curl -I http://192.168.94.90:8088
+curl -I http://192.168.10.90:8088
 
 28) Test the published service through DEV-2.
-curl -I http://192.168.94.91:8088
+curl -I http://192.168.10.91:8088
 
 29) Scale web-demo to four replicas.
 docker service scale web-demo=4
@@ -115,7 +115,7 @@ docker service inspect web-demo --pretty
 docker service logs web-demo
 
 36) Test connectivity from DEV-2 to the Swarm manager.
-ping -c 3 192.168.94.90
+ping -c 3 192.168.10.90
 
 37) Show only the local Swarm state.
 docker info --format '{{.Swarm.LocalNodeState}}'

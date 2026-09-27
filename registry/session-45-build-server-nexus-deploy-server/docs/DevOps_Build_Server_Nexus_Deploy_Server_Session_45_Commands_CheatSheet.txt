@@ -221,7 +221,7 @@ Options:
 - -a = --all (all): Show all containers instead of only running containers.
 - --filter name=session45-build-test = filter: Show containers whose name matches session45-build-test.
 ------------------------------------------------------------
-# export NEXUS_REGISTRY='192.168.94.90:8085'
+# export NEXUS_REGISTRY='192.168.10.90:8085'
 
 Explanation:
 Exports the Nexus Docker Registry address into the NEXUS_REGISTRY environment variable.
@@ -339,7 +339,7 @@ Options:
 # curl -sS \
   -o /dev/null \
   -w 'HTTP Status: %{http_code}\n' \
-  http://192.168.94.90:8085/v2/
+  http://192.168.10.90:8085/v2/
 
 Explanation:
 Tests the Nexus Docker Registry API endpoint and prints only its HTTP status code.
@@ -414,7 +414,7 @@ Options:
 # curl -sS \
   -o /dev/null \
   -w 'HTTP Status: %{http_code}\n' \
-  http://192.168.94.91:18045/
+  http://192.168.10.91:18045/
 
 Explanation:
 Tests the deployed application on DEV-2 and prints only its HTTP status code.
@@ -435,17 +435,17 @@ Options:
 - -n = --quiet / --silent: Suppress sed's normal automatic printing.
 - '/Insecure Registries/,+10p' = sed address and print command: Start at the matching line, include the next 10 lines, and print that range.
 ------------------------------------------------------------
-# docker logout 192.168.94.90:8085
+# docker logout 192.168.10.90:8085
 
 Explanation:
-Removes the stored Docker login credentials for the Nexus Registry at 192.168.94.90:8085.
+Removes the stored Docker login credentials for the Nexus Registry at 192.168.10.90:8085.
 ------------------------------------------------------------
-# docker login 192.168.94.90:8085
+# docker login 192.168.10.90:8085
 
 Explanation:
-Starts an interactive Docker login to the Nexus Registry at 192.168.94.90:8085.
+Starts an interactive Docker login to the Nexus Registry at 192.168.10.90:8085.
 ------------------------------------------------------------
-# curl -v http://192.168.94.90:8085/v2/
+# curl -v http://192.168.10.90:8085/v2/
 
 Explanation:
 Connects to the Nexus Docker Registry API endpoint and shows verbose request and response details.
@@ -453,10 +453,10 @@ Connects to the Nexus Docker Registry API endpoint and shows verbose request and
 Options:
 - -v = --verbose (verbose): Show detailed connection, request, and response information.
 ------------------------------------------------------------
-# nc -zv 192.168.94.90 8085
+# nc -zv 192.168.10.90 8085
 
 Explanation:
-Tests whether a TCP connection can be established to 192.168.94.90 on port 8085 without sending application data.
+Tests whether a TCP connection can be established to 192.168.10.90 on port 8085 without sending application data.
 
 Options:
 - -z = zero-I/O mode: Scan for a listening service without sending data.
@@ -474,13 +474,13 @@ Options:
 - -p = --processes (processes): Show the process using each socket when permitted.
 - | = pipeline: Send the output of ss to grep.
 ------------------------------------------------------------
-# docker pull 192.168.94.90:8085/session45-web:1.0
+# docker pull 192.168.10.90:8085/session45-web:1.0
 
 Explanation:
 Downloads version 1.0 of session45-web directly from the Nexus Docker Registry using its full image reference.
 ------------------------------------------------------------
 # docker image inspect \
-  192.168.94.90:8085/session45-web:1.0 \
+  192.168.10.90:8085/session45-web:1.0 \
   --format '{{json .RepoDigests}}'
 
 Explanation:
@@ -514,13 +514,13 @@ Options:
 ------------------------------------------------------------
 # docker tag \
   session45-web:1.0 \
-  192.168.94.90:8085/session45-web:1.0
+  192.168.10.90:8085/session45-web:1.0
 
 Explanation:
 Creates a registry-qualified tag for session45-web:1.0 using the Nexus Registry address.
 ------------------------------------------------------------
 # docker push \
-  192.168.94.90:8085/session45-web:1.0
+  192.168.10.90:8085/session45-web:1.0
 
 Explanation:
 Uploads session45-web:1.0 to the Nexus Docker Registry using its full image reference.
@@ -529,7 +529,7 @@ Uploads session45-web:1.0 to the Nexus Docker Registry using its full image refe
   --name session45-web \
   --restart unless-stopped \
   -p 18045:8000 \
-  192.168.94.90:8085/session45-web:1.0
+  192.168.10.90:8085/session45-web:1.0
 
 Explanation:
 Runs the Nexus-hosted image as a detached session45-web container with restart policy and port mapping.

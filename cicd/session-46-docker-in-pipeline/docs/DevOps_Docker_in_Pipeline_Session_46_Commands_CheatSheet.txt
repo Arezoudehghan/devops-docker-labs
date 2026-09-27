@@ -41,12 +41,12 @@ Options:
 - ${CI_COMMIT_SHORT_SHA} = shell variable expansion: Inserts the current value of the GitLab CI/CD variable.
 - . = build context: Uses the current directory as the Docker build context.
 ------------------------------------------------------------
-# docker pull 192.168.94.90:8085/myapp:b222222
+# docker pull 192.168.10.90:8085/myapp:b222222
 
 Explanation:
 Downloads the b222222 version of the myapp image from the Nexus Docker registry.
 ------------------------------------------------------------
-# docker pull 192.168.94.90:8085/myapp:a82fd19
+# docker pull 192.168.10.90:8085/myapp:a82fd19
 
 Explanation:
 Downloads the a82fd19 version of the myapp image from the Nexus Docker registry.
@@ -55,7 +55,7 @@ Downloads the a82fd19 version of the myapp image from the Nexus Docker registry.
   --name myapp \
   --restart unless-stopped \
   -p 8088:80 \
-  192.168.94.90:8085/myapp:a82fd19
+  192.168.10.90:8085/myapp:a82fd19
 
 Explanation:
 Starts the registry image as a background container named myapp, publishes it on port 8088, and applies an automatic restart policy.
@@ -195,7 +195,7 @@ Removes the temporary s46-test container even if it is still running.
 Options:
 - -f = --force (force): Forces removal of the running container.
 ------------------------------------------------------------
-# export REGISTRY=192.168.94.90:8085
+# export REGISTRY=192.168.10.90:8085
 
 Explanation:
 Sets and exports the REGISTRY environment variable with the Nexus Docker registry address.
@@ -236,7 +236,7 @@ Options:
 - \ = shell line continuation: Continues the same command on the next line.
 ------------------------------------------------------------
 # docker pull \
-  192.168.94.90:8085/cicd-session46-app:s46-v1
+  192.168.10.90:8085/cicd-session46-app:s46-v1
 
 Explanation:
 Downloads the s46-v1 application image from the Nexus Docker registry.
@@ -258,7 +258,7 @@ Options:
   --name cicd-session46-app \
   --restart unless-stopped \
   -p 18046:80 \
-  192.168.94.90:8085/cicd-session46-app:s46-v1
+  192.168.10.90:8085/cicd-session46-app:s46-v1
 
 Explanation:
 Deploys the image from Nexus as a background container, publishes it on port 18046, and configures automatic restart behavior.
