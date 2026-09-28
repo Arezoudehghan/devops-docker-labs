@@ -1,0 +1,123 @@
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists running Docker containers.
+
+------------------------------------------------------------
+# docker run nginx
+
+Explanation:
+Creates and starts a container from the nginx image. If the image is not available locally, Docker pulls it from the configured registry first.
+
+------------------------------------------------------------
+# ls -l /var/run/docker.sock
+
+Explanation:
+Shows detailed information about the Docker Unix socket file.
+
+Options:
+- -l = long listing format: Shows permissions, owner, group, size, and other file details.
+------------------------------------------------------------
+# systemctl status docker
+
+Explanation:
+Shows the current status of the Docker systemd service.
+
+------------------------------------------------------------
+# ps aux | grep dockerd
+
+Explanation:
+Lists processes and filters the output to lines containing dockerd.
+
+Options:
+- a = include processes for all users with terminals: Expands the process list beyond only the current user's processes.
+- u = user-oriented format: Shows detailed process information such as user and CPU usage.
+- x = include processes without a controlling terminal: Includes background services such as daemons.
+- | = pipe operator: Sends the output of ps aux to grep dockerd.
+------------------------------------------------------------
+# docker pull nginx
+
+Explanation:
+Downloads the nginx image from the configured Docker registry to the local Docker host.
+
+------------------------------------------------------------
+# docker images
+
+Explanation:
+Lists Docker images stored on the local Docker host.
+
+------------------------------------------------------------
+# docker pull alpine
+
+Explanation:
+Downloads the alpine image from the configured Docker registry to the local Docker host.
+
+------------------------------------------------------------
+# docker run alpine echo hello
+
+Explanation:
+Creates a container from the alpine image, runs echo hello inside it, and exits when the command finishes.
+
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all Docker containers, including running and stopped containers.
+
+Options:
+- -a = --all (all): Shows all containers instead of only running containers.
+------------------------------------------------------------
+# ps aux | grep containerd
+
+Explanation:
+Lists processes and filters the output to lines containing containerd.
+
+Options:
+- a = include processes for all users with terminals: Expands the process list beyond only the current user's processes.
+- u = user-oriented format: Shows detailed process information such as user and CPU usage.
+- x = include processes without a controlling terminal: Includes background services such as daemons.
+- | = pipe operator: Sends the output of ps aux to grep containerd.
+------------------------------------------------------------
+# systemctl status containerd
+
+Explanation:
+Shows the current status of the containerd systemd service.
+
+------------------------------------------------------------
+# docker version
+
+Explanation:
+Shows Docker Client and Docker Server version information when the daemon is reachable.
+
+------------------------------------------------------------
+# sudo systemctl stop docker
+
+Explanation:
+Stops the Docker systemd service with elevated privileges.
+
+------------------------------------------------------------
+# sudo systemctl start docker
+
+Explanation:
+Starts the Docker systemd service with elevated privileges.
+
+------------------------------------------------------------
+# docker info
+
+Explanation:
+Shows detailed information about the Docker Engine, including containers, images, storage, runtime, CPU, memory, and registry settings.
+
+------------------------------------------------------------
+# docker run alpine echo "Docker architecture test"
+
+Explanation:
+Creates a container from the alpine image, runs echo with the text "Docker architecture test", and exits when the command finishes.
+
+------------------------------------------------------------
+# docker run busybox echo hello
+
+Explanation:
+Creates a container from the busybox image, runs echo hello inside it, and exits when the command finishes. If the image is not available locally, Docker pulls it first.
+
+------------------------------------------------------------
