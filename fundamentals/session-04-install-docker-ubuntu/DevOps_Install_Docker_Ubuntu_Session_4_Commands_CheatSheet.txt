@@ -1,0 +1,441 @@
+------------------------------------------------------------
+# cat /etc/os-release
+
+Explanation:
+Displays operating-system identification information from the standard OS release file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# uname -m
+
+Explanation:
+Prints the machine hardware architecture, such as x86_64.
+
+Options:
+- -m = --machine (machine): Prints the machine hardware name.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# whoami
+
+Explanation:
+Prints the effective username of the current shell user.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker --version
+
+Explanation:
+Prints the installed Docker CLI version and then exits.
+
+Options:
+- --version = version: Displays version information.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# dpkg -l | grep -i docker
+
+Explanation:
+Lists installed Debian packages and filters the output for lines containing docker, ignoring letter case.
+
+Options:
+- -l = --list (list): Lists packages known to dpkg.
+- | = pipe: Sends the output of dpkg to grep as its input.
+- -i = --ignore-case (ignore case): Makes grep match docker without case sensitivity.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo apt remove $(dpkg --get-selections docker.io docker-compose docker-compose-v2 docker-doc docker-buildx podman-docker containerd runc | cut -f1)
+
+Explanation:
+Removes conflicting Docker-related packages returned by dpkg. The nested command builds the package-name list dynamically.
+
+Options:
+- --get-selections = get selections: Shows the package selection states for the named packages.
+- | = pipe: Sends dpkg output to cut.
+- -f1 = --fields=1 (fields): Selects the first tab-delimited field, which contains the package name.
+- $(...) = command substitution: Runs the nested pipeline and inserts its output as arguments to apt remove.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo apt update
+
+Explanation:
+Refreshes APT package indexes from the configured repositories.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# apt update
+
+Explanation:
+Refreshes APT package indexes from the configured repositories.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# apt upgrade
+
+Explanation:
+Upgrades installed packages to newer versions available from the configured repositories.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo apt install ca-certificates curl
+
+Explanation:
+Installs the CA certificate bundle and curl packages through APT.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo install -m 0755 -d /etc/apt/keyrings
+
+Explanation:
+Creates /etc/apt/keyrings as a directory with permission mode 0755.
+
+Options:
+- -m = --mode (mode): Sets the permission mode; 0755 gives the owner read/write/execute and others read/execute.
+- -d = --directory (directory): Creates directories instead of copying files.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+
+Explanation:
+Downloads Docker's Ubuntu repository signing key and saves it as /etc/apt/keyrings/docker.asc.
+
+Options:
+- -f = --fail (fail): Makes curl fail on HTTP response errors.
+- -s = --silent (silent): Hides the progress meter and normal status messages.
+- -S = --show-error (show error): Shows an error message when used with --silent.
+- -L = --location (location): Follows HTTP redirects.
+- -o = --output (output): Writes the response to the specified file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+Explanation:
+Adds read permission for all user classes to the Docker repository key file.
+
+Options:
+- a+r = symbolic mode argument: Adds read permission (+r) for all users (a).
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+Explanation:
+Writes the Docker APT repository definition to /etc/apt/sources.list.d/docker.sources. The shell expands the Ubuntu codename and Debian architecture before tee writes the file.
+
+Options:
+- <<EOF = here-document operator: Sends all following lines up to the closing EOF marker to tee as standard input.
+- $(...) = command substitution: Runs the enclosed command and inserts its output into the here-document.
+- && = AND operator: Runs echo only if sourcing /etc/os-release succeeds.
+- ${UBUNTU_CODENAME:-$VERSION_CODENAME} = parameter expansion: Uses UBUNTU_CODENAME when it is set and non-empty; otherwise uses VERSION_CODENAME.
+- --print-architecture = print architecture: Makes dpkg print the package architecture, such as amd64.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat /etc/apt/sources.list.d/docker.sources
+
+Explanation:
+Displays the Docker APT repository definition file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# apt-cache policy docker-ce
+
+Explanation:
+Shows APT package policy information for docker-ce, including installed and candidate versions.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+Explanation:
+Installs Docker Engine, the Docker CLI, containerd, Buildx, and the Docker Compose plugin.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose
+
+Explanation:
+Invokes the Docker Compose command group and, without a subcommand, normally displays Compose help or usage information.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker-compose
+
+Explanation:
+Invokes the legacy standalone Docker Compose command if that binary is installed. Without a subcommand, it normally displays help or usage information.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker compose version
+
+Explanation:
+Prints the installed Docker Compose plugin version.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker buildx version
+
+Explanation:
+Prints the installed Docker Buildx plugin version.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl status docker
+
+Explanation:
+Shows the current systemd status of the Docker service, including whether it is running.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl start docker
+
+Explanation:
+Starts the Docker systemd service immediately.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl is-enabled docker
+
+Explanation:
+Checks whether the Docker service is configured to start automatically at boot.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl enable docker
+
+Explanation:
+Enables the Docker service to start automatically at boot.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl status containerd
+
+Explanation:
+Shows the current systemd status of the containerd service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo docker run hello-world
+
+Explanation:
+Creates and starts a container from the hello-world image with root privileges through sudo. Docker pulls the image first if it is not available locally.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo docker images
+
+Explanation:
+Lists Docker images stored locally while running the Docker CLI through sudo.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo docker ps
+
+Explanation:
+Lists currently running Docker containers while running the Docker CLI through sudo.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo docker ps -a
+
+Explanation:
+Lists all Docker containers, including stopped containers, while running the Docker CLI through sudo.
+
+Options:
+- -a = --all (all): Shows all containers instead of only running containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo docker info
+
+Explanation:
+Displays detailed Docker client and server information while running the Docker CLI through sudo.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists currently running Docker containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -l /var/run/docker.sock
+
+Explanation:
+Displays detailed ownership and permission information for the Docker Unix socket.
+
+Options:
+- -l = long listing format: Shows permissions, owner, group, size, and other file details.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# getent group docker
+
+Explanation:
+Queries the configured group databases and prints the entry for the docker group.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo usermod -aG docker $USER
+
+Explanation:
+Adds the current user to the docker supplementary group without removing existing supplementary group memberships.
+
+Options:
+- -a = --append (append): Adds the user to the supplementary group list instead of replacing existing groups.
+- -G = --groups (groups): Specifies the supplementary group list; here it contains docker.
+- $USER = shell variable: Expands to the current user's username.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# newgrp docker
+
+Explanation:
+Starts a new shell with docker as the active group so the new group membership can take effect in the current login session.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# groups
+
+Explanation:
+Prints the group memberships of the current user.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run hello-world
+
+Explanation:
+Creates and starts a container from the hello-world image. Docker pulls the image first if it is not available locally.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name test-nginx -p 8080:80 nginx
+
+Explanation:
+Runs an Nginx container in the background, names it test-nginx, and publishes host port 8080 to container port 80.
+
+Options:
+- -d = --detach (detach): Runs the container in the background.
+- --name = name: Assigns the container name test-nginx.
+- -p = --publish (publish): Publishes a container port to the host; 8080:80 maps host port 8080 to container port 80.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://localhost:8080
+
+Explanation:
+Sends an HTTP request to the Nginx service exposed on local port 8080 and prints the response body.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f test-nginx
+
+Explanation:
+Removes the test-nginx container and forces removal if it is still running.
+
+Options:
+- -f = --force (force): Forces removal of a running container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all Docker containers, including stopped containers.
+
+Options:
+- -a = --all (all): Shows all containers instead of only running containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker images
+
+Explanation:
+Lists Docker images stored locally.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl restart docker
+
+Explanation:
+Restarts the Docker systemd service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker info
+
+Explanation:
+Displays detailed Docker client and server information, including containers, images, drivers, kernel details, and Docker Root Dir.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl stop docker
+
+Explanation:
+Stops the Docker systemd service immediately.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl disable docker
+
+Explanation:
+Disables automatic startup of the Docker service at boot.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo journalctl -u docker --no-pager -n 100
+
+Explanation:
+Shows the most recent 100 journal entries for the Docker systemd unit without opening an interactive pager.
+
+Options:
+- -u = --unit (unit): Filters journal entries to the docker unit.
+- --no-pager = no pager: Prints output directly instead of using a pager.
+- -n = --lines (lines): Limits output to a number of recent lines; 100 requests the latest 100 lines.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls -l /etc/apt/keyrings/docker.asc
+
+Explanation:
+Displays detailed ownership, permission, size, and timestamp information for the Docker repository key file.
+
+Options:
+- -l = long listing format: Shows detailed file information.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# dpkg --print-architecture
+
+Explanation:
+Prints the Debian package architecture used by the system, such as amd64.
+
+Options:
+- --print-architecture = print architecture: Displays the architecture used for package installation.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# systemctl is-active docker
+
+Explanation:
+Checks whether the Docker service is currently active.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# systemctl is-enabled docker
+
+Explanation:
+Checks whether the Docker service is enabled to start automatically at boot.
+------------------------------------------------------------
