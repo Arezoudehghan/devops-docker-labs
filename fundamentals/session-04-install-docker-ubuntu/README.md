@@ -106,3 +106,7 @@ docker info
 systemctl is-active docker
 systemctl is-enabled docker
 ```
+
+## Commands Cheat Sheet
+
+See [`DevOps_Install_Docker_Ubuntu_Session_4_Commands_CheatSheet.txt`](DevOps_Install_Docker_Ubuntu_Session_4_Commands_CheatSheet.txt).
