@@ -1,0 +1,130 @@
+------------------------------------------------------------
+# uname -a
+
+Explanation:
+Shows all available system and kernel information reported by uname.
+
+Options:
+- -a = --all (all): Prints all available uname information.
+------------------------------------------------------------
+# docker run --rm ubuntu uname -a
+
+Explanation:
+Starts a temporary container from the ubuntu image and runs uname -a inside it. The container is removed automatically after the command finishes.
+
+Options:
+- --rm = remove container automatically: Deletes the container when its process exits.
+- ubuntu = Docker image argument: Uses the ubuntu image to create the container.
+- uname = command argument: Runs uname inside the container.
+- -a = --all (all): Prints all available uname information from inside the container.
+------------------------------------------------------------
+# uname -r
+
+Explanation:
+Shows the release version of the currently running kernel.
+
+Options:
+- -r = --kernel-release (kernel release): Prints the kernel release.
+------------------------------------------------------------
+# docker run --rm ubuntu uname -r
+
+Explanation:
+Starts a temporary container from the ubuntu image and prints the kernel release seen inside the container. The container is removed automatically when the command finishes.
+
+Options:
+- --rm = remove container automatically: Deletes the container when its process exits.
+- ubuntu = Docker image argument: Uses the ubuntu image to create the container.
+- uname = command argument: Runs uname inside the container.
+- -r = --kernel-release (kernel release): Prints the kernel release from inside the container.
+------------------------------------------------------------
+# cat /etc/os-release
+
+Explanation:
+Displays operating system identification information from the /etc/os-release file.
+------------------------------------------------------------
+# docker run --rm alpine cat /etc/os-release
+
+Explanation:
+Starts a temporary container from the alpine image and displays its operating system identification file. The container is removed automatically after the command finishes.
+
+Options:
+- --rm = remove container automatically: Deletes the container when its process exits.
+- alpine = Docker image argument: Uses the alpine image to create the container.
+- cat = command argument: Runs cat inside the container.
+- /etc/os-release = file path argument: Specifies the operating system identification file to display.
+------------------------------------------------------------
+# docker run -d --name test-nginx nginx
+
+Explanation:
+Starts an nginx container in the background and assigns it the name test-nginx.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints its container ID.
+- --name = assign a name: Sets the container name to test-nginx.
+- test-nginx = --name value: The name assigned to the container.
+- nginx = Docker image argument: Uses the nginx image to create the container.
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists containers that are currently running.
+------------------------------------------------------------
+# docker top test-nginx
+
+Explanation:
+Displays the processes running inside the container named test-nginx.
+------------------------------------------------------------
+# ps aux | grep nginx
+
+Explanation:
+Lists host processes in a detailed user-oriented format and filters the result for lines containing nginx.
+
+Options:
+- a = BSD-style ps option, all users with terminals: Shows processes for all users that are associated with a terminal, subject to ps selection rules.
+- u = BSD-style ps option, user-oriented format: Displays process information in a user-oriented format.
+- x = BSD-style ps option, include processes without controlling terminals: Also includes processes that do not have a controlling terminal.
+- | = pipe operator: Sends the output of ps aux to grep as its input.
+- nginx = grep pattern argument: Matches lines that contain the text nginx.
+------------------------------------------------------------
+# docker rm -f test-nginx
+
+Explanation:
+Removes the container named test-nginx and forcibly stops it first if it is still running.
+
+Options:
+- -f = --force (force): Forcefully removes a running container by sending it a SIGKILL signal first.
+- test-nginx = container name argument: Specifies the container to remove.
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all containers, including both running and stopped containers.
+
+Options:
+- -a = --all (all): Shows all containers instead of only running containers.
+------------------------------------------------------------
+# docker run -d --name nginx-lab nginx
+
+Explanation:
+Starts an nginx container in the background and assigns it the name nginx-lab.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints its container ID.
+- --name = assign a name: Sets the container name to nginx-lab.
+- nginx-lab = --name value: The name assigned to the container.
+- nginx = Docker image argument: Uses the nginx image to create the container.
+------------------------------------------------------------
+# docker top nginx-lab
+
+Explanation:
+Displays the processes running inside the container named nginx-lab.
+------------------------------------------------------------
+# docker rm -f nginx-lab
+
+Explanation:
+Removes the container named nginx-lab and forcibly stops it first if it is still running.
+
+Options:
+- -f = --force (force): Forcefully removes a running container by sending it a SIGKILL signal first.
+- nginx-lab = container name argument: Specifies the container to remove.
+------------------------------------------------------------
