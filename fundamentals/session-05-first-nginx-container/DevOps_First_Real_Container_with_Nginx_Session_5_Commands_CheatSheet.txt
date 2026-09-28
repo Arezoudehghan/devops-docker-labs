@@ -1,0 +1,435 @@
+------------------------------------------------------------
+# sudo apt install nginx
+
+Explanation:
+Installs the Nginx package directly on the Ubuntu host by using APT with administrator privileges.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker --version
+
+Explanation:
+Shows the installed Docker client version.
+
+Options:
+- --version = version: Prints version information and exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# sudo systemctl status docker
+
+Explanation:
+Shows the current systemd status of the Docker service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps
+
+Explanation:
+Lists Docker containers that are currently running.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker ps -a
+
+Explanation:
+Lists all Docker containers, including running and stopped containers.
+
+Options:
+- -a = --all (all): Shows all containers instead of only running containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker images
+
+Explanation:
+Lists Docker images stored locally on the host.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker image ls
+
+Explanation:
+Lists Docker images stored locally. It is the newer command form corresponding to `docker images`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker pull nginx
+
+Explanation:
+Downloads the Nginx image from the configured Docker registry, using Docker Hub by default when no registry is specified.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run nginx
+
+Explanation:
+Creates and starts a new container from the Nginx image in the foreground.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop a18f72b65c43
+
+Explanation:
+Technical correction: the lesson first used `docker stop CONTAINER_ID` as a placeholder. This concrete example from the lesson is syntactically complete and stops the container with ID `a18f72b65c43` if it exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm a18f72b65c43
+
+Explanation:
+Technical correction: the lesson first used `docker rm CONTAINER_ID` as a placeholder. This concrete example from the lesson is syntactically complete and removes the stopped container with ID `a18f72b65c43` if it exists.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name my-nginx nginx
+
+Explanation:
+Creates and starts an Nginx container in the background and assigns it the name `my-nginx`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints the container ID.
+- --name my-nginx = name: Assigns the container name `my-nginx`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop my-nginx
+
+Explanation:
+Stops the running container named `my-nginx`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm my-nginx
+
+Explanation:
+Removes the stopped container named `my-nginx`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name my-nginx -p 8080:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `my-nginx` in the background and maps host port `8080` to container port `80`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints the container ID.
+- --name my-nginx = name: Assigns the container name `my-nginx`.
+- -p 8080:80 = --publish 8080:80 (publish): Publishes host port `8080` to container port `80`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://localhost:8080
+
+Explanation:
+Sends an HTTP request to port `8080` on the local host to test the published Nginx service.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker port my-nginx
+
+Explanation:
+Shows the published port mappings for the container named `my-nginx`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs my-nginx
+
+Explanation:
+Displays the logs produced by the container named `my-nginx`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs -f my-nginx
+
+Explanation:
+Displays the container logs and keeps following new log lines as they are produced.
+
+Options:
+- -f = --follow (follow): Continues streaming new log output.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec -it my-nginx /bin/bash
+
+Explanation:
+Starts an interactive Bash shell inside the already running container named `my-nginx`.
+
+Options:
+- -i = --interactive (interactive): Keeps standard input open.
+- -t = --tty (TTY): Allocates a pseudo-terminal.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# hostname
+
+Explanation:
+Prints the hostname of the current system or container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# pwd
+
+Explanation:
+Prints the current working directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ls
+
+Explanation:
+Lists files and directories in the current directory.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ps aux
+
+Explanation:
+Shows running processes with user-oriented details, including processes without a controlling terminal.
+
+Options:
+- a = documented BSD-style option: Shows processes for all users, not only the current user.
+- u = documented BSD-style option: Uses a user-oriented output format.
+- x = documented BSD-style option: Includes processes that do not have a controlling terminal.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# cat /usr/share/nginx/html/index.html
+
+Explanation:
+Prints the contents of the default Nginx `index.html` file.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# exit
+
+Explanation:
+Exits the current shell session, such as the Bash shell opened inside the container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect my-nginx
+
+Explanation:
+Shows detailed low-level information about the container named `my-nginx` in JSON format.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my-nginx
+
+Explanation:
+Extracts and prints the container IP address from Docker inspection data by using a Go template.
+
+Options:
+- -f = --format (format): Formats the output with the supplied Go template.
+- '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' = format value: Iterates through attached networks and prints each container IP address.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stats my-nginx
+
+Explanation:
+Shows live CPU, memory, network, block I/O, and process statistics for the container named `my-nginx`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker start my-nginx
+
+Explanation:
+Starts the existing stopped container named `my-nginx`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name nginx-2 -p 8081:80 nginx
+
+Explanation:
+Creates and starts a second Nginx container named `nginx-2` and maps host port `8081` to container port `80`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints the container ID.
+- --name nginx-2 = name: Assigns the container name `nginx-2`.
+- -p 8081:80 = --publish 8081:80 (publish): Publishes host port `8081` to container port `80`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name nginx-3 -p 8080:80 nginx
+
+Explanation:
+Attempts to create and start a third Nginx container named `nginx-3` while publishing host port `8080`. The syntax is valid, but it fails at runtime if host port `8080` is already allocated.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints the container ID.
+- --name nginx-3 = name: Assigns the container name `nginx-3`.
+- -p 8080:80 = --publish 8080:80 (publish): Publishes host port `8080` to container port `80`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stop nginx-2
+
+Explanation:
+Stops the running container named `nginx-2`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm -f nginx-3
+
+Explanation:
+Force-removes the container named `nginx-3`, stopping it first if necessary.
+
+Options:
+- -f = --force (force): Forces removal of a running container by sending it a stop signal before removal.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rm my-nginx nginx-2
+
+Explanation:
+Removes the stopped containers named `my-nginx` and `nginx-2` in one command.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker rmi nginx
+
+Explanation:
+Removes the local Docker image named `nginx` if it is not required by existing containers.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run --rm nginx
+
+Explanation:
+Creates and starts an Nginx container and automatically removes that container when it exits.
+
+Options:
+- --rm = automatically remove: Automatically removes the container and its anonymous volumes when the container exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web01 -p 9090:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `web01` and maps host port `9090` to container port `80`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints the container ID.
+- --name web01 = name: Assigns the container name `web01`.
+- -p 9090:80 = --publish 9090:80 (publish): Publishes host port `9090` to container port `80`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://localhost:9090
+
+Explanation:
+Sends an HTTP request to local host port `9090` to verify the `web01` Nginx container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker logs web01
+
+Explanation:
+Displays the logs produced by the container named `web01`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker port web01
+
+Explanation:
+Shows the published port mappings for the container named `web01`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker stats web01
+
+Explanation:
+Shows live resource usage statistics for the container named `web01`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web01 -p 8081:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `web01` and maps host port `8081` to container port `80`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints the container ID.
+- --name web01 = name: Assigns the container name `web01`.
+- -p 8081:80 = --publish 8081:80 (publish): Publishes host port `8081` to container port `80`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web02 -p 8082:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `web02` and maps host port `8082` to container port `80`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints the container ID.
+- --name web02 = name: Assigns the container name `web02`.
+- -p 8082:80 = --publish 8082:80 (publish): Publishes host port `8082` to container port `80`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker run -d --name web03 -p 8083:80 nginx
+
+Explanation:
+Creates and starts an Nginx container named `web03` and maps host port `8083` to container port `80`.
+
+Options:
+- -d = --detach (detach): Runs the container in the background and prints the container ID.
+- --name web03 = name: Assigns the container name `web03`.
+- -p 8083:80 = --publish 8083:80 (publish): Publishes host port `8083` to container port `80`.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://localhost:8081
+
+Explanation:
+Sends an HTTP request to local host port `8081` to test the first challenge Nginx container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://localhost:8082
+
+Explanation:
+Sends an HTTP request to local host port `8082` to test the second challenge Nginx container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# curl http://localhost:8083
+
+Explanation:
+Sends an HTTP request to local host port `8083` to test the third challenge Nginx container.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# nginx -v
+
+Explanation:
+Shows the installed Nginx version on the current system and exits.
+
+Options:
+- -v = documented Nginx option: Prints the Nginx version and exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# docker exec web01 nginx -v
+
+Explanation:
+Runs `nginx -v` inside the already running container named `web01` to display its Nginx version.
+
+Options:
+- -v = documented Nginx option passed to `nginx`: Prints the Nginx version and exits.
+------------------------------------------------------------
+
+------------------------------------------------------------
+# ss -lntp
+
+Explanation:
+Shows listening TCP sockets with numeric addresses and the related process information.
+
+Options:
+- -l = --listening (listening): Displays only listening sockets.
+- -n = --numeric (numeric): Shows numeric addresses and ports instead of resolving service names.
+- -t = --tcp (TCP): Displays TCP sockets.
+- -p = --processes (processes): Shows the process using each socket.
+------------------------------------------------------------
